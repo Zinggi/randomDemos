@@ -7,5 +7,5 @@ This more convinient than having a seperate github pages branche for each projec
 
 ### Wavefront .obj file loader
 
-    * [Simple demo](https://zinggi.github.io/randomDemos/webgl/objLoader_simple.html)
-    * [Model viewer](https://zinggi.github.io/randomDemos/webgl/objLoader_modelViewer.html)
+ * [Simple demo](https://zinggi.github.io/randomDemos/webgl/objLoader_simple.html)
+ * [Model viewer](https://zinggi.github.io/randomDemos/webgl/objLoader_modelViewer.html)
