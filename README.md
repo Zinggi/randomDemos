@@ -1,7 +1,11 @@
 # randomDemos
-This is place where I put cool random demos that don't deserve their own repository
+This is place where I put cool random demos.
+This more convinient than having a seperate github pages branche for each project.
 
 
 ## Elm WebGL
 
-[wavefront .obj file loader](https://zinggi.github.io/randomDemos/webgl/objLoader.html)
+### Wavefront .obj file loader
+
+    * [Simple demo](https://zinggi.github.io/randomDemos/webgl/objLoader_simple.html)
+    * [Model viewer](https://zinggi.github.io/randomDemos/webgl/objLoader_modelViewer.html)
