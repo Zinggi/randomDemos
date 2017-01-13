@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Main</title><style>html,head,body { padding:0; margin:0; }
+<html><head><meta charset="UTF-8"><title>ElmLogo</title><style>html,head,body { padding:0; margin:0; }
 body { font-family: calibri, helvetica, arial, sans-serif; }</style><script type="text/javascript">
 (function() {
 'use strict';
@@ -4450,6 +4450,923 @@ var _Bogdanp$elm_combine$Combine_Num$float = A2(
 			_Bogdanp$elm_combine$Combine_Num$toFloat,
 			_Bogdanp$elm_combine$Combine$regex('(0|[1-9][0-9]*)(\\.[0-9]+)')),
 		'expected a float'));
+var _elm_lang$core$Native_Bitwise = function() {
+
+return {
+	and: F2(function and(a, b) { return a & b; }),
+	or: F2(function or(a, b) { return a | b; }),
+	xor: F2(function xor(a, b) { return a ^ b; }),
+	complement: function complement(a) { return ~a; },
+	shiftLeftBy: F2(function(offset, a) { return a << offset; }),
+	shiftRightBy: F2(function(offset, a) { return a >> offset; }),
+	shiftRightZfBy: F2(function(offset, a) { return a >>> offset; })
+};
+
+}();
+var _elm_lang$core$Bitwise$shiftRightZfBy = _elm_lang$core$Native_Bitwise.shiftRightZfBy;
+var _elm_lang$core$Bitwise$shiftRightBy = _elm_lang$core$Native_Bitwise.shiftRightBy;
+var _elm_lang$core$Bitwise$shiftLeftBy = _elm_lang$core$Native_Bitwise.shiftLeftBy;
+var _elm_lang$core$Bitwise$complement = _elm_lang$core$Native_Bitwise.complement;
+var _elm_lang$core$Bitwise$xor = _elm_lang$core$Native_Bitwise.xor;
+var _elm_lang$core$Bitwise$or = _elm_lang$core$Native_Bitwise.or;
+var _elm_lang$core$Bitwise$and = _elm_lang$core$Native_Bitwise.and;
+var _Skinney$elm_array_exploration$Native_JsArray = function() {
+
+var empty = [];
+
+function singleton(val) {
+    return [val];
+}
+
+function length(arr) {
+    return arr.length;
+}
+
+function initialize(size, offset, f) {
+    var result = newArray(size);
+
+    for (var i = 0; i < size; i++) {
+        result[i] = f(offset + i);
+    }
+
+    return result;
+}
+
+function newArray(size) {
+    // A JS literal is much faster than `new Array(size)` in Safari.
+    // The following code optimizes the common case of 32-sized arrays,
+    // while falling back to the "proper" way to preallocate arrays
+    // for other sizes. This makes a big performance difference in
+    // Safari, while exerting a minor performance hit in Chrome.
+    // For 32-sized arrays, Chrome and Safari become equally fast.
+    if (size !== 32) {
+        return new Array(size);
+    }
+
+    return [
+        null, null, null, null, null,
+        null, null, null, null, null,
+        null, null, null, null, null,
+        null, null, null, null, null,
+        null, null, null, null, null,
+        null, null, null, null, null,
+        null, null
+    ];
+}
+
+function initializeFromList(max, ls) {
+    var result = newArray(max);
+
+    for (var i = 0; i < max; i++) {
+        if (ls.ctor === '[]') {
+            result.length = i;
+            break;
+        }
+
+        result[i] = ls._0;
+        ls = ls._1;
+    }
+
+    return {
+        ctor: '_Tuple2',
+        _0: result,
+        _1: ls
+    };
+}
+
+function unsafeGet(idx, arr) {
+    return arr[idx];
+}
+
+function unsafeSet(idx, val, arr) {
+    var result = arr.slice();
+    result[idx] = val;
+    return result;
+}
+
+function push(val, arr) {
+    var result = arr.slice();
+    result.push(val);
+    return result;
+}
+
+function foldl(f, init, arr) {
+    var acc = init;
+    var len = arr.length;
+
+    for (var i = 0; i < len; i++) {
+        acc = A2(f, arr[i], acc);
+    }
+
+    return acc;
+}
+
+function foldr(f, init, arr) {
+    var acc = init;
+
+    for (var i = arr.length - 1; i >= 0; i--) {
+        acc = A2(f, arr[i], acc);
+    }
+
+    return acc;
+}
+
+function map(f, arr) {
+    var len = arr.length;
+    var result = newArray(len);
+
+    for (var i = 0; i < len; i++) {
+        result[i] = f(arr[i]);
+    }
+
+    return result;
+}
+
+function indexedMap(f, offset, arr) {
+    var len = arr.length;
+    var result = newArray(len);
+
+    for (var i = 0; i < len; i++) {
+        result[i] = A2(f, offset + i, arr[i]);
+    }
+
+    return result;
+}
+
+function slice(from, to, arr) {
+    return arr.slice(from, to);
+}
+
+function appendN(n, dest, source) {
+    var destLen = dest.length;
+    var itemsToCopy = n - destLen;
+
+    if (itemsToCopy > source.length) {
+        itemsToCopy = source.length;
+    }
+
+    var size = destLen + itemsToCopy;
+    var result = newArray(size);
+
+    for (var i = 0; i < destLen; i++) {
+        result[i] = dest[i];
+    }
+
+    for (var i = 0; i < itemsToCopy; i++) {
+        result[i + destLen] = source[i];
+    }
+
+    return result;
+}
+
+return {
+    empty: empty,
+    singleton: singleton,
+    length: length,
+    initialize: F3(initialize),
+    initializeFromList: F2(initializeFromList),
+    unsafeGet: F2(unsafeGet),
+    unsafeSet: F3(unsafeSet),
+    push: F2(push),
+    foldl: F3(foldl),
+    foldr: F3(foldr),
+    map: F2(map),
+    indexedMap: F3(indexedMap),
+    slice: F3(slice),
+    appendN: F3(appendN)
+};
+
+}();
+var _Skinney$elm_array_exploration$Array_JsArray$appendN = _Skinney$elm_array_exploration$Native_JsArray.appendN;
+var _Skinney$elm_array_exploration$Array_JsArray$slice = _Skinney$elm_array_exploration$Native_JsArray.slice;
+var _Skinney$elm_array_exploration$Array_JsArray$indexedMap = _Skinney$elm_array_exploration$Native_JsArray.indexedMap;
+var _Skinney$elm_array_exploration$Array_JsArray$map = _Skinney$elm_array_exploration$Native_JsArray.map;
+var _Skinney$elm_array_exploration$Array_JsArray$foldr = _Skinney$elm_array_exploration$Native_JsArray.foldr;
+var _Skinney$elm_array_exploration$Array_JsArray$foldl = _Skinney$elm_array_exploration$Native_JsArray.foldl;
+var _Skinney$elm_array_exploration$Array_JsArray$push = _Skinney$elm_array_exploration$Native_JsArray.push;
+var _Skinney$elm_array_exploration$Array_JsArray$unsafeSet = _Skinney$elm_array_exploration$Native_JsArray.unsafeSet;
+var _Skinney$elm_array_exploration$Array_JsArray$unsafeGet = _Skinney$elm_array_exploration$Native_JsArray.unsafeGet;
+var _Skinney$elm_array_exploration$Array_JsArray$initializeFromList = _Skinney$elm_array_exploration$Native_JsArray.initializeFromList;
+var _Skinney$elm_array_exploration$Array_JsArray$initialize = _Skinney$elm_array_exploration$Native_JsArray.initialize;
+var _Skinney$elm_array_exploration$Array_JsArray$length = _Skinney$elm_array_exploration$Native_JsArray.length;
+var _Skinney$elm_array_exploration$Array_JsArray$singleton = _Skinney$elm_array_exploration$Native_JsArray.singleton;
+var _Skinney$elm_array_exploration$Array_JsArray$empty = _Skinney$elm_array_exploration$Native_JsArray.empty;
+var _Skinney$elm_array_exploration$Array_JsArray$JsArray = function (a) {
+	return {ctor: 'JsArray', _0: a};
+};
+var _Skinney$elm_array_exploration$Array_Hamt$emptyBuilder = {
+	tail: _Skinney$elm_array_exploration$Array_JsArray$empty,
+	nodeList: {ctor: '[]'},
+	nodeListSize: 0
+};
+var _Skinney$elm_array_exploration$Array_Hamt$translateIndex = F2(
+	function (idx, _p0) {
+		var _p1 = _p0;
+		var _p2 = _p1._0;
+		var posIndex = (_elm_lang$core$Native_Utils.cmp(idx, 0) < 0) ? (_p2 + idx) : idx;
+		return (_elm_lang$core$Native_Utils.cmp(posIndex, 0) < 0) ? 0 : ((_elm_lang$core$Native_Utils.cmp(posIndex, _p2) > 0) ? _p2 : posIndex);
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$foldl = F3(
+	function (f, init, _p3) {
+		var _p4 = _p3;
+		var helper = F2(
+			function (i, acc) {
+				var _p5 = i;
+				if (_p5.ctor === 'SubTree') {
+					return A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, helper, acc, _p5._0);
+				} else {
+					return A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, f, acc, _p5._0);
+				}
+			});
+		var acc = A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, helper, init, _p4._2);
+		return A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, f, acc, _p4._3);
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$foldr = F3(
+	function (f, init, _p6) {
+		var _p7 = _p6;
+		var acc = A3(_Skinney$elm_array_exploration$Array_JsArray$foldr, f, init, _p7._3);
+		var helper = F2(
+			function (i, acc) {
+				var _p8 = i;
+				if (_p8.ctor === 'SubTree') {
+					return A3(_Skinney$elm_array_exploration$Array_JsArray$foldr, helper, acc, _p8._0);
+				} else {
+					return A3(_Skinney$elm_array_exploration$Array_JsArray$foldr, f, acc, _p8._0);
+				}
+			});
+		return A3(_Skinney$elm_array_exploration$Array_JsArray$foldr, helper, acc, _p7._2);
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$toIndexedList = function (_p9) {
+	var _p10 = _p9;
+	var helper = F2(
+		function (n, _p11) {
+			var _p12 = _p11;
+			var _p13 = _p12._0;
+			return {
+				ctor: '_Tuple2',
+				_0: _p13 - 1,
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: _p13, _1: n},
+					_1: _p12._1
+				}
+			};
+		});
+	return _elm_lang$core$Tuple$second(
+		A3(
+			_Skinney$elm_array_exploration$Array_Hamt$foldr,
+			helper,
+			{
+				ctor: '_Tuple2',
+				_0: _p10._0 - 1,
+				_1: {ctor: '[]'}
+			},
+			_p10));
+};
+var _Skinney$elm_array_exploration$Array_Hamt$toList = function (arr) {
+	return A3(
+		_Skinney$elm_array_exploration$Array_Hamt$foldr,
+		F2(
+			function (x, y) {
+				return {ctor: '::', _0: x, _1: y};
+			}),
+		{ctor: '[]'},
+		arr);
+};
+var _Skinney$elm_array_exploration$Array_Hamt$tailIndex = function (len) {
+	return (len >>> 5) << 5;
+};
+var _Skinney$elm_array_exploration$Array_Hamt$length = function (_p14) {
+	var _p15 = _p14;
+	return _p15._0;
+};
+var _Skinney$elm_array_exploration$Array_Hamt$isEmpty = function (_p16) {
+	var _p17 = _p16;
+	return _elm_lang$core$Native_Utils.eq(_p17._0, 0);
+};
+var _Skinney$elm_array_exploration$Array_Hamt$branchFactor = 32;
+var _Skinney$elm_array_exploration$Array_Hamt$shiftStep = _elm_lang$core$Basics$ceiling(
+	A2(
+		_elm_lang$core$Basics$logBase,
+		2,
+		_elm_lang$core$Basics$toFloat(_Skinney$elm_array_exploration$Array_Hamt$branchFactor)));
+var _Skinney$elm_array_exploration$Array_Hamt$bitMask = 4294967295 >>> (32 - _Skinney$elm_array_exploration$Array_Hamt$shiftStep);
+var _Skinney$elm_array_exploration$Array_Hamt$getHelp = F3(
+	function (shift, idx, tree) {
+		getHelp:
+		while (true) {
+			var pos = _Skinney$elm_array_exploration$Array_Hamt$bitMask & (idx >>> shift);
+			var _p18 = A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, pos, tree);
+			if (_p18.ctor === 'SubTree') {
+				var _v10 = shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep,
+					_v11 = idx,
+					_v12 = _p18._0;
+				shift = _v10;
+				idx = _v11;
+				tree = _v12;
+				continue getHelp;
+			} else {
+				return A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, _Skinney$elm_array_exploration$Array_Hamt$bitMask & idx, _p18._0);
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$get = F2(
+	function (idx, _p19) {
+		var _p20 = _p19;
+		var _p21 = _p20._0;
+		return ((_elm_lang$core$Native_Utils.cmp(idx, 0) < 0) || (_elm_lang$core$Native_Utils.cmp(idx, _p21) > -1)) ? _elm_lang$core$Maybe$Nothing : ((_elm_lang$core$Native_Utils.cmp(
+			idx,
+			_Skinney$elm_array_exploration$Array_Hamt$tailIndex(_p21)) > -1) ? _elm_lang$core$Maybe$Just(
+			A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, _Skinney$elm_array_exploration$Array_Hamt$bitMask & idx, _p20._3)) : _elm_lang$core$Maybe$Just(
+			A3(_Skinney$elm_array_exploration$Array_Hamt$getHelp, _p20._1, idx, _p20._2)));
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$fetchNewTail = F4(
+	function (shift, end, treeEnd, tree) {
+		fetchNewTail:
+		while (true) {
+			var pos = _Skinney$elm_array_exploration$Array_Hamt$bitMask & (treeEnd >>> shift);
+			var _p22 = A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, pos, tree);
+			if (_p22.ctor === 'SubTree') {
+				var _v15 = shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep,
+					_v16 = end,
+					_v17 = treeEnd,
+					_v18 = _p22._0;
+				shift = _v15;
+				end = _v16;
+				treeEnd = _v17;
+				tree = _v18;
+				continue fetchNewTail;
+			} else {
+				return A3(_Skinney$elm_array_exploration$Array_JsArray$slice, 0, _Skinney$elm_array_exploration$Array_Hamt$bitMask & end, _p22._0);
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$hoistTree = F3(
+	function (oldShift, newShift, tree) {
+		hoistTree:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(oldShift, newShift) < 1) {
+				return tree;
+			} else {
+				var _p23 = A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, 0, tree);
+				if (_p23.ctor === 'SubTree') {
+					var _v20 = oldShift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep,
+						_v21 = newShift,
+						_v22 = _p23._0;
+					oldShift = _v20;
+					newShift = _v21;
+					tree = _v22;
+					continue hoistTree;
+				} else {
+					return tree;
+				}
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$builderFromArray = function (_p24) {
+	var _p25 = _p24;
+	var helper = F2(
+		function (node, acc) {
+			var _p26 = node;
+			if (_p26.ctor === 'SubTree') {
+				return A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, helper, acc, _p26._0);
+			} else {
+				return {ctor: '::', _0: node, _1: acc};
+			}
+		});
+	return {
+		tail: _p25._3,
+		nodeList: A3(
+			_Skinney$elm_array_exploration$Array_JsArray$foldl,
+			helper,
+			{ctor: '[]'},
+			_p25._2),
+		nodeListSize: (_p25._0 / _Skinney$elm_array_exploration$Array_Hamt$branchFactor) | 0
+	};
+};
+var _Skinney$elm_array_exploration$Array_Hamt$Builder = F3(
+	function (a, b, c) {
+		return {tail: a, nodeList: b, nodeListSize: c};
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$Array = F4(
+	function (a, b, c, d) {
+		return {ctor: 'Array', _0: a, _1: b, _2: c, _3: d};
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$empty = A4(_Skinney$elm_array_exploration$Array_Hamt$Array, 0, _Skinney$elm_array_exploration$Array_Hamt$shiftStep, _Skinney$elm_array_exploration$Array_JsArray$empty, _Skinney$elm_array_exploration$Array_JsArray$empty);
+var _Skinney$elm_array_exploration$Array_Hamt$Leaf = function (a) {
+	return {ctor: 'Leaf', _0: a};
+};
+var _Skinney$elm_array_exploration$Array_Hamt$appendHelp = F2(
+	function (tail, builder) {
+		var tailLen = _Skinney$elm_array_exploration$Array_JsArray$length(tail);
+		var leftOver = A2(
+			_elm_lang$core$Basics$max,
+			0,
+			(_Skinney$elm_array_exploration$Array_JsArray$length(builder.tail) + tailLen) - _Skinney$elm_array_exploration$Array_Hamt$branchFactor);
+		var appended = A3(_Skinney$elm_array_exploration$Array_JsArray$appendN, _Skinney$elm_array_exploration$Array_Hamt$branchFactor, builder.tail, tail);
+		var appendedLen = _Skinney$elm_array_exploration$Array_JsArray$length(appended);
+		return _elm_lang$core$Native_Utils.eq(appendedLen, _Skinney$elm_array_exploration$Array_Hamt$branchFactor) ? {
+			tail: A3(_Skinney$elm_array_exploration$Array_JsArray$slice, tailLen - leftOver, tailLen, tail),
+			nodeList: {
+				ctor: '::',
+				_0: _Skinney$elm_array_exploration$Array_Hamt$Leaf(appended),
+				_1: builder.nodeList
+			},
+			nodeListSize: builder.nodeListSize + 1
+		} : {tail: appended, nodeList: builder.nodeList, nodeListSize: builder.nodeListSize};
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$SubTree = function (a) {
+	return {ctor: 'SubTree', _0: a};
+};
+var _Skinney$elm_array_exploration$Array_Hamt$setHelp = F4(
+	function (shift, idx, val, tree) {
+		var pos = _Skinney$elm_array_exploration$Array_Hamt$bitMask & (idx >>> shift);
+		var _p27 = A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, pos, tree);
+		if (_p27.ctor === 'SubTree') {
+			var newSub = A4(_Skinney$elm_array_exploration$Array_Hamt$setHelp, shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep, idx, val, _p27._0);
+			return A3(
+				_Skinney$elm_array_exploration$Array_JsArray$unsafeSet,
+				pos,
+				_Skinney$elm_array_exploration$Array_Hamt$SubTree(newSub),
+				tree);
+		} else {
+			var newLeaf = A3(_Skinney$elm_array_exploration$Array_JsArray$unsafeSet, _Skinney$elm_array_exploration$Array_Hamt$bitMask & idx, val, _p27._0);
+			return A3(
+				_Skinney$elm_array_exploration$Array_JsArray$unsafeSet,
+				pos,
+				_Skinney$elm_array_exploration$Array_Hamt$Leaf(newLeaf),
+				tree);
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$set = F3(
+	function (idx, val, _p28) {
+		var _p29 = _p28;
+		var _p33 = _p29._2;
+		var _p32 = _p29._3;
+		var _p31 = _p29._1;
+		var _p30 = _p29._0;
+		return ((_elm_lang$core$Native_Utils.cmp(idx, 0) < 0) || (_elm_lang$core$Native_Utils.cmp(idx, _p30) > -1)) ? _p29 : ((_elm_lang$core$Native_Utils.cmp(
+			idx,
+			_Skinney$elm_array_exploration$Array_Hamt$tailIndex(_p30)) > -1) ? A4(
+			_Skinney$elm_array_exploration$Array_Hamt$Array,
+			_p30,
+			_p31,
+			_p33,
+			A3(_Skinney$elm_array_exploration$Array_JsArray$unsafeSet, _Skinney$elm_array_exploration$Array_Hamt$bitMask & idx, val, _p32)) : A4(
+			_Skinney$elm_array_exploration$Array_Hamt$Array,
+			_p30,
+			_p31,
+			A4(_Skinney$elm_array_exploration$Array_Hamt$setHelp, _p31, idx, val, _p33),
+			_p32));
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$pushTailHelp = F4(
+	function (shift, idx, tail, tree) {
+		var pos = _Skinney$elm_array_exploration$Array_Hamt$bitMask & (idx >>> shift);
+		if (_elm_lang$core$Native_Utils.cmp(
+			pos,
+			_Skinney$elm_array_exploration$Array_JsArray$length(tree)) > -1) {
+			if (_elm_lang$core$Native_Utils.eq(shift, 5)) {
+				return A2(
+					_Skinney$elm_array_exploration$Array_JsArray$push,
+					_Skinney$elm_array_exploration$Array_Hamt$Leaf(tail),
+					tree);
+			} else {
+				var newSub = _Skinney$elm_array_exploration$Array_Hamt$SubTree(
+					A4(_Skinney$elm_array_exploration$Array_Hamt$pushTailHelp, shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep, idx, tail, _Skinney$elm_array_exploration$Array_JsArray$empty));
+				return A2(_Skinney$elm_array_exploration$Array_JsArray$push, newSub, tree);
+			}
+		} else {
+			var val = A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, pos, tree);
+			var _p34 = val;
+			if (_p34.ctor === 'SubTree') {
+				var newSub = _Skinney$elm_array_exploration$Array_Hamt$SubTree(
+					A4(_Skinney$elm_array_exploration$Array_Hamt$pushTailHelp, shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep, idx, tail, _p34._0));
+				return A3(_Skinney$elm_array_exploration$Array_JsArray$unsafeSet, pos, newSub, tree);
+			} else {
+				var newSub = _Skinney$elm_array_exploration$Array_Hamt$SubTree(
+					A4(
+						_Skinney$elm_array_exploration$Array_Hamt$pushTailHelp,
+						shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep,
+						idx,
+						tail,
+						_Skinney$elm_array_exploration$Array_JsArray$singleton(val)));
+				return A3(_Skinney$elm_array_exploration$Array_JsArray$unsafeSet, pos, newSub, tree);
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$push = F2(
+	function (a, _p35) {
+		var _p36 = _p35;
+		var _p39 = _p36._2;
+		var _p38 = _p36._1;
+		var _p37 = _p36._0;
+		var newLen = _p37 + 1;
+		var modifiedTail = A2(_Skinney$elm_array_exploration$Array_JsArray$push, a, _p36._3);
+		var tailLen = _Skinney$elm_array_exploration$Array_JsArray$length(modifiedTail);
+		if (_elm_lang$core$Native_Utils.eq(tailLen, _Skinney$elm_array_exploration$Array_Hamt$branchFactor)) {
+			var overflow = _elm_lang$core$Native_Utils.cmp(newLen >>> _Skinney$elm_array_exploration$Array_Hamt$shiftStep, 1 << _p38) > 0;
+			if (overflow) {
+				var spacyTree = _Skinney$elm_array_exploration$Array_JsArray$singleton(
+					_Skinney$elm_array_exploration$Array_Hamt$SubTree(_p39));
+				var newShift = _p38 + _Skinney$elm_array_exploration$Array_Hamt$shiftStep;
+				return A4(
+					_Skinney$elm_array_exploration$Array_Hamt$Array,
+					newLen,
+					newShift,
+					A4(_Skinney$elm_array_exploration$Array_Hamt$pushTailHelp, newShift, _p37, modifiedTail, spacyTree),
+					_Skinney$elm_array_exploration$Array_JsArray$empty);
+			} else {
+				return A4(
+					_Skinney$elm_array_exploration$Array_Hamt$Array,
+					newLen,
+					_p38,
+					A4(_Skinney$elm_array_exploration$Array_Hamt$pushTailHelp, _p38, _p37, modifiedTail, _p39),
+					_Skinney$elm_array_exploration$Array_JsArray$empty);
+			}
+		} else {
+			return A4(_Skinney$elm_array_exploration$Array_Hamt$Array, newLen, _p38, _p39, modifiedTail);
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$map = F2(
+	function (f, _p40) {
+		var _p41 = _p40;
+		var helper = function (i) {
+			var _p42 = i;
+			if (_p42.ctor === 'SubTree') {
+				return _Skinney$elm_array_exploration$Array_Hamt$SubTree(
+					A2(_Skinney$elm_array_exploration$Array_JsArray$map, helper, _p42._0));
+			} else {
+				return _Skinney$elm_array_exploration$Array_Hamt$Leaf(
+					A2(_Skinney$elm_array_exploration$Array_JsArray$map, f, _p42._0));
+			}
+		};
+		return A4(
+			_Skinney$elm_array_exploration$Array_Hamt$Array,
+			_p41._0,
+			_p41._1,
+			A2(_Skinney$elm_array_exploration$Array_JsArray$map, helper, _p41._2),
+			A2(_Skinney$elm_array_exploration$Array_JsArray$map, f, _p41._3));
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$toString = function (array) {
+	var content = A2(
+		_elm_lang$core$String$join,
+		',',
+		_Skinney$elm_array_exploration$Array_Hamt$toList(
+			A2(_Skinney$elm_array_exploration$Array_Hamt$map, _elm_lang$core$Basics$toString, array)));
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'Array [',
+		A2(_elm_lang$core$Basics_ops['++'], content, ']'));
+};
+var _Skinney$elm_array_exploration$Array_Hamt$sliceTree = F3(
+	function (shift, endIdx, tree) {
+		var lastPos = _Skinney$elm_array_exploration$Array_Hamt$bitMask & (endIdx >>> shift);
+		var _p43 = A2(_Skinney$elm_array_exploration$Array_JsArray$unsafeGet, lastPos, tree);
+		if (_p43.ctor === 'SubTree') {
+			var newSub = A3(_Skinney$elm_array_exploration$Array_Hamt$sliceTree, shift - _Skinney$elm_array_exploration$Array_Hamt$shiftStep, endIdx, _p43._0);
+			return _elm_lang$core$Native_Utils.eq(
+				_Skinney$elm_array_exploration$Array_JsArray$length(newSub),
+				0) ? A3(_Skinney$elm_array_exploration$Array_JsArray$slice, 0, lastPos, tree) : A3(
+				_Skinney$elm_array_exploration$Array_JsArray$unsafeSet,
+				lastPos,
+				_Skinney$elm_array_exploration$Array_Hamt$SubTree(newSub),
+				A3(_Skinney$elm_array_exploration$Array_JsArray$slice, 0, lastPos + 1, tree));
+		} else {
+			return A3(_Skinney$elm_array_exploration$Array_JsArray$slice, 0, lastPos, tree);
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$sliceRight = F2(
+	function (end, _p44) {
+		var _p45 = _p44;
+		var _p48 = _p45._2;
+		var _p47 = _p45._1;
+		var _p46 = _p45._0;
+		if (_elm_lang$core$Native_Utils.eq(end, _p46)) {
+			return _p45;
+		} else {
+			if (_elm_lang$core$Native_Utils.cmp(
+				end,
+				_Skinney$elm_array_exploration$Array_Hamt$tailIndex(_p46)) > -1) {
+				return A4(
+					_Skinney$elm_array_exploration$Array_Hamt$Array,
+					end,
+					_p47,
+					_p48,
+					A3(_Skinney$elm_array_exploration$Array_JsArray$slice, 0, _Skinney$elm_array_exploration$Array_Hamt$bitMask & end, _p45._3));
+			} else {
+				var endIdx = _Skinney$elm_array_exploration$Array_Hamt$tailIndex(end);
+				var depth = _elm_lang$core$Basics$floor(
+					A2(
+						_elm_lang$core$Basics$logBase,
+						_elm_lang$core$Basics$toFloat(_Skinney$elm_array_exploration$Array_Hamt$branchFactor),
+						_elm_lang$core$Basics$toFloat(endIdx - 1)));
+				var newShift = A2(_elm_lang$core$Basics$max, 5, depth * _Skinney$elm_array_exploration$Array_Hamt$shiftStep);
+				return A4(
+					_Skinney$elm_array_exploration$Array_Hamt$Array,
+					end,
+					newShift,
+					A3(
+						_Skinney$elm_array_exploration$Array_Hamt$hoistTree,
+						_p47,
+						newShift,
+						A3(_Skinney$elm_array_exploration$Array_Hamt$sliceTree, _p47, endIdx, _p48)),
+					A4(_Skinney$elm_array_exploration$Array_Hamt$fetchNewTail, _p47, end, endIdx, _p48));
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$compressNodes = F2(
+	function (nodes, acc) {
+		compressNodes:
+		while (true) {
+			var _p49 = A2(_Skinney$elm_array_exploration$Array_JsArray$initializeFromList, _Skinney$elm_array_exploration$Array_Hamt$branchFactor, nodes);
+			var node = _p49._0;
+			var remainingNodes = _p49._1;
+			var newAcc = {
+				ctor: '::',
+				_0: _Skinney$elm_array_exploration$Array_Hamt$SubTree(node),
+				_1: acc
+			};
+			var _p50 = remainingNodes;
+			if (_p50.ctor === '[]') {
+				return _elm_lang$core$List$reverse(newAcc);
+			} else {
+				var _v34 = remainingNodes,
+					_v35 = newAcc;
+				nodes = _v34;
+				acc = _v35;
+				continue compressNodes;
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$treeFromBuilder = F2(
+	function (nodeList, nodeListSize) {
+		treeFromBuilder:
+		while (true) {
+			var newNodeSize = _elm_lang$core$Basics$ceiling(
+				_elm_lang$core$Basics$toFloat(nodeListSize) / _elm_lang$core$Basics$toFloat(_Skinney$elm_array_exploration$Array_Hamt$branchFactor));
+			if (_elm_lang$core$Native_Utils.eq(newNodeSize, 1)) {
+				return _elm_lang$core$Tuple$first(
+					A2(_Skinney$elm_array_exploration$Array_JsArray$initializeFromList, _Skinney$elm_array_exploration$Array_Hamt$branchFactor, nodeList));
+			} else {
+				var _v36 = A2(
+					_Skinney$elm_array_exploration$Array_Hamt$compressNodes,
+					nodeList,
+					{ctor: '[]'}),
+					_v37 = newNodeSize;
+				nodeList = _v36;
+				nodeListSize = _v37;
+				continue treeFromBuilder;
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$builderToArray = function (builder) {
+	if (_elm_lang$core$Native_Utils.eq(builder.nodeListSize, 0)) {
+		return A4(
+			_Skinney$elm_array_exploration$Array_Hamt$Array,
+			_Skinney$elm_array_exploration$Array_JsArray$length(builder.tail),
+			_Skinney$elm_array_exploration$Array_Hamt$shiftStep,
+			_Skinney$elm_array_exploration$Array_JsArray$empty,
+			builder.tail);
+	} else {
+		var tree = A2(
+			_Skinney$elm_array_exploration$Array_Hamt$treeFromBuilder,
+			_elm_lang$core$List$reverse(builder.nodeList),
+			builder.nodeListSize);
+		var treeLen = builder.nodeListSize * _Skinney$elm_array_exploration$Array_Hamt$branchFactor;
+		var depth = _elm_lang$core$Basics$floor(
+			A2(
+				_elm_lang$core$Basics$logBase,
+				_elm_lang$core$Basics$toFloat(_Skinney$elm_array_exploration$Array_Hamt$branchFactor),
+				_elm_lang$core$Basics$toFloat(treeLen - 1)));
+		return A4(
+			_Skinney$elm_array_exploration$Array_Hamt$Array,
+			_Skinney$elm_array_exploration$Array_JsArray$length(builder.tail) + treeLen,
+			A2(_elm_lang$core$Basics$max, 5, depth * _Skinney$elm_array_exploration$Array_Hamt$shiftStep),
+			tree,
+			builder.tail);
+	}
+};
+var _Skinney$elm_array_exploration$Array_Hamt$initializeHelp = F5(
+	function (fromIndex, toIndex, length, fn, nodeList) {
+		initializeHelp:
+		while (true) {
+			var nodeSize = A2(_elm_lang$core$Basics$min, _Skinney$elm_array_exploration$Array_Hamt$branchFactor, toIndex - fromIndex);
+			var node = A3(_Skinney$elm_array_exploration$Array_JsArray$initialize, nodeSize, fromIndex, fn);
+			if (_elm_lang$core$Native_Utils.cmp(nodeSize, _Skinney$elm_array_exploration$Array_Hamt$branchFactor) < 0) {
+				return _Skinney$elm_array_exploration$Array_Hamt$builderToArray(
+					{tail: node, nodeList: nodeList, nodeListSize: (length / _Skinney$elm_array_exploration$Array_Hamt$branchFactor) | 0});
+			} else {
+				var _v38 = fromIndex + nodeSize,
+					_v39 = toIndex,
+					_v40 = length,
+					_v41 = fn,
+					_v42 = {
+					ctor: '::',
+					_0: _Skinney$elm_array_exploration$Array_Hamt$Leaf(node),
+					_1: nodeList
+				};
+				fromIndex = _v38;
+				toIndex = _v39;
+				length = _v40;
+				fn = _v41;
+				nodeList = _v42;
+				continue initializeHelp;
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$initialize = F2(
+	function (length, fn) {
+		return (_elm_lang$core$Native_Utils.cmp(length, 0) < 1) ? _Skinney$elm_array_exploration$Array_Hamt$empty : A5(
+			_Skinney$elm_array_exploration$Array_Hamt$initializeHelp,
+			0,
+			length,
+			length,
+			fn,
+			{ctor: '[]'});
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$repeat = F2(
+	function (n, e) {
+		return A2(
+			_Skinney$elm_array_exploration$Array_Hamt$initialize,
+			n,
+			function (_p51) {
+				return e;
+			});
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$fromListHelp = F3(
+	function (list, nodeList, nodeListSize) {
+		fromListHelp:
+		while (true) {
+			var _p52 = A2(_Skinney$elm_array_exploration$Array_JsArray$initializeFromList, _Skinney$elm_array_exploration$Array_Hamt$branchFactor, list);
+			var jsArray = _p52._0;
+			var remainingItems = _p52._1;
+			if (_elm_lang$core$Native_Utils.cmp(
+				_Skinney$elm_array_exploration$Array_JsArray$length(jsArray),
+				_Skinney$elm_array_exploration$Array_Hamt$branchFactor) < 0) {
+				return _Skinney$elm_array_exploration$Array_Hamt$builderToArray(
+					{tail: jsArray, nodeList: nodeList, nodeListSize: nodeListSize});
+			} else {
+				var _v43 = remainingItems,
+					_v44 = {
+					ctor: '::',
+					_0: _Skinney$elm_array_exploration$Array_Hamt$Leaf(jsArray),
+					_1: nodeList
+				},
+					_v45 = nodeListSize + 1;
+				list = _v43;
+				nodeList = _v44;
+				nodeListSize = _v45;
+				continue fromListHelp;
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$fromList = function (ls) {
+	var _p53 = ls;
+	if (_p53.ctor === '[]') {
+		return _Skinney$elm_array_exploration$Array_Hamt$empty;
+	} else {
+		return A3(
+			_Skinney$elm_array_exploration$Array_Hamt$fromListHelp,
+			ls,
+			{ctor: '[]'},
+			0);
+	}
+};
+var _Skinney$elm_array_exploration$Array_Hamt$filter = F2(
+	function (f, arr) {
+		var helper = F2(
+			function (n, acc) {
+				return f(n) ? {ctor: '::', _0: n, _1: acc} : acc;
+			});
+		return _Skinney$elm_array_exploration$Array_Hamt$fromList(
+			A3(
+				_Skinney$elm_array_exploration$Array_Hamt$foldr,
+				helper,
+				{ctor: '[]'},
+				arr));
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$indexedMap = F2(
+	function (f, _p54) {
+		var _p55 = _p54;
+		var initialBuilder = {
+			tail: A3(
+				_Skinney$elm_array_exploration$Array_JsArray$indexedMap,
+				f,
+				_Skinney$elm_array_exploration$Array_Hamt$tailIndex(_p55._0),
+				_p55._3),
+			nodeList: {ctor: '[]'},
+			nodeListSize: 0
+		};
+		var helper = F2(
+			function (node, builder) {
+				var _p56 = node;
+				if (_p56.ctor === 'SubTree') {
+					return A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, helper, builder, _p56._0);
+				} else {
+					var offset = builder.nodeListSize * _Skinney$elm_array_exploration$Array_Hamt$branchFactor;
+					var mappedLeaf = _Skinney$elm_array_exploration$Array_Hamt$Leaf(
+						A3(_Skinney$elm_array_exploration$Array_JsArray$indexedMap, f, offset, _p56._0));
+					return {
+						tail: builder.tail,
+						nodeList: {ctor: '::', _0: mappedLeaf, _1: builder.nodeList},
+						nodeListSize: builder.nodeListSize + 1
+					};
+				}
+			});
+		return _Skinney$elm_array_exploration$Array_Hamt$builderToArray(
+			A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, helper, initialBuilder, _p55._2));
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$append = F2(
+	function (a, _p57) {
+		var _p58 = _p57;
+		var foldHelper = F2(
+			function (node, builder) {
+				var _p59 = node;
+				if (_p59.ctor === 'SubTree') {
+					return A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, foldHelper, builder, _p59._0);
+				} else {
+					return A2(_Skinney$elm_array_exploration$Array_Hamt$appendHelp, _p59._0, builder);
+				}
+			});
+		var builder = _Skinney$elm_array_exploration$Array_Hamt$builderFromArray(a);
+		return _Skinney$elm_array_exploration$Array_Hamt$builderToArray(
+			A2(
+				_Skinney$elm_array_exploration$Array_Hamt$appendHelp,
+				_p58._3,
+				A3(_Skinney$elm_array_exploration$Array_JsArray$foldl, foldHelper, builder, _p58._2)));
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$sliceLeft = F2(
+	function (from, _p60) {
+		var _p61 = _p60;
+		var _p66 = _p61._3;
+		var _p65 = _p61._0;
+		if (_elm_lang$core$Native_Utils.eq(from, 0)) {
+			return _p61;
+		} else {
+			if (_elm_lang$core$Native_Utils.cmp(
+				from,
+				_Skinney$elm_array_exploration$Array_Hamt$tailIndex(_p65)) > -1) {
+				return A4(
+					_Skinney$elm_array_exploration$Array_Hamt$Array,
+					_p65 - from,
+					_Skinney$elm_array_exploration$Array_Hamt$shiftStep,
+					_Skinney$elm_array_exploration$Array_JsArray$empty,
+					A3(
+						_Skinney$elm_array_exploration$Array_JsArray$slice,
+						from,
+						_Skinney$elm_array_exploration$Array_JsArray$length(_p66),
+						_p66));
+			} else {
+				var skipNodes = (from / _Skinney$elm_array_exploration$Array_Hamt$branchFactor) | 0;
+				var helper = F2(
+					function (node, acc) {
+						var _p62 = node;
+						if (_p62.ctor === 'SubTree') {
+							return A3(_Skinney$elm_array_exploration$Array_JsArray$foldr, helper, acc, _p62._0);
+						} else {
+							return {ctor: '::', _0: _p62._0, _1: acc};
+						}
+					});
+				var leafNodes = A3(
+					_Skinney$elm_array_exploration$Array_JsArray$foldr,
+					helper,
+					{
+						ctor: '::',
+						_0: _p66,
+						_1: {ctor: '[]'}
+					},
+					_p61._2);
+				var nodesToInsert = A2(_elm_lang$core$List$drop, skipNodes, leafNodes);
+				var _p63 = nodesToInsert;
+				if (_p63.ctor === '[]') {
+					return _Skinney$elm_array_exploration$Array_Hamt$empty;
+				} else {
+					var _p64 = _p63._0;
+					var firstSlice = from - (skipNodes * _Skinney$elm_array_exploration$Array_Hamt$branchFactor);
+					var initialBuilder = {
+						tail: A3(
+							_Skinney$elm_array_exploration$Array_JsArray$slice,
+							firstSlice,
+							_Skinney$elm_array_exploration$Array_JsArray$length(_p64),
+							_p64),
+						nodeList: {ctor: '[]'},
+						nodeListSize: 0
+					};
+					return _Skinney$elm_array_exploration$Array_Hamt$builderToArray(
+						A3(_elm_lang$core$List$foldl, _Skinney$elm_array_exploration$Array_Hamt$appendHelp, initialBuilder, _p63._1));
+				}
+			}
+		}
+	});
+var _Skinney$elm_array_exploration$Array_Hamt$slice = F3(
+	function (from, to, arr) {
+		var correctTo = A2(_Skinney$elm_array_exploration$Array_Hamt$translateIndex, to, arr);
+		var correctFrom = A2(_Skinney$elm_array_exploration$Array_Hamt$translateIndex, from, arr);
+		return (_elm_lang$core$Native_Utils.cmp(correctFrom, correctTo) > 0) ? _Skinney$elm_array_exploration$Array_Hamt$empty : A2(
+			_Skinney$elm_array_exploration$Array_Hamt$sliceLeft,
+			correctFrom,
+			A2(_Skinney$elm_array_exploration$Array_Hamt$sliceRight, correctTo, arr));
+	});
 
 /*
  * Copyright (c) 2010 Mozilla Corporation
@@ -6485,32 +7402,306 @@ var _elm_community$linear_algebra$Math_Vector2$getY = _elm_community$linear_alge
 var _elm_community$linear_algebra$Math_Vector2$getX = _elm_community$linear_algebra$Native_Math_Vector2.getX;
 var _elm_community$linear_algebra$Math_Vector2$vec2 = _elm_community$linear_algebra$Native_Math_Vector2.vec2;
 var _elm_community$linear_algebra$Math_Vector2$Vec2 = {ctor: 'Vec2'};
+
+/*
+ * Copyright (c) 2010 Mozilla Corporation
+ * Copyright (c) 2010 Vladimir Vukicevic
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * File: mjs
+ *
+ * Vector and Matrix math utilities for JavaScript, optimized for WebGL.
+ * Edited to work with the Elm Programming Language
+ */
+
+var _elm_community$linear_algebra$Native_Math_Vector4 = function() {
+
+    var MJS_FLOAT_ARRAY_TYPE = Float32Array;
+
+    var V4 = { };
+
+    if (MJS_FLOAT_ARRAY_TYPE == Array) {
+        V4.$ = function V4_$(x, y, z, w) {
+            return [x, y, z, w];
+        };
+    } else {
+        V4.$ = function V4_$(x, y, z, w) {
+            return new MJS_FLOAT_ARRAY_TYPE([x, y, z, w]);
+        };
+    }
+
+    V4.getX = function V4_getX(a) {
+        return a[0];
+    }
+    V4.getY = function V4_getY(a) {
+        return a[1];
+    }
+    V4.getZ = function V4_getZ(a) {
+        return a[2];
+    }
+    V4.getW = function V4_getW(a) {
+        return a[3];
+    }
+    V4.setX = function V4_setX(x, a) {
+        return new MJS_FLOAT_ARRAY_TYPE(x, a[1], a[2], a[3]);
+    }
+    V4.setY = function V4_setY(y, a) {
+        return new MJS_FLOAT_ARRAY_TYPE(a[0], y, a[2], a[3]);
+    }
+    V4.setZ = function V4_setZ(z, a) {
+        return new MJS_FLOAT_ARRAY_TYPE(a[0], a[1], z, a[3]);
+    }
+    V4.setW = function V4_setW(w, a) {
+        return new MJS_FLOAT_ARRAY_TYPE(a[0], a[1], a[2], w);
+    }
+
+    V4.toTuple = function V4_toTuple(a) {
+        return {
+            ctor:"_Tuple4",
+            _0:a[0],
+            _1:a[1],
+            _2:a[2],
+            _3:a[3]
+        };
+    };
+    V4.fromTuple = function V4_fromTuple(t) {
+        return new MJS_FLOAT_ARRAY_TYPE([t._0, t._1, t._2, t._3]);
+    };
+
+    V4.toRecord = function V4_toRecord(a) {
+        return {
+            _:{},
+            x:a[0],
+            y:a[1],
+            z:a[2],
+            w:a[3]
+        };
+    };
+    V4.fromRecord = function V4_fromRecord(r) {
+        return new MJS_FLOAT_ARRAY_TYPE([r.x, r.y, r.z, r.w]);
+    };
+
+    V4.add = function V4_add(a, b) {
+        var r = new MJS_FLOAT_ARRAY_TYPE(4);
+        r[0] = a[0] + b[0];
+        r[1] = a[1] + b[1];
+        r[2] = a[2] + b[2];
+        r[3] = a[3] + b[3];
+        return r;
+    };
+
+    V4.sub = function V4_sub(a, b) {
+        var r = new MJS_FLOAT_ARRAY_TYPE(4);
+        r[0] = a[0] - b[0];
+        r[1] = a[1] - b[1];
+        r[2] = a[2] - b[2];
+        r[3] = a[3] - b[3];
+        return r;
+    };
+
+    V4.neg = function V4_neg(a) {
+        var r = new MJS_FLOAT_ARRAY_TYPE(4);
+        r[0] = - a[0];
+        r[1] = - a[1];
+        r[2] = - a[2];
+        r[3] = - a[3];
+        return r;
+    };
+
+    V4.direction = function V4_direction(a, b) {
+        var r = new MJS_FLOAT_ARRAY_TYPE(4);
+        r[0] = a[0] - b[0];
+        r[1] = a[1] - b[1];
+        r[2] = a[2] - b[2];
+        r[3] = a[3] - b[3];
+        var im = 1.0 / V4.length(r);
+        r[0] = r[0] * im;
+        r[1] = r[1] * im;
+        r[2] = r[2] * im;
+        r[3] = r[3] * im;
+        return r;
+    };
+
+    V4.length = function V4_length(a) {
+        return Math.sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2] + a[3]*a[3]);
+    };
+
+    V4.lengthSquared = function V4_lengthSquared(a) {
+        return a[0]*a[0] + a[1]*a[1] + a[2]*a[2] + a[3]*a[3];
+    };
+
+    V4.distance = function V4_distance(a, b) {
+        var dx = a[0] - b[0];
+        var dy = a[1] - b[1];
+        var dz = a[2] - b[2];
+        var dw = a[3] - b[3];
+        return Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
+    };
+
+    V4.distanceSquared = function V4_distanceSquared(a, b) {
+        var dx = a[0] - b[0];
+        var dy = a[1] - b[1];
+        var dz = a[2] - b[2];
+        var dw = a[3] - b[3];
+        return dx * dx + dy * dy + dz * dz + dw * dw;
+    };
+
+    V4.normalize = function V4_normalize(a) {
+        var r = new MJS_FLOAT_ARRAY_TYPE(4);
+        var im = 1.0 / V4.length(a);
+        r[0] = a[0] * im;
+        r[1] = a[1] * im;
+        r[2] = a[2] * im;
+        r[3] = a[3] * im;
+        return r;
+    };
+
+    V4.scale = function V4_scale(k, a) {
+        var r = new MJS_FLOAT_ARRAY_TYPE(4);
+        r[0] = a[0] * k;
+        r[1] = a[1] * k;
+        r[2] = a[2] * k;
+        r[3] = a[3] * k;
+        return r;
+    };
+
+    V4.dot = function V4_dot(a, b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+    };
+
+    return {
+        vec4: F4(V4.$),
+        getX: V4.getX,
+        getY: V4.getY,
+        getZ: V4.getZ,
+        getW: V4.getW,
+        setX: F2(V4.setX),
+        setY: F2(V4.setY),
+        setZ: F2(V4.setZ),
+        setW: F2(V4.setW),
+        toTuple: V4.toTuple,
+        toRecord: V4.toRecord,
+        fromTuple: V4.fromTuple,
+        fromRecord: V4.fromRecord,
+        add: F2(V4.add),
+        sub: F2(V4.sub),
+        neg: V4.neg,
+        direction: F2(V4.direction),
+        length: V4.length,
+        lengthSquared: V4.lengthSquared,
+        distance: F2(V4.distance),
+        distanceSquared: F2(V4.distanceSquared),
+        normalize: V4.normalize,
+        scale: F2(V4.scale),
+        dot: F2(V4.dot)
+    };
+
+}();
+var _elm_community$linear_algebra$Math_Vector4$dot = _elm_community$linear_algebra$Native_Math_Vector4.dot;
+var _elm_community$linear_algebra$Math_Vector4$scale = _elm_community$linear_algebra$Native_Math_Vector4.scale;
+var _elm_community$linear_algebra$Math_Vector4$normalize = _elm_community$linear_algebra$Native_Math_Vector4.normalize;
+var _elm_community$linear_algebra$Math_Vector4$distanceSquared = _elm_community$linear_algebra$Native_Math_Vector4.distanceSquared;
+var _elm_community$linear_algebra$Math_Vector4$distance = _elm_community$linear_algebra$Native_Math_Vector4.distance;
+var _elm_community$linear_algebra$Math_Vector4$lengthSquared = _elm_community$linear_algebra$Native_Math_Vector4.lengthSquared;
+var _elm_community$linear_algebra$Math_Vector4$length = _elm_community$linear_algebra$Native_Math_Vector4.length;
+var _elm_community$linear_algebra$Math_Vector4$direction = _elm_community$linear_algebra$Native_Math_Vector4.direction;
+var _elm_community$linear_algebra$Math_Vector4$negate = _elm_community$linear_algebra$Native_Math_Vector4.neg;
+var _elm_community$linear_algebra$Math_Vector4$sub = _elm_community$linear_algebra$Native_Math_Vector4.sub;
+var _elm_community$linear_algebra$Math_Vector4$add = _elm_community$linear_algebra$Native_Math_Vector4.add;
+var _elm_community$linear_algebra$Math_Vector4$fromRecord = _elm_community$linear_algebra$Native_Math_Vector4.fromRecord;
+var _elm_community$linear_algebra$Math_Vector4$fromTuple = _elm_community$linear_algebra$Native_Math_Vector4.fromTuple;
+var _elm_community$linear_algebra$Math_Vector4$toRecord = _elm_community$linear_algebra$Native_Math_Vector4.toRecord;
+var _elm_community$linear_algebra$Math_Vector4$toTuple = _elm_community$linear_algebra$Native_Math_Vector4.toTuple;
+var _elm_community$linear_algebra$Math_Vector4$setW = _elm_community$linear_algebra$Native_Math_Vector4.setW;
+var _elm_community$linear_algebra$Math_Vector4$setZ = _elm_community$linear_algebra$Native_Math_Vector4.setZ;
+var _elm_community$linear_algebra$Math_Vector4$setY = _elm_community$linear_algebra$Native_Math_Vector4.setY;
+var _elm_community$linear_algebra$Math_Vector4$setX = _elm_community$linear_algebra$Native_Math_Vector4.setX;
+var _elm_community$linear_algebra$Math_Vector4$getW = _elm_community$linear_algebra$Native_Math_Vector4.getW;
+var _elm_community$linear_algebra$Math_Vector4$getZ = _elm_community$linear_algebra$Native_Math_Vector4.getZ;
+var _elm_community$linear_algebra$Math_Vector4$getY = _elm_community$linear_algebra$Native_Math_Vector4.getY;
+var _elm_community$linear_algebra$Math_Vector4$getX = _elm_community$linear_algebra$Native_Math_Vector4.getX;
+var _elm_community$linear_algebra$Math_Vector4$vec4 = _elm_community$linear_algebra$Native_Math_Vector4.vec4;
+var _elm_community$linear_algebra$Math_Vector4$Vec4 = {ctor: 'Vec4'};
 // eslint-disable-next-line no-unused-vars, camelcase
 var _elm_community$webgl$Native_Texture = function () {
 
-  function loadWith(filter, source) {
+  var NEAREST = 9728;
+  var LINEAR = 9729;
+  var CLAMP_TO_EDGE = 33071;
+
+  function load(magnify, mininify, horizontalWrap, verticalWrap, flipY, url) {
     // eslint-disable-next-line camelcase
     var Scheduler = _elm_lang$core$Native_Scheduler;
+    var isMipmap = mininify !== NEAREST && mininify !== LINEAR;
     return Scheduler.nativeBinding(function (callback) {
       var img = new Image();
-      // prevent the debugger from serializing the image as a record
-      function getImage() {
-        return img;
+      function createTexture(gl) {
+        var tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magnify);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mininify);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, horizontalWrap);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, verticalWrap);
+        if (isMipmap) {
+          gl.generateMipmap(gl.TEXTURE_2D);
+        }
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        return tex;
       }
       img.onload = function () {
-        callback(Scheduler.succeed({
-          ctor: 'Texture',
-          img: getImage,
-          filter: filter,
-          width: img.width,
-          height: img.height
-        }));
+        var width = img.width;
+        var height = img.height;
+        var widthPowerOfTwo = (width & (width - 1)) === 0;
+        var heightPowerOfTwo = (height & (height - 1)) === 0;
+        var isSizeValid = (widthPowerOfTwo && heightPowerOfTwo) || (
+          !isMipmap
+          && horizontalWrap === CLAMP_TO_EDGE
+          && verticalWrap === CLAMP_TO_EDGE
+        );
+        if (isSizeValid) {
+          callback(Scheduler.succeed({
+            ctor: 'Texture',
+            createTexture: createTexture,
+            width: width,
+            height: height
+          }));
+        } else {
+          callback(Scheduler.fail({
+            ctor: 'SizeError',
+            _0: width,
+            _1: height
+          }));
+        }
       };
       img.onerror = function () {
-        callback(Scheduler.fail({ ctor: 'Error' }));
+        callback(Scheduler.fail({ ctor: 'LoadError' }));
       };
       img.crossOrigin = 'Anonymous';
-      img.src = source;
+      img.src = url;
     });
   }
 
@@ -6521,7 +7712,7 @@ var _elm_community$webgl$Native_Texture = function () {
 
   return {
     size: size,
-    loadWith: F2(loadWith)
+    load: F6(load)
   };
 
 }();
@@ -6561,14 +7752,14 @@ var _elm_community$webgl$Native_WebGL = function () {
     return { src: src };
   }
 
-  function render(settings, vert, frag, buffer, uniforms) {
+  function entity(settings, vert, frag, buffer, uniforms) {
 
     if (!buffer.guid) {
       buffer.guid = guid();
     }
 
     return {
-      ctor: 'Renderable',
+      ctor: 'Entity',
       vert: vert,
       frag: frag,
       buffer: buffer,
@@ -6579,126 +7770,98 @@ var _elm_community$webgl$Native_WebGL = function () {
   }
 
  /**
-  *  Apply settings to the gl context
+  *  Apply setting to the gl context
   *
   *  @param {WebGLRenderingContext} gl context
-  *  @param {List<Setting>} settings the list of settings coming in from Elm
-  *  @return {Array<Function>} array of functions, when invoked with gl,
-  *          will cleanup the context from changes, caused by the settings
+  *  @param {Setting} setting coming in from Elm
   */
-  function doSettings(gl, settings) {
-    var cleanupOperations = [];
-    var s1;
-    var s2;
-    function disable(capability) {
-      return function (gl) {
-        gl.disable(capability);
-      };
+  function applySetting(gl, setting) {
+    switch (setting.ctor) {
+      case 'Blend':
+        gl.enable(gl.BLEND);
+        // eq1 f11 f12 eq2 f21 f22 r g b a
+        gl.blendEquationSeparate(setting._0, setting._3);
+        gl.blendFuncSeparate(setting._1, setting._2, setting._4, setting._5);
+        gl.blendColor(setting._6, setting._7, setting._8, setting._9);
+        break;
+      case 'DepthTest':
+        gl.enable(gl.DEPTH_TEST);
+        // func mask near far
+        gl.depthFunc(setting._0);
+        gl.depthMask(setting._1);
+        gl.depthRange(setting._2, setting._3);
+        break;
+      case 'StencilTest':
+        gl.enable(gl.STENCIL_TEST);
+        // ref mask writeMask test1 fail1 zfail1 zpass1 test2 fail2 zfail2 zpass2
+        gl.stencilFuncSeparate(gl.FRONT, setting._3, setting._0, setting._1);
+        gl.stencilOpSeparate(gl.FRONT, setting._4, setting._5, setting._6);
+        gl.stencilMaskSeparate(gl.FRONT, setting._2);
+        gl.stencilFuncSeparate(gl.BACK, setting._7, setting._0, setting._1);
+        gl.stencilOpSeparate(gl.BACK, setting._8, setting._9, setting._10);
+        gl.stencilMaskSeparate(gl.BACK, setting._2);
+        break;
+      case 'Scissor':
+        gl.enable(gl.SCISSOR_TEST);
+        gl.scissor(setting._0, setting._1, setting._2, setting._3);
+        break;
+      case 'ColorMask':
+        gl.colorMask(setting._0, setting._1, setting._2, setting._3);
+        break;
+      case 'CullFace':
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(setting._0);
+        break;
+      case 'PolygonOffset':
+        gl.enable(gl.POLYGON_OFFSET_FILL);
+        gl.polygonOffset(setting._0, setting._1);
+        break;
+      case 'SampleCoverage':
+        gl.enable(gl.SAMPLE_COVERAGE);
+        gl.sampleCoverage(setting._0, setting._1);
+        break;
+      case 'SampleAlphaToCoverage':
+        gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);
+        break;
     }
-    listEach(function (setting) {
-      s1 = setting._0;
-      s2 = setting._1;
-      switch (setting.ctor) {
-        case 'Blend':
-          cleanupOperations.push(disable(gl.BLEND));
-          gl.enable(gl.BLEND);
-          gl.blendColor(setting._1, setting._2, setting._3, setting._4);
-          gl.blendFunc(s1.source._0, s1.destination._0);
-          gl.blendEquation(s1.equation._0);
-          break;
-        case 'BlendSeparate':
-          cleanupOperations.push(disable(gl.BLEND));
-          gl.enable(gl.BLEND);
-          gl.blendColor(setting._2, setting._3, setting._4, setting._5);
-          gl.blendFuncSeparate(s1.source._0, s1.destination._0, s2.source._0, s2.destination._0);
-          gl.blendEquationSeparate(s1.equation._0, s2.equation._0);
-          break;
-        case 'Depth':
-          cleanupOperations.push(disable(gl.DEPTH_TEST));
-          gl.enable(gl.DEPTH_TEST);
-          gl.depthFunc(s1.func._0);
-          gl.depthMask(s1.mask);
-          gl.depthRange(s1.near, s1.far);
-          break;
-        case 'Stencil':
-          cleanupOperations.push(disable(gl.STENCIL_TEST));
-          gl.enable(gl.STENCIL_TEST);
-          gl.stencilFunc(s1.func._0, s1.ref, s1.valueMask);
-          gl.stencilOp(s1.fail._0, s1.zfail._0, s1.zpass._0);
-          gl.stencilMask(s1.writeMask);
-          break;
-        case 'StencilFuncSeparate':
-          cleanupOperations.push(disable(gl.STENCIL_TEST));
-          gl.enable(gl.STENCIL_TEST);
-          gl.stencilFuncSeparate(gl.FRONT, s1.func._0, s1.ref, s1.valueMask);
-          gl.stencilOpSeparate(gl.FRONT, s1.fail._0, s1.zfail._0, s1.zpass._0);
-          gl.stencilMaskSeparate(gl.FRONT, s1.writeMask);
-          gl.stencilFuncSeparate(gl.BACK, s2.func._0, s2.ref, s2.valueMask);
-          gl.stencilOpSeparate(gl.BACK, s2.fail._0, s2.zfail._0, s2.zpass._0);
-          gl.stencilMaskSeparate(gl.BACK, s2.writeMask);
-          break;
-        case 'Scissor':
-          cleanupOperations.push(disable(gl.SCISSOR_TEST));
-          gl.enable(gl.SCISSOR_TEST);
-          gl.scissor(setting._0, setting._1, setting._2, setting._3);
-          break;
-        case 'ColorMask':
-          cleanupOperations.push(function (gl) {
-            gl.colorMask(true, true, true, true);
-          });
-          gl.colorMask(setting._0, setting._1, setting._2, setting._3);
-          break;
-        case 'CullFace':
-          cleanupOperations.push(disable(gl.CULL_FACE));
-          gl.enable(gl.CULL_FACE);
-          gl.cullFace(s1);
-          break;
-        case 'Dither':
-          cleanupOperations.push(disable(gl.DITHER));
-          gl.enable(gl.DITHER);
-          break;
-        case 'PolygonOffset':
-          cleanupOperations.push(disable(gl.POLYGON_OFFSET_FILL));
-          gl.enable(gl.POLYGON_OFFSET_FILL);
-          gl.polygonOffset(s1, s2);
-          break;
-        case 'SampleCoverage':
-          cleanupOperations.push(disable(gl.SAMPLE_COVERAGE));
-          gl.enable(gl.SAMPLE_COVERAGE);
-          gl.sampleCoverage(s1, s2);
-          break;
-        case 'SampleAlphaToCoverage':
-          cleanupOperations.push(disable(gl.SAMPLE_ALPHA_TO_COVERAGE));
-          gl.enable(gl.SAMPLE_ALPHA_TO_COVERAGE);
-          break;
-      }
-    }, settings);
-    return cleanupOperations;
   }
 
-
-  function doTexture(gl, texture) {
-
-    var tex = gl.createTexture();
-    LOG('Created texture');
-
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.img());
-    switch (texture.filter.ctor) {
-      case 'Linear':
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+ /**
+  *  Revert setting that was applied to the gl context
+  *
+  *  @param {WebGLRenderingContext} gl context
+  *  @param {Setting} setting coming in from Elm
+  */
+  function revertSetting(gl, setting) {
+    switch (setting.ctor) {
+      case 'Blend':
+        gl.disable(gl.BLEND);
         break;
-      case 'Nearest':
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      case 'DepthTest':
+        gl.disable(gl.DEPTH_TEST);
+        break;
+      case 'StencilTest':
+        gl.disable(gl.STENCIL_TEST);
+        break;
+      case 'Scissor':
+        gl.disable(gl.SCISSOR_TEST);
+        break;
+      case 'ColorMask':
+        gl.colorMask(true, true, true, true);
+        break;
+      case 'CullFace':
+        gl.disable(gl.CULL_FACE);
+        break;
+      case 'PolygonOffset':
+        gl.disable(gl.POLYGON_OFFSET_FILL);
+        break;
+      case 'SampleCoverage':
+        gl.disable(gl.SAMPLE_COVERAGE);
+        break;
+      case 'SampleAlphaToCoverage':
+        gl.disable(gl.SAMPLE_ALPHA_TO_COVERAGE);
         break;
     }
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    return tex;
-
   }
 
   function doCompile(gl, src, type) {
@@ -6922,67 +8085,67 @@ var _elm_community$webgl$Native_WebGL = function () {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     LOG('Drawing');
 
-    function drawEntity(render) {
-      if (listLength(render.buffer._0) === 0) {
+    function drawEntity(entity) {
+      if (listLength(entity.buffer._0) === 0) {
         return;
       }
 
       var progid;
       var program;
-      if (render.vert.id && render.frag.id) {
-        progid = getProgID(render.vert.id, render.frag.id);
+      if (entity.vert.id && entity.frag.id) {
+        progid = getProgID(entity.vert.id, entity.frag.id);
         program = model.cache.programs[progid];
       }
 
       if (!program) {
 
         var vshader;
-        if (render.vert.id) {
-          vshader = model.cache.shaders[render.vert.id];
+        if (entity.vert.id) {
+          vshader = model.cache.shaders[entity.vert.id];
         } else {
-          render.vert.id = guid();
+          entity.vert.id = guid();
         }
 
         if (!vshader) {
-          vshader = doCompile(gl, render.vert.src, gl.VERTEX_SHADER);
-          model.cache.shaders[render.vert.id] = vshader;
+          vshader = doCompile(gl, entity.vert.src, gl.VERTEX_SHADER);
+          model.cache.shaders[entity.vert.id] = vshader;
         }
 
         var fshader;
-        if (render.frag.id) {
-          fshader = model.cache.shaders[render.frag.id];
+        if (entity.frag.id) {
+          fshader = model.cache.shaders[entity.frag.id];
         } else {
-          render.frag.id = guid();
+          entity.frag.id = guid();
         }
 
         if (!fshader) {
-          fshader = doCompile(gl, render.frag.src, gl.FRAGMENT_SHADER);
-          model.cache.shaders[render.frag.id] = fshader;
+          fshader = doCompile(gl, entity.frag.src, gl.FRAGMENT_SHADER);
+          model.cache.shaders[entity.frag.id] = fshader;
         }
 
         program = doLink(gl, vshader, fshader);
-        progid = getProgID(render.vert.id, render.frag.id);
+        progid = getProgID(entity.vert.id, entity.frag.id);
         model.cache.programs[progid] = program;
 
       }
 
       gl.useProgram(program);
 
-      progid = progid || getProgID(render.vert.id, render.frag.id);
+      progid = progid || getProgID(entity.vert.id, entity.frag.id);
       var setters = model.cache.uniformSetters[progid];
       if (!setters) {
         setters = createUniformSetters(gl, model, program);
         model.cache.uniformSetters[progid] = setters;
       }
 
-      setUniforms(setters, render.uniforms);
+      setUniforms(setters, entity.uniforms);
 
-      var renderType = getRenderInfo(gl, render.buffer.ctor);
-      var buffer = model.cache.buffers[render.buffer.guid];
+      var entityType = getRenderInfo(gl, entity.buffer.ctor);
+      var buffer = model.cache.buffers[entity.buffer.guid];
 
       if (!buffer) {
-        buffer = doBindSetup(gl, renderType, render.buffer);
-        model.cache.buffers[render.buffer.guid] = buffer;
+        buffer = doBindSetup(gl, entityType, entity.buffer);
+        model.cache.buffers[entity.buffer.guid] = buffer;
       }
 
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indexBuffer);
@@ -6996,7 +8159,7 @@ var _elm_community$webgl$Native_WebGL = function () {
         gl.enableVertexAttribArray(attribLocation);
 
         if (buffer.buffers[attribute.name] === undefined) {
-          buffer.buffers[attribute.name] = doBindAttribute(gl, attribute, render.buffer._0, renderType.elemSize);
+          buffer.buffers[attribute.name] = doBindAttribute(gl, attribute, entity.buffer._0, entityType.elemSize);
         }
         var attributeBuffer = buffer.buffers[attribute.name];
         var attributeInfo = getAttributeInfo(gl, attribute.type);
@@ -7005,17 +8168,19 @@ var _elm_community$webgl$Native_WebGL = function () {
         gl.vertexAttribPointer(attribLocation, attributeInfo.size, attributeInfo.baseType, false, 0, 0);
       }
 
-      var cleanupOperations = doSettings(gl, render.settings);
+      listEach(function (setting) {
+        applySetting(gl, setting);
+      }, entity.settings);
 
-      gl.drawElements(renderType.mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(entityType.mode, buffer.numIndices, gl.UNSIGNED_SHORT, 0);
 
-      cleanupOperations.forEach(function (operation) {
-        operation(gl);
-      });
+      listEach(function (setting) {
+        revertSetting(gl, setting);
+      }, entity.settings);
 
     }
 
-    listEach(drawEntity, model.renderables);
+    listEach(drawEntity, model.entities);
     return domNode;
   }
 
@@ -7062,7 +8227,8 @@ var _elm_community$webgl$Native_WebGL = function () {
               texture.id = guid();
             }
             if (!tex) {
-              tex = doTexture(gl, texture);
+              LOG('Created texture');
+              tex = texture.createTexture(gl);
               model.cache.textures[texture.id] = tex;
             }
             gl.activeTexture(gl[activeName]);
@@ -7100,9 +8266,9 @@ var _elm_community$webgl$Native_WebGL = function () {
 
   // VIRTUAL-DOM WIDGET
 
-  function toHtml(options, factList, renderables) {
+  function toHtml(options, factList, entities) {
     var model = {
-      renderables: renderables,
+      entities: entities,
       cache: {},
       options: options
     };
@@ -7111,7 +8277,7 @@ var _elm_community$webgl$Native_WebGL = function () {
   }
 
   var implementation = {
-    render: renderCanvas,
+    render: render,
     diff: diff
   };
 
@@ -7121,10 +8287,10 @@ var _elm_community$webgl$Native_WebGL = function () {
    *  @param {Object} model.cache that may contain the following properties:
              gl, shaders, programs, uniformSetters, buffers, textures
    *  @param {List<Option>} model.options list of options coming from Elm
-   *  @param {List<Renderable>} model.renderables list of renderables coming from Elm
+   *  @param {List<Entity>} model.entities list of entities coming from Elm
    *  @return {HTMLElement} <canvas> if WebGL is supported, otherwise a <div>
    */
-  function renderCanvas(model) {
+  function render(model) {
 
     var contextAttributes = {
       alpha: false,
@@ -7210,7 +8376,7 @@ var _elm_community$webgl$Native_WebGL = function () {
 
   return {
     unsafeCoerceGLSL: unsafeCoerceGLSL,
-    render: F5(render),
+    entity: F5(entity),
     toHtml: F3(toHtml)
   };
 
@@ -11838,169 +13004,136 @@ var _elm_lang$html$Html$details = _elm_lang$html$Html$node('details');
 var _elm_lang$html$Html$summary = _elm_lang$html$Html$node('summary');
 var _elm_lang$html$Html$menuitem = _elm_lang$html$Html$node('menuitem');
 var _elm_lang$html$Html$menu = _elm_lang$html$Html$node('menu');
-var _elm_community$webgl$WebGL_Settings$BlendOptions = F3(
-	function (a, b, c) {
-		return {equation: a, source: b, destination: c};
-	});
-var _elm_community$webgl$WebGL_Settings$DepthOptions = F4(
-	function (a, b, c, d) {
-		return {func: a, mask: b, near: c, far: d};
-	});
-var _elm_community$webgl$WebGL_Settings$StencilOptions = F7(
-	function (a, b, c, d, e, f, g) {
-		return {func: a, ref: b, valueMask: c, fail: d, zfail: e, zpass: f, writeMask: g};
-	});
-var _elm_community$webgl$WebGL_Settings$SampleAlphaToCoverage = {ctor: 'SampleAlphaToCoverage'};
-var _elm_community$webgl$WebGL_Settings$sampleAlphaToCoverage = _elm_community$webgl$WebGL_Settings$SampleAlphaToCoverage;
-var _elm_community$webgl$WebGL_Settings$SampleCoverage = F2(
+var _elm_community$webgl$WebGL_Settings_Internal$SampleAlphaToCoverage = {ctor: 'SampleAlphaToCoverage'};
+var _elm_community$webgl$WebGL_Settings_Internal$SampleCoverage = F2(
 	function (a, b) {
 		return {ctor: 'SampleCoverage', _0: a, _1: b};
 	});
-var _elm_community$webgl$WebGL_Settings$sampleCoverage = _elm_community$webgl$WebGL_Settings$SampleCoverage;
-var _elm_community$webgl$WebGL_Settings$PolygonOffset = F2(
+var _elm_community$webgl$WebGL_Settings_Internal$PolygonOffset = F2(
 	function (a, b) {
 		return {ctor: 'PolygonOffset', _0: a, _1: b};
 	});
-var _elm_community$webgl$WebGL_Settings$polygonOffset = _elm_community$webgl$WebGL_Settings$PolygonOffset;
-var _elm_community$webgl$WebGL_Settings$Dither = {ctor: 'Dither'};
-var _elm_community$webgl$WebGL_Settings$dither = _elm_community$webgl$WebGL_Settings$Dither;
-var _elm_community$webgl$WebGL_Settings$CullFace = function (a) {
+var _elm_community$webgl$WebGL_Settings_Internal$CullFace = function (a) {
 	return {ctor: 'CullFace', _0: a};
 };
-var _elm_community$webgl$WebGL_Settings$cullFace = function (_p0) {
-	var _p1 = _p0;
-	return _elm_community$webgl$WebGL_Settings$CullFace(_p1._0);
-};
-var _elm_community$webgl$WebGL_Settings$ColorMask = F4(
+var _elm_community$webgl$WebGL_Settings_Internal$ColorMask = F4(
 	function (a, b, c, d) {
 		return {ctor: 'ColorMask', _0: a, _1: b, _2: c, _3: d};
 	});
-var _elm_community$webgl$WebGL_Settings$colorMask = _elm_community$webgl$WebGL_Settings$ColorMask;
-var _elm_community$webgl$WebGL_Settings$Scissor = F4(
+var _elm_community$webgl$WebGL_Settings_Internal$Scissor = F4(
 	function (a, b, c, d) {
 		return {ctor: 'Scissor', _0: a, _1: b, _2: c, _3: d};
 	});
-var _elm_community$webgl$WebGL_Settings$scissor = _elm_community$webgl$WebGL_Settings$Scissor;
-var _elm_community$webgl$WebGL_Settings$StencilSeparate = F2(
-	function (a, b) {
-		return {ctor: 'StencilSeparate', _0: a, _1: b};
+var _elm_community$webgl$WebGL_Settings_Internal$StencilTest = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {ctor: 'StencilTest', _0: a, _1: b, _2: c, _3: d, _4: e, _5: f, _6: g, _7: h, _8: i, _9: j, _10: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _elm_community$webgl$WebGL_Settings_Internal$DepthTest = F4(
+	function (a, b, c, d) {
+		return {ctor: 'DepthTest', _0: a, _1: b, _2: c, _3: d};
 	});
-var _elm_community$webgl$WebGL_Settings$stencilSeparate = _elm_community$webgl$WebGL_Settings$StencilSeparate;
-var _elm_community$webgl$WebGL_Settings$Stencil = function (a) {
-	return {ctor: 'Stencil', _0: a};
+var _elm_community$webgl$WebGL_Settings_Internal$Blend = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return {ctor: 'Blend', _0: a, _1: b, _2: c, _3: d, _4: e, _5: f, _6: g, _7: h, _8: i, _9: j};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
 };
-var _elm_community$webgl$WebGL_Settings$stencil = _elm_community$webgl$WebGL_Settings$Stencil;
-var _elm_community$webgl$WebGL_Settings$Depth = function (a) {
-	return {ctor: 'Depth', _0: a};
+var _elm_community$webgl$WebGL_Settings$cullFace = function (_p0) {
+	var _p1 = _p0;
+	return _elm_community$webgl$WebGL_Settings_Internal$CullFace(_p1._0);
 };
-var _elm_community$webgl$WebGL_Settings$depth = _elm_community$webgl$WebGL_Settings$Depth;
-var _elm_community$webgl$WebGL_Settings$BlendSeparate = F6(
-	function (a, b, c, d, e, f) {
-		return {ctor: 'BlendSeparate', _0: a, _1: b, _2: c, _3: d, _4: e, _5: f};
-	});
-var _elm_community$webgl$WebGL_Settings$blendSeparate = _elm_community$webgl$WebGL_Settings$BlendSeparate;
-var _elm_community$webgl$WebGL_Settings$Blend = F5(
-	function (a, b, c, d, e) {
-		return {ctor: 'Blend', _0: a, _1: b, _2: c, _3: d, _4: e};
-	});
-var _elm_community$webgl$WebGL_Settings$blend = _elm_community$webgl$WebGL_Settings$Blend;
-var _elm_community$webgl$WebGL_Settings$BlendFactor = function (a) {
-	return {ctor: 'BlendFactor', _0: a};
-};
-var _elm_community$webgl$WebGL_Settings$zero = _elm_community$webgl$WebGL_Settings$BlendFactor(0);
-var _elm_community$webgl$WebGL_Settings$one = _elm_community$webgl$WebGL_Settings$BlendFactor(1);
-var _elm_community$webgl$WebGL_Settings$srcColor = _elm_community$webgl$WebGL_Settings$BlendFactor(768);
-var _elm_community$webgl$WebGL_Settings$oneMinusSrcColor = _elm_community$webgl$WebGL_Settings$BlendFactor(769);
-var _elm_community$webgl$WebGL_Settings$dstColor = _elm_community$webgl$WebGL_Settings$BlendFactor(774);
-var _elm_community$webgl$WebGL_Settings$oneMinusDstColor = _elm_community$webgl$WebGL_Settings$BlendFactor(775);
-var _elm_community$webgl$WebGL_Settings$srcAlpha = _elm_community$webgl$WebGL_Settings$BlendFactor(770);
-var _elm_community$webgl$WebGL_Settings$oneMinusSrcAlpha = _elm_community$webgl$WebGL_Settings$BlendFactor(771);
-var _elm_community$webgl$WebGL_Settings$dstAlpha = _elm_community$webgl$WebGL_Settings$BlendFactor(772);
-var _elm_community$webgl$WebGL_Settings$oneMinusDstAlpha = _elm_community$webgl$WebGL_Settings$BlendFactor(773);
-var _elm_community$webgl$WebGL_Settings$constantColor = _elm_community$webgl$WebGL_Settings$BlendFactor(32769);
-var _elm_community$webgl$WebGL_Settings$oneMinusConstantColor = _elm_community$webgl$WebGL_Settings$BlendFactor(32770);
-var _elm_community$webgl$WebGL_Settings$constantAlpha = _elm_community$webgl$WebGL_Settings$BlendFactor(32771);
-var _elm_community$webgl$WebGL_Settings$oneMinusConstantAlpha = _elm_community$webgl$WebGL_Settings$BlendFactor(32772);
-var _elm_community$webgl$WebGL_Settings$srcAlphaSaturate = _elm_community$webgl$WebGL_Settings$BlendFactor(776);
-var _elm_community$webgl$WebGL_Settings$BlendEquation = function (a) {
-	return {ctor: 'BlendEquation', _0: a};
-};
-var _elm_community$webgl$WebGL_Settings$add = _elm_community$webgl$WebGL_Settings$BlendEquation(32774);
-var _elm_community$webgl$WebGL_Settings$blendOptions = {equation: _elm_community$webgl$WebGL_Settings$add, source: _elm_community$webgl$WebGL_Settings$one, destination: _elm_community$webgl$WebGL_Settings$zero};
-var _elm_community$webgl$WebGL_Settings$subtract = _elm_community$webgl$WebGL_Settings$BlendEquation(32778);
-var _elm_community$webgl$WebGL_Settings$reverseSubtract = _elm_community$webgl$WebGL_Settings$BlendEquation(32779);
-var _elm_community$webgl$WebGL_Settings$CompareMode = function (a) {
-	return {ctor: 'CompareMode', _0: a};
-};
-var _elm_community$webgl$WebGL_Settings$never = _elm_community$webgl$WebGL_Settings$CompareMode(512);
-var _elm_community$webgl$WebGL_Settings$always = _elm_community$webgl$WebGL_Settings$CompareMode(519);
-var _elm_community$webgl$WebGL_Settings$less = _elm_community$webgl$WebGL_Settings$CompareMode(513);
-var _elm_community$webgl$WebGL_Settings$depthOptions = {func: _elm_community$webgl$WebGL_Settings$less, mask: true, near: 0, far: 1};
-var _elm_community$webgl$WebGL_Settings$lessOrEqual = _elm_community$webgl$WebGL_Settings$CompareMode(515);
-var _elm_community$webgl$WebGL_Settings$equal = _elm_community$webgl$WebGL_Settings$CompareMode(514);
-var _elm_community$webgl$WebGL_Settings$greaterOrEqual = _elm_community$webgl$WebGL_Settings$CompareMode(518);
-var _elm_community$webgl$WebGL_Settings$greater = _elm_community$webgl$WebGL_Settings$CompareMode(516);
-var _elm_community$webgl$WebGL_Settings$notEqual = _elm_community$webgl$WebGL_Settings$CompareMode(517);
-var _elm_community$webgl$WebGL_Settings$ZMode = function (a) {
-	return {ctor: 'ZMode', _0: a};
-};
-var _elm_community$webgl$WebGL_Settings$keep = _elm_community$webgl$WebGL_Settings$ZMode(7680);
-var _elm_community$webgl$WebGL_Settings$stencilOptions = {func: _elm_community$webgl$WebGL_Settings$always, ref: 0, valueMask: 4294967295, fail: _elm_community$webgl$WebGL_Settings$keep, zfail: _elm_community$webgl$WebGL_Settings$keep, zpass: _elm_community$webgl$WebGL_Settings$keep, writeMask: 4294967295};
-var _elm_community$webgl$WebGL_Settings$none = _elm_community$webgl$WebGL_Settings$ZMode(0);
-var _elm_community$webgl$WebGL_Settings$replace = _elm_community$webgl$WebGL_Settings$ZMode(7681);
-var _elm_community$webgl$WebGL_Settings$increment = _elm_community$webgl$WebGL_Settings$ZMode(7682);
-var _elm_community$webgl$WebGL_Settings$decrement = _elm_community$webgl$WebGL_Settings$ZMode(7683);
-var _elm_community$webgl$WebGL_Settings$invert = _elm_community$webgl$WebGL_Settings$ZMode(5386);
-var _elm_community$webgl$WebGL_Settings$incrementWrap = _elm_community$webgl$WebGL_Settings$ZMode(34055);
-var _elm_community$webgl$WebGL_Settings$decrementWrap = _elm_community$webgl$WebGL_Settings$ZMode(34056);
+var _elm_community$webgl$WebGL_Settings$sampleCoverage = _elm_community$webgl$WebGL_Settings_Internal$SampleCoverage;
+var _elm_community$webgl$WebGL_Settings$sampleAlphaToCoverage = _elm_community$webgl$WebGL_Settings_Internal$SampleAlphaToCoverage;
+var _elm_community$webgl$WebGL_Settings$polygonOffset = _elm_community$webgl$WebGL_Settings_Internal$PolygonOffset;
+var _elm_community$webgl$WebGL_Settings$colorMask = _elm_community$webgl$WebGL_Settings_Internal$ColorMask;
+var _elm_community$webgl$WebGL_Settings$scissor = _elm_community$webgl$WebGL_Settings_Internal$Scissor;
 var _elm_community$webgl$WebGL_Settings$FaceMode = function (a) {
 	return {ctor: 'FaceMode', _0: a};
 };
 var _elm_community$webgl$WebGL_Settings$front = _elm_community$webgl$WebGL_Settings$FaceMode(1028);
 var _elm_community$webgl$WebGL_Settings$back = _elm_community$webgl$WebGL_Settings$FaceMode(1029);
 var _elm_community$webgl$WebGL_Settings$frontAndBack = _elm_community$webgl$WebGL_Settings$FaceMode(1032);
-var _elm_community$webgl$WebGL_Options$ClearColor = F4(
-	function (a, b, c, d) {
-		return {ctor: 'ClearColor', _0: a, _1: b, _2: c, _3: d};
+var _elm_community$webgl$WebGL_Settings_DepthTest$greaterOrEqual = function (_p0) {
+	var _p1 = _p0;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 518, _p1.write, _p1.near, _p1.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$lessOrEqual = function (_p2) {
+	var _p3 = _p2;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 515, _p3.write, _p3.near, _p3.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$notEqual = function (_p4) {
+	var _p5 = _p4;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 517, _p5.write, _p5.near, _p5.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$greater = function (_p6) {
+	var _p7 = _p6;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 516, _p7.write, _p7.near, _p7.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$equal = function (_p8) {
+	var _p9 = _p8;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 514, _p9.write, _p9.near, _p9.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$always = function (_p10) {
+	var _p11 = _p10;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 519, _p11.write, _p11.near, _p11.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$never = function (_p12) {
+	var _p13 = _p12;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 512, _p13.write, _p13.near, _p13.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$less = function (_p14) {
+	var _p15 = _p14;
+	return A4(_elm_community$webgl$WebGL_Settings_Internal$DepthTest, 513, _p15.write, _p15.near, _p15.far);
+};
+var _elm_community$webgl$WebGL_Settings_DepthTest$default = _elm_community$webgl$WebGL_Settings_DepthTest$less(
+	{write: true, near: 0, far: 1});
+var _elm_community$webgl$WebGL_Settings_DepthTest$Options = F3(
+	function (a, b, c) {
+		return {write: a, near: b, far: c};
 	});
-var _elm_community$webgl$WebGL_Options$clearColor = _elm_community$webgl$WebGL_Options$ClearColor;
-var _elm_community$webgl$WebGL_Options$Antialias = {ctor: 'Antialias'};
-var _elm_community$webgl$WebGL_Options$antialias = _elm_community$webgl$WebGL_Options$Antialias;
-var _elm_community$webgl$WebGL_Options$Stencil = function (a) {
-	return {ctor: 'Stencil', _0: a};
-};
-var _elm_community$webgl$WebGL_Options$stencil = _elm_community$webgl$WebGL_Options$Stencil;
-var _elm_community$webgl$WebGL_Options$Depth = function (a) {
-	return {ctor: 'Depth', _0: a};
-};
-var _elm_community$webgl$WebGL_Options$depth = _elm_community$webgl$WebGL_Options$Depth;
-var _elm_community$webgl$WebGL_Options$Alpha = function (a) {
-	return {ctor: 'Alpha', _0: a};
-};
-var _elm_community$webgl$WebGL_Options$alpha = _elm_community$webgl$WebGL_Options$Alpha;
 var _elm_community$webgl$WebGL$toHtmlWith = F3(
-	function (options, attributes, renderables) {
-		return A3(_elm_community$webgl$Native_WebGL.toHtml, options, attributes, renderables);
+	function (options, attributes, entities) {
+		return A3(_elm_community$webgl$Native_WebGL.toHtml, options, attributes, entities);
 	});
-var _elm_community$webgl$WebGL$toHtml = _elm_community$webgl$WebGL$toHtmlWith(
+var _elm_community$webgl$WebGL$entityWith = _elm_community$webgl$Native_WebGL.entity;
+var _elm_community$webgl$WebGL$entity = _elm_community$webgl$WebGL$entityWith(
 	{
 		ctor: '::',
-		_0: _elm_community$webgl$WebGL_Options$alpha(true),
-		_1: {
-			ctor: '::',
-			_0: _elm_community$webgl$WebGL_Options$antialias,
-			_1: {
-				ctor: '::',
-				_0: _elm_community$webgl$WebGL_Options$depth(1),
-				_1: {ctor: '[]'}
-			}
-		}
-	});
-var _elm_community$webgl$WebGL$renderWith = _elm_community$webgl$Native_WebGL.render;
-var _elm_community$webgl$WebGL$render = _elm_community$webgl$WebGL$renderWith(
-	{
-		ctor: '::',
-		_0: _elm_community$webgl$WebGL_Settings$depth(_elm_community$webgl$WebGL_Settings$depthOptions),
+		_0: _elm_community$webgl$WebGL_Settings_DepthTest$default,
 		_1: {ctor: '[]'}
 	});
 var _elm_community$webgl$WebGL$unsafeShader = _elm_community$webgl$Native_WebGL.unsafeCoerceGLSL;
@@ -12039,7 +13172,40 @@ var _elm_community$webgl$WebGL$Triangles = function (a) {
 var _elm_community$webgl$WebGL$triangles = _elm_community$webgl$WebGL$Triangles;
 var _elm_community$webgl$WebGL$Shader = {ctor: 'Shader'};
 var _elm_community$webgl$WebGL$Texture = {ctor: 'Texture'};
-var _elm_community$webgl$WebGL$Renderable = {ctor: 'Renderable'};
+var _elm_community$webgl$WebGL$Entity = {ctor: 'Entity'};
+var _elm_community$webgl$WebGL$ClearColor = F4(
+	function (a, b, c, d) {
+		return {ctor: 'ClearColor', _0: a, _1: b, _2: c, _3: d};
+	});
+var _elm_community$webgl$WebGL$clearColor = _elm_community$webgl$WebGL$ClearColor;
+var _elm_community$webgl$WebGL$Antialias = {ctor: 'Antialias'};
+var _elm_community$webgl$WebGL$antialias = _elm_community$webgl$WebGL$Antialias;
+var _elm_community$webgl$WebGL$Stencil = function (a) {
+	return {ctor: 'Stencil', _0: a};
+};
+var _elm_community$webgl$WebGL$stencil = _elm_community$webgl$WebGL$Stencil;
+var _elm_community$webgl$WebGL$Depth = function (a) {
+	return {ctor: 'Depth', _0: a};
+};
+var _elm_community$webgl$WebGL$depth = _elm_community$webgl$WebGL$Depth;
+var _elm_community$webgl$WebGL$Alpha = function (a) {
+	return {ctor: 'Alpha', _0: a};
+};
+var _elm_community$webgl$WebGL$alpha = _elm_community$webgl$WebGL$Alpha;
+var _elm_community$webgl$WebGL$toHtml = _elm_community$webgl$WebGL$toHtmlWith(
+	{
+		ctor: '::',
+		_0: _elm_community$webgl$WebGL$alpha(true),
+		_1: {
+			ctor: '::',
+			_0: _elm_community$webgl$WebGL$antialias,
+			_1: {
+				ctor: '::',
+				_0: _elm_community$webgl$WebGL$depth(1),
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
 var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
 var _elm_lang$core$Task$spawnCmd = F2(
@@ -12237,11 +13403,48 @@ var _elm_lang$core$Task$cmdMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
 var _elm_community$webgl$WebGL_Texture$size = _elm_community$webgl$Native_Texture.size;
-var _elm_community$webgl$WebGL_Texture$loadWith = _elm_community$webgl$Native_Texture.loadWith;
-var _elm_community$webgl$WebGL_Texture$Nearest = {ctor: 'Nearest'};
-var _elm_community$webgl$WebGL_Texture$Linear = {ctor: 'Linear'};
-var _elm_community$webgl$WebGL_Texture$load = _elm_community$webgl$WebGL_Texture$loadWith(_elm_community$webgl$WebGL_Texture$Linear);
-var _elm_community$webgl$WebGL_Texture$Error = {ctor: 'Error'};
+var _elm_community$webgl$WebGL_Texture$loadWith = F2(
+	function (_p0, url) {
+		var _p1 = _p0;
+		var expand = F4(
+			function (_p5, _p4, _p3, _p2) {
+				var _p6 = _p5;
+				var _p7 = _p4;
+				var _p8 = _p3;
+				var _p9 = _p2;
+				return A6(_elm_community$webgl$Native_Texture.load, _p6._0, _p7._0, _p8._0, _p9._0, _p1.flipY, url);
+			});
+		return A4(expand, _p1.magnify, _p1.minify, _p1.horizontalWrap, _p1.verticalWrap);
+	});
+var _elm_community$webgl$WebGL_Texture$Options = F5(
+	function (a, b, c, d, e) {
+		return {magnify: a, minify: b, horizontalWrap: c, verticalWrap: d, flipY: e};
+	});
+var _elm_community$webgl$WebGL_Texture$SizeError = F2(
+	function (a, b) {
+		return {ctor: 'SizeError', _0: a, _1: b};
+	});
+var _elm_community$webgl$WebGL_Texture$LoadError = {ctor: 'LoadError'};
+var _elm_community$webgl$WebGL_Texture$Resize = function (a) {
+	return {ctor: 'Resize', _0: a};
+};
+var _elm_community$webgl$WebGL_Texture$linear = _elm_community$webgl$WebGL_Texture$Resize(9729);
+var _elm_community$webgl$WebGL_Texture$nearest = _elm_community$webgl$WebGL_Texture$Resize(9728);
+var _elm_community$webgl$WebGL_Texture$nearestMipmapNearest = _elm_community$webgl$WebGL_Texture$Resize(9984);
+var _elm_community$webgl$WebGL_Texture$linearMipmapNearest = _elm_community$webgl$WebGL_Texture$Resize(9985);
+var _elm_community$webgl$WebGL_Texture$nearestMipmapLinear = _elm_community$webgl$WebGL_Texture$Resize(9986);
+var _elm_community$webgl$WebGL_Texture$linearMipmapLinear = _elm_community$webgl$WebGL_Texture$Resize(9987);
+var _elm_community$webgl$WebGL_Texture$Bigger = {ctor: 'Bigger'};
+var _elm_community$webgl$WebGL_Texture$Smaller = {ctor: 'Smaller'};
+var _elm_community$webgl$WebGL_Texture$Wrap = function (a) {
+	return {ctor: 'Wrap', _0: a};
+};
+var _elm_community$webgl$WebGL_Texture$repeat = _elm_community$webgl$WebGL_Texture$Wrap(10497);
+var _elm_community$webgl$WebGL_Texture$defaultOptions = {magnify: _elm_community$webgl$WebGL_Texture$linear, minify: _elm_community$webgl$WebGL_Texture$nearestMipmapLinear, horizontalWrap: _elm_community$webgl$WebGL_Texture$repeat, verticalWrap: _elm_community$webgl$WebGL_Texture$repeat, flipY: true};
+var _elm_community$webgl$WebGL_Texture$load = _elm_community$webgl$WebGL_Texture$loadWith(_elm_community$webgl$WebGL_Texture$defaultOptions);
+var _elm_community$webgl$WebGL_Texture$clampToEdge = _elm_community$webgl$WebGL_Texture$Wrap(33071);
+var _elm_community$webgl$WebGL_Texture$nonPowerOfTwoOptions = {magnify: _elm_community$webgl$WebGL_Texture$linear, minify: _elm_community$webgl$WebGL_Texture$nearest, horizontalWrap: _elm_community$webgl$WebGL_Texture$clampToEdge, verticalWrap: _elm_community$webgl$WebGL_Texture$clampToEdge, flipY: true};
+var _elm_community$webgl$WebGL_Texture$mirroredRepeat = _elm_community$webgl$WebGL_Texture$Wrap(33648);
 var _elm_lang$animation_frame$Native_AnimationFrame = function()
 {
 
@@ -12621,6 +13824,190 @@ var _elm_lang$animation_frame$AnimationFrame$subMap = F2(
 		}
 	});
 _elm_lang$core$Native_Platform.effectManagers['AnimationFrame'] = {pkg: 'elm-lang/animation-frame', init: _elm_lang$animation_frame$AnimationFrame$init, onEffects: _elm_lang$animation_frame$AnimationFrame$onEffects, onSelfMsg: _elm_lang$animation_frame$AnimationFrame$onSelfMsg, tag: 'sub', subMap: _elm_lang$animation_frame$AnimationFrame$subMap};
+var _elm_lang$dom$Native_Dom = function() {
+
+var fakeNode = {
+	addEventListener: function() {},
+	removeEventListener: function() {}
+};
+
+var onDocument = on(typeof document !== 'undefined' ? document : fakeNode);
+var onWindow = on(typeof window !== 'undefined' ? window : fakeNode);
+
+function on(node)
+{
+	return function(eventName, decoder, toTask)
+	{
+		return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+
+			function performTask(event)
+			{
+				var result = A2(_elm_lang$core$Json_Decode$decodeValue, decoder, event);
+				if (result.ctor === 'Ok')
+				{
+					_elm_lang$core$Native_Scheduler.rawSpawn(toTask(result._0));
+				}
+			}
+
+			node.addEventListener(eventName, performTask);
+
+			return function()
+			{
+				node.removeEventListener(eventName, performTask);
+			};
+		});
+	};
+}
+
+var rAF = typeof requestAnimationFrame !== 'undefined'
+	? requestAnimationFrame
+	: function(callback) { callback(); };
+
+function withNode(id, doStuff)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		rAF(function()
+		{
+			var node = document.getElementById(id);
+			if (node === null)
+			{
+				callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'NotFound', _0: id }));
+				return;
+			}
+			callback(_elm_lang$core$Native_Scheduler.succeed(doStuff(node)));
+		});
+	});
+}
+
+
+// FOCUS
+
+function focus(id)
+{
+	return withNode(id, function(node) {
+		node.focus();
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function blur(id)
+{
+	return withNode(id, function(node) {
+		node.blur();
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+
+// SCROLLING
+
+function getScrollTop(id)
+{
+	return withNode(id, function(node) {
+		return node.scrollTop;
+	});
+}
+
+function setScrollTop(id, desiredScrollTop)
+{
+	return withNode(id, function(node) {
+		node.scrollTop = desiredScrollTop;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function toBottom(id)
+{
+	return withNode(id, function(node) {
+		node.scrollTop = node.scrollHeight;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function getScrollLeft(id)
+{
+	return withNode(id, function(node) {
+		return node.scrollLeft;
+	});
+}
+
+function setScrollLeft(id, desiredScrollLeft)
+{
+	return withNode(id, function(node) {
+		node.scrollLeft = desiredScrollLeft;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function toRight(id)
+{
+	return withNode(id, function(node) {
+		node.scrollLeft = node.scrollWidth;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+
+// SIZE
+
+function width(options, id)
+{
+	return withNode(id, function(node) {
+		switch (options.ctor)
+		{
+			case 'Content':
+				return node.scrollWidth;
+			case 'VisibleContent':
+				return node.clientWidth;
+			case 'VisibleContentWithBorders':
+				return node.offsetWidth;
+			case 'VisibleContentWithBordersAndMargins':
+				var rect = node.getBoundingClientRect();
+				return rect.right - rect.left;
+		}
+	});
+}
+
+function height(options, id)
+{
+	return withNode(id, function(node) {
+		switch (options.ctor)
+		{
+			case 'Content':
+				return node.scrollHeight;
+			case 'VisibleContent':
+				return node.clientHeight;
+			case 'VisibleContentWithBorders':
+				return node.offsetHeight;
+			case 'VisibleContentWithBordersAndMargins':
+				var rect = node.getBoundingClientRect();
+				return rect.bottom - rect.top;
+		}
+	});
+}
+
+return {
+	onDocument: F3(onDocument),
+	onWindow: F3(onWindow),
+
+	focus: focus,
+	blur: blur,
+
+	getScrollTop: getScrollTop,
+	setScrollTop: F2(setScrollTop),
+	getScrollLeft: getScrollLeft,
+	setScrollLeft: F2(setScrollLeft),
+	toBottom: toBottom,
+	toRight: toRight,
+
+	height: F2(height),
+	width: F2(width)
+};
+
+}();
+var _elm_lang$dom$Dom_LowLevel$onWindow = _elm_lang$dom$Native_Dom.onWindow;
+var _elm_lang$dom$Dom_LowLevel$onDocument = _elm_lang$dom$Native_Dom.onDocument;
 var _elm_lang$html$Html_Attributes$map = _elm_lang$virtual_dom$VirtualDom$mapProperty;
 var _elm_lang$html$Html_Attributes$attribute = _elm_lang$virtual_dom$VirtualDom$attribute;
 var _elm_lang$html$Html_Attributes$contextmenu = function (value) {
@@ -13442,15 +14829,349 @@ var _elm_lang$http$Http$StringPart = F2(
 		return {ctor: 'StringPart', _0: a, _1: b};
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+var _elm_lang$mouse$Mouse_ops = _elm_lang$mouse$Mouse_ops || {};
+_elm_lang$mouse$Mouse_ops['&>'] = F2(
+	function (t1, t2) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (_p0) {
+				return t2;
+			},
+			t1);
+	});
+var _elm_lang$mouse$Mouse$onSelfMsg = F3(
+	function (router, _p1, state) {
+		var _p2 = _p1;
+		var _p3 = A2(_elm_lang$core$Dict$get, _p2.category, state);
+		if (_p3.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var send = function (tagger) {
+				return A2(
+					_elm_lang$core$Platform$sendToApp,
+					router,
+					tagger(_p2.position));
+			};
+			return A2(
+				_elm_lang$mouse$Mouse_ops['&>'],
+				_elm_lang$core$Task$sequence(
+					A2(_elm_lang$core$List$map, send, _p3._0.taggers)),
+				_elm_lang$core$Task$succeed(state));
+		}
+	});
+var _elm_lang$mouse$Mouse$init = _elm_lang$core$Task$succeed(_elm_lang$core$Dict$empty);
+var _elm_lang$mouse$Mouse$categorizeHelpHelp = F2(
+	function (value, maybeValues) {
+		var _p4 = maybeValues;
+		if (_p4.ctor === 'Nothing') {
+			return _elm_lang$core$Maybe$Just(
+				{
+					ctor: '::',
+					_0: value,
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$core$Maybe$Just(
+				{ctor: '::', _0: value, _1: _p4._0});
+		}
+	});
+var _elm_lang$mouse$Mouse$categorizeHelp = F2(
+	function (subs, subDict) {
+		categorizeHelp:
+		while (true) {
+			var _p5 = subs;
+			if (_p5.ctor === '[]') {
+				return subDict;
+			} else {
+				var _v4 = _p5._1,
+					_v5 = A3(
+					_elm_lang$core$Dict$update,
+					_p5._0._0,
+					_elm_lang$mouse$Mouse$categorizeHelpHelp(_p5._0._1),
+					subDict);
+				subs = _v4;
+				subDict = _v5;
+				continue categorizeHelp;
+			}
+		}
+	});
+var _elm_lang$mouse$Mouse$categorize = function (subs) {
+	return A2(_elm_lang$mouse$Mouse$categorizeHelp, subs, _elm_lang$core$Dict$empty);
+};
+var _elm_lang$mouse$Mouse$subscription = _elm_lang$core$Native_Platform.leaf('Mouse');
+var _elm_lang$mouse$Mouse$Position = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _elm_lang$mouse$Mouse$position = A3(
+	_elm_lang$core$Json_Decode$map2,
+	_elm_lang$mouse$Mouse$Position,
+	A2(_elm_lang$core$Json_Decode$field, 'pageX', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'pageY', _elm_lang$core$Json_Decode$int));
+var _elm_lang$mouse$Mouse$Watcher = F2(
+	function (a, b) {
+		return {taggers: a, pid: b};
+	});
+var _elm_lang$mouse$Mouse$Msg = F2(
+	function (a, b) {
+		return {category: a, position: b};
+	});
+var _elm_lang$mouse$Mouse$onEffects = F3(
+	function (router, newSubs, oldState) {
+		var rightStep = F3(
+			function (category, taggers, task) {
+				var tracker = A3(
+					_elm_lang$dom$Dom_LowLevel$onDocument,
+					category,
+					_elm_lang$mouse$Mouse$position,
+					function (_p6) {
+						return A2(
+							_elm_lang$core$Platform$sendToSelf,
+							router,
+							A2(_elm_lang$mouse$Mouse$Msg, category, _p6));
+					});
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (state) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (pid) {
+								return _elm_lang$core$Task$succeed(
+									A3(
+										_elm_lang$core$Dict$insert,
+										category,
+										A2(_elm_lang$mouse$Mouse$Watcher, taggers, pid),
+										state));
+							},
+							_elm_lang$core$Process$spawn(tracker));
+					},
+					task);
+			});
+		var bothStep = F4(
+			function (category, _p7, taggers, task) {
+				var _p8 = _p7;
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (state) {
+						return _elm_lang$core$Task$succeed(
+							A3(
+								_elm_lang$core$Dict$insert,
+								category,
+								A2(_elm_lang$mouse$Mouse$Watcher, taggers, _p8.pid),
+								state));
+					},
+					task);
+			});
+		var leftStep = F3(
+			function (category, _p9, task) {
+				var _p10 = _p9;
+				return A2(
+					_elm_lang$mouse$Mouse_ops['&>'],
+					_elm_lang$core$Process$kill(_p10.pid),
+					task);
+			});
+		return A6(
+			_elm_lang$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			oldState,
+			_elm_lang$mouse$Mouse$categorize(newSubs),
+			_elm_lang$core$Task$succeed(_elm_lang$core$Dict$empty));
+	});
+var _elm_lang$mouse$Mouse$MySub = F2(
+	function (a, b) {
+		return {ctor: 'MySub', _0: a, _1: b};
+	});
+var _elm_lang$mouse$Mouse$clicks = function (tagger) {
+	return _elm_lang$mouse$Mouse$subscription(
+		A2(_elm_lang$mouse$Mouse$MySub, 'click', tagger));
+};
+var _elm_lang$mouse$Mouse$moves = function (tagger) {
+	return _elm_lang$mouse$Mouse$subscription(
+		A2(_elm_lang$mouse$Mouse$MySub, 'mousemove', tagger));
+};
+var _elm_lang$mouse$Mouse$downs = function (tagger) {
+	return _elm_lang$mouse$Mouse$subscription(
+		A2(_elm_lang$mouse$Mouse$MySub, 'mousedown', tagger));
+};
+var _elm_lang$mouse$Mouse$ups = function (tagger) {
+	return _elm_lang$mouse$Mouse$subscription(
+		A2(_elm_lang$mouse$Mouse$MySub, 'mouseup', tagger));
+};
+var _elm_lang$mouse$Mouse$subMap = F2(
+	function (func, _p11) {
+		var _p12 = _p11;
+		return A2(
+			_elm_lang$mouse$Mouse$MySub,
+			_p12._0,
+			function (_p13) {
+				return func(
+					_p12._1(_p13));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Mouse'] = {pkg: 'elm-lang/mouse', init: _elm_lang$mouse$Mouse$init, onEffects: _elm_lang$mouse$Mouse$onEffects, onSelfMsg: _elm_lang$mouse$Mouse$onSelfMsg, tag: 'sub', subMap: _elm_lang$mouse$Mouse$subMap};
+var _elm_lang$window$Native_Window = function()
+{
+
+var size = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)	{
+	callback(_elm_lang$core$Native_Scheduler.succeed({
+		width: window.innerWidth,
+		height: window.innerHeight
+	}));
+});
+
+return {
+	size: size
+};
+
+}();var _elm_lang$window$Window_ops = _elm_lang$window$Window_ops || {};
+_elm_lang$window$Window_ops['&>'] = F2(
+	function (task1, task2) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (_p0) {
+				return task2;
+			},
+			task1);
+	});
+var _elm_lang$window$Window$onSelfMsg = F3(
+	function (router, dimensions, state) {
+		var _p1 = state;
+		if (_p1.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var send = function (_p2) {
+				var _p3 = _p2;
+				return A2(
+					_elm_lang$core$Platform$sendToApp,
+					router,
+					_p3._0(dimensions));
+			};
+			return A2(
+				_elm_lang$window$Window_ops['&>'],
+				_elm_lang$core$Task$sequence(
+					A2(_elm_lang$core$List$map, send, _p1._0.subs)),
+				_elm_lang$core$Task$succeed(state));
+		}
+	});
+var _elm_lang$window$Window$init = _elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing);
+var _elm_lang$window$Window$size = _elm_lang$window$Native_Window.size;
+var _elm_lang$window$Window$width = A2(
+	_elm_lang$core$Task$map,
+	function (_) {
+		return _.width;
+	},
+	_elm_lang$window$Window$size);
+var _elm_lang$window$Window$height = A2(
+	_elm_lang$core$Task$map,
+	function (_) {
+		return _.height;
+	},
+	_elm_lang$window$Window$size);
+var _elm_lang$window$Window$onEffects = F3(
+	function (router, newSubs, oldState) {
+		var _p4 = {ctor: '_Tuple2', _0: oldState, _1: newSubs};
+		if (_p4._0.ctor === 'Nothing') {
+			if (_p4._1.ctor === '[]') {
+				return _elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing);
+			} else {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (pid) {
+						return _elm_lang$core$Task$succeed(
+							_elm_lang$core$Maybe$Just(
+								{subs: newSubs, pid: pid}));
+					},
+					_elm_lang$core$Process$spawn(
+						A3(
+							_elm_lang$dom$Dom_LowLevel$onWindow,
+							'resize',
+							_elm_lang$core$Json_Decode$succeed(
+								{ctor: '_Tuple0'}),
+							function (_p5) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									_elm_lang$core$Platform$sendToSelf(router),
+									_elm_lang$window$Window$size);
+							})));
+			}
+		} else {
+			if (_p4._1.ctor === '[]') {
+				return A2(
+					_elm_lang$window$Window_ops['&>'],
+					_elm_lang$core$Process$kill(_p4._0._0.pid),
+					_elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing));
+			} else {
+				return _elm_lang$core$Task$succeed(
+					_elm_lang$core$Maybe$Just(
+						{subs: newSubs, pid: _p4._0._0.pid}));
+			}
+		}
+	});
+var _elm_lang$window$Window$subscription = _elm_lang$core$Native_Platform.leaf('Window');
+var _elm_lang$window$Window$Size = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _elm_lang$window$Window$MySub = function (a) {
+	return {ctor: 'MySub', _0: a};
+};
+var _elm_lang$window$Window$resizes = function (tagger) {
+	return _elm_lang$window$Window$subscription(
+		_elm_lang$window$Window$MySub(tagger));
+};
+var _elm_lang$window$Window$subMap = F2(
+	function (func, _p6) {
+		var _p7 = _p6;
+		return _elm_lang$window$Window$MySub(
+			function (_p8) {
+				return func(
+					_p7._0(_p8));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Window'] = {pkg: 'elm-lang/window', init: _elm_lang$window$Window$init, onEffects: _elm_lang$window$Window$onEffects, onSelfMsg: _elm_lang$window$Window$onSelfMsg, tag: 'sub', subMap: _elm_lang$window$Window$subMap};
 var _user$project$OBJ_Types$MeshWith = F2(
 	function (a, b) {
 		return {vertices: a, indices: b};
 	});
+var _user$project$OBJ_Types$MeshWithT = F2(
+	function (a, b) {
+		return {vertices: a, indices: b};
+	});
+var _user$project$OBJ_Types$Vertex = F2(
+	function (a, b) {
+		return {position: a, normal: b};
+	});
+var _user$project$OBJ_Types$VertexWithTexture = F3(
+	function (a, b, c) {
+		return {position: a, texCoord: b, normal: c};
+	});
+var _user$project$OBJ_Types$VertexWithTextureAndTangent = F4(
+	function (a, b, c, d) {
+		return {position: a, texCoord: b, normal: c, tangent: d};
+	});
+var _user$project$OBJ_Types$VertexWithTextureAndTangentT = F5(
+	function (a, b, c, d, e) {
+		return {position: a, texCoord: b, normal: c, sdir: d, tdir: e};
+	});
+var _user$project$OBJ_Types$WithTextureAndTangent = function (a) {
+	return {ctor: 'WithTextureAndTangent', _0: a};
+};
 var _user$project$OBJ_Types$WithTexture = function (a) {
 	return {ctor: 'WithTexture', _0: a};
 };
 var _user$project$OBJ_Types$WithoutTexture = function (a) {
 	return {ctor: 'WithoutTexture', _0: a};
+};
+var _user$project$OBJ_Types$WithTextureAndTangentT = function (a) {
+	return {ctor: 'WithTextureAndTangentT', _0: a};
+};
+var _user$project$OBJ_Types$WithTextureT = function (a) {
+	return {ctor: 'WithTextureT', _0: a};
+};
+var _user$project$OBJ_Types$WithoutTextureT = function (a) {
+	return {ctor: 'WithoutTextureT', _0: a};
 };
 var _user$project$OBJ_Types$UseMtl = function (a) {
 	return {ctor: 'UseMtl', _0: a};
@@ -13479,29 +15200,23 @@ var _user$project$OBJ_Types$Vt = function (a) {
 var _user$project$OBJ_Types$V = function (a) {
 	return {ctor: 'V', _0: a};
 };
-var _user$project$OBJ_Types$FVertexNormal4 = function (a) {
-	return {ctor: 'FVertexNormal4', _0: a};
-};
 var _user$project$OBJ_Types$FVertexNormal = function (a) {
 	return {ctor: 'FVertexNormal', _0: a};
-};
-var _user$project$OBJ_Types$FVertexTextureNormal4 = function (a) {
-	return {ctor: 'FVertexTextureNormal4', _0: a};
 };
 var _user$project$OBJ_Types$FVertexTextureNormal = function (a) {
 	return {ctor: 'FVertexTextureNormal', _0: a};
 };
-var _user$project$OBJ_Types$FVertexTexture4 = function (a) {
-	return {ctor: 'FVertexTexture4', _0: a};
+var _user$project$OBJ_Types$FTVertexNormal = function (a) {
+	return {ctor: 'FTVertexNormal', _0: a};
 };
-var _user$project$OBJ_Types$FVertexTexture = function (a) {
-	return {ctor: 'FVertexTexture', _0: a};
+var _user$project$OBJ_Types$FTVertexTextureNormal = function (a) {
+	return {ctor: 'FTVertexTextureNormal', _0: a};
 };
-var _user$project$OBJ_Types$FVertex4 = function (a) {
-	return {ctor: 'FVertex4', _0: a};
+var _user$project$OBJ_Types$Four = function (a) {
+	return {ctor: 'Four', _0: a};
 };
-var _user$project$OBJ_Types$FVertex = function (a) {
-	return {ctor: 'FVertex', _0: a};
+var _user$project$OBJ_Types$Three = function (a) {
+	return {ctor: 'Three', _0: a};
 };
 var _user$project$OBJ_Types$GVN = function (a) {
 	return {ctor: 'GVN', _0: a};
@@ -13515,1230 +15230,774 @@ var _user$project$OBJ_Types$GVT = function (a) {
 var _user$project$OBJ_Types$GV = function (a) {
 	return {ctor: 'GV', _0: a};
 };
-var _user$project$OBJ_Assembler$addFace = F2(
-	function (f, state) {
-		var _p0 = {ctor: '_Tuple2', _0: state.currentGroup, _1: f};
-		_v0_16:
+var _user$project$OBJ_Assembler$get2 = F3(
+	function (_p0, a1, a2) {
+		var _p1 = _p0;
+		var _p2 = {
+			ctor: '_Tuple2',
+			_0: A2(_Skinney$elm_array_exploration$Array_Hamt$get, _p1._0 - 1, a1),
+			_1: A2(_Skinney$elm_array_exploration$Array_Hamt$get, _p1._1 - 1, a2)
+		};
+		if (((_p2.ctor === '_Tuple2') && (_p2._0.ctor === 'Just')) && (_p2._1.ctor === 'Just')) {
+			return _elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple2', _0: _p2._0._0, _1: _p2._1._0});
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _user$project$OBJ_Assembler$get3 = F4(
+	function (_p3, a1, a2, a3) {
+		var _p4 = _p3;
+		var _p5 = {
+			ctor: '_Tuple3',
+			_0: A2(_Skinney$elm_array_exploration$Array_Hamt$get, _p4._0 - 1, a1),
+			_1: A2(_Skinney$elm_array_exploration$Array_Hamt$get, _p4._1 - 1, a2),
+			_2: A2(_Skinney$elm_array_exploration$Array_Hamt$get, _p4._2 - 1, a3)
+		};
+		if ((((_p5.ctor === '_Tuple3') && (_p5._0.ctor === 'Just')) && (_p5._1.ctor === 'Just')) && (_p5._2.ctor === 'Just')) {
+			return _elm_lang$core$Maybe$Just(
+				{ctor: '_Tuple3', _0: _p5._0._0, _1: _p5._1._0, _2: _p5._2._0});
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _user$project$OBJ_Assembler$updateArray = F3(
+	function (i, f, a) {
+		var _p6 = A2(_Skinney$elm_array_exploration$Array_Hamt$get, i, a);
+		if (_p6.ctor === 'Just') {
+			return A3(
+				_Skinney$elm_array_exploration$Array_Hamt$set,
+				i,
+				f(_p6._0),
+				a);
+		} else {
+			return a;
+		}
+	});
+var _user$project$OBJ_Assembler$t3map = F2(
+	function (f, _p7) {
+		var _p8 = _p7;
+		return {
+			ctor: '_Tuple3',
+			_0: f(_p8._0),
+			_1: f(_p8._1),
+			_2: f(_p8._2)
+		};
+	});
+var _user$project$OBJ_Assembler$log = F2(
+	function (s, a) {
+		var _p9 = A2(
+			_elm_lang$core$Debug$log,
+			s,
+			{ctor: '_Tuple0'});
+		return a;
+	});
+var _user$project$OBJ_Assembler$createMesh = F2(
+	function (withTangents, f) {
+		var emptyMesh = {
+			vertices: {ctor: '[]'},
+			indices: {ctor: '[]'}
+		};
+		var _p10 = f;
+		if (_p10.ctor === 'FTVertexTextureNormal') {
+			return withTangents ? _user$project$OBJ_Types$WithTextureAndTangentT(
+				_elm_lang$core$Native_Utils.update(
+					emptyMesh,
+					{vertices: _Skinney$elm_array_exploration$Array_Hamt$empty})) : _user$project$OBJ_Types$WithTextureT(emptyMesh);
+		} else {
+			return _user$project$OBJ_Types$WithoutTextureT(emptyMesh);
+		}
+	});
+var _user$project$OBJ_Assembler$triangulate = function (threeOrFour) {
+	var _p11 = threeOrFour;
+	if (_p11.ctor === 'Three') {
+		return {
+			ctor: '::',
+			_0: _p11._0,
+			_1: {ctor: '[]'}
+		};
+	} else {
+		var _p13 = _p11._0._2;
+		var _p12 = _p11._0._0;
+		return {
+			ctor: '::',
+			_0: {ctor: '_Tuple3', _0: _p12, _1: _p11._0._1, _2: _p13},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple3', _0: _p11._0._3, _1: _p12, _2: _p13},
+				_1: {ctor: '[]'}
+			}
+		};
+	}
+};
+var _user$project$OBJ_Assembler$arrayUpdate = F3(
+	function (i, f, a) {
+		var _p14 = A2(_Skinney$elm_array_exploration$Array_Hamt$get, i, a);
+		if (_p14.ctor === 'Just') {
+			return A3(
+				_Skinney$elm_array_exploration$Array_Hamt$set,
+				i,
+				f(_p14._0),
+				a);
+		} else {
+			return a;
+		}
+	});
+var _user$project$OBJ_Assembler$fst2 = function (_p15) {
+	var _p16 = _p15;
+	return {ctor: '_Tuple2', _0: _p16._0, _1: _p16._1};
+};
+var _user$project$OBJ_Assembler$getOrInsertVN = F2(
+	function (index, _p17) {
+		var _p18 = _p17;
+		var _p23 = _p18;
+		var _p22 = _p18.knownVertex;
+		var _p21 = _p18.currentIndex;
+		var _p19 = A2(_elm_lang$core$Dict$get, index, _p22);
+		if (_p19.ctor === 'Just') {
+			return {
+				ctor: '_Tuple3',
+				_0: _p23,
+				_1: {ctor: '[]'},
+				_2: _p19._0
+			};
+		} else {
+			var _p20 = A3(_user$project$OBJ_Assembler$get2, index, _p18.vs, _p18.vns);
+			if (_p20.ctor === 'Just') {
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						_p23,
+						{
+							knownVertex: A3(_elm_lang$core$Dict$insert, index, _p21, _p22),
+							currentIndex: _p21 + 1
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$OBJ_Types$Vertex, _p20._0._0, _p20._0._1),
+						_1: {ctor: '[]'}
+					},
+					_2: _p21
+				};
+			} else {
+				return A2(
+					_user$project$OBJ_Assembler$log,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'index ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(index),
+							' out of bounds!\nThis should never happen with a well formed file')),
+					{
+						ctor: '_Tuple3',
+						_0: _p23,
+						_1: {ctor: '[]'},
+						_2: -42
+					});
+			}
+		}
+	});
+var _user$project$OBJ_Assembler$getOrInsertVTNT = F3(
+	function (_p25, index, _p24) {
+		var _p26 = _p25;
+		var _p39 = _p26._1;
+		var _p38 = _p26._0;
+		var _p27 = _p24;
+		var _p37 = _p27;
+		var _p36 = _p27.knownVertexTexturesTangents;
+		var _p35 = _p27.currentIndex;
+		var _p28 = A2(_elm_lang$core$Dict$get, index, _p36);
+		if (_p28.ctor === 'Just') {
+			var _p33 = _p28._0;
+			var _p29 = _p37.currentMesh;
+			if ((_p29.ctor === 'Just') && (_p29._0.ctor === 'WithTextureAndTangentT')) {
+				var _p32 = _p29._0._0;
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						_p37,
+						{
+							currentMesh: _elm_lang$core$Maybe$Just(
+								_user$project$OBJ_Types$WithTextureAndTangentT(
+									_elm_lang$core$Native_Utils.update(
+										_p32,
+										{
+											vertices: A3(
+												_user$project$OBJ_Assembler$updateArray,
+												_p33,
+												function (_p30) {
+													var _p31 = _p30;
+													return _elm_lang$core$Native_Utils.update(
+														_p31,
+														{
+															sdir: A2(_elm_community$linear_algebra$Math_Vector3$add, _p31.sdir, _p38),
+															tdir: A2(_elm_community$linear_algebra$Math_Vector3$add, _p31.tdir, _p39)
+														});
+												},
+												_p32.vertices)
+										})))
+						}),
+					_1: _Skinney$elm_array_exploration$Array_Hamt$empty,
+					_2: _p33
+				};
+			} else {
+				return {ctor: '_Tuple3', _0: _p37, _1: _Skinney$elm_array_exploration$Array_Hamt$empty, _2: _p33};
+			}
+		} else {
+			var _p34 = A4(_user$project$OBJ_Assembler$get3, index, _p27.vs, _p27.vts, _p27.vns);
+			if (_p34.ctor === 'Just') {
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						_p37,
+						{
+							knownVertexTexturesTangents: A3(_elm_lang$core$Dict$insert, index, _p35, _p36),
+							currentIndex: _p35 + 1
+						}),
+					_1: _Skinney$elm_array_exploration$Array_Hamt$fromList(
+						{
+							ctor: '::',
+							_0: A5(_user$project$OBJ_Types$VertexWithTextureAndTangentT, _p34._0._0, _p34._0._1, _p34._0._2, _p38, _p39),
+							_1: {ctor: '[]'}
+						}),
+					_2: _p35
+				};
+			} else {
+				return A2(
+					_user$project$OBJ_Assembler$log,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'index ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(index),
+							' out of bounds!\nThis should never happen with a well formed file')),
+					{ctor: '_Tuple3', _0: _p37, _1: _Skinney$elm_array_exploration$Array_Hamt$empty, _2: -42});
+			}
+		}
+	});
+var _user$project$OBJ_Assembler$getOrInsertVTN = F2(
+	function (index, _p40) {
+		var _p41 = _p40;
+		var _p46 = _p41;
+		var _p45 = _p41.knownVertexTextures;
+		var _p44 = _p41.currentIndex;
+		var _p42 = A2(_elm_lang$core$Dict$get, index, _p45);
+		if (_p42.ctor === 'Just') {
+			return {
+				ctor: '_Tuple3',
+				_0: _p46,
+				_1: {ctor: '[]'},
+				_2: _p42._0
+			};
+		} else {
+			var _p43 = A4(_user$project$OBJ_Assembler$get3, index, _p41.vs, _p41.vts, _p41.vns);
+			if (_p43.ctor === 'Just') {
+				return {
+					ctor: '_Tuple3',
+					_0: _elm_lang$core$Native_Utils.update(
+						_p46,
+						{
+							knownVertexTextures: A3(_elm_lang$core$Dict$insert, index, _p44, _p45),
+							currentIndex: _p44 + 1
+						}),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$OBJ_Types$VertexWithTexture, _p43._0._0, _p43._0._1, _p43._0._2),
+						_1: {ctor: '[]'}
+					},
+					_2: _p44
+				};
+			} else {
+				return A2(
+					_user$project$OBJ_Assembler$log,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'index ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(index),
+							' out of bounds!\nThis should never happen with a well formed file')),
+					{
+						ctor: '_Tuple3',
+						_0: _p46,
+						_1: {ctor: '[]'},
+						_2: -42
+					});
+			}
+		}
+	});
+var _user$project$OBJ_Assembler$getFaceTangent = F2(
+	function (_p48, _p47) {
+		var _p49 = _p48;
+		var _p50 = _p47;
+		var _p57 = _p50.vts;
+		var _p56 = _p50.vs;
+		var _p51 = {
+			ctor: '_Tuple2',
+			_0: A4(
+				_user$project$OBJ_Assembler$get3,
+				{ctor: '_Tuple3', _0: _p49._0._0, _1: _p49._1._0, _2: _p49._2._0},
+				_p56,
+				_p56,
+				_p56),
+			_1: A4(
+				_user$project$OBJ_Assembler$get3,
+				{ctor: '_Tuple3', _0: _p49._0._1, _1: _p49._1._1, _2: _p49._2._1},
+				_p57,
+				_p57,
+				_p57)
+		};
+		if (((((_p51.ctor === '_Tuple2') && (_p51._0.ctor === 'Just')) && (_p51._0._0.ctor === '_Tuple3')) && (_p51._1.ctor === 'Just')) && (_p51._1._0.ctor === '_Tuple3')) {
+			var _p52 = A2(
+				_user$project$OBJ_Assembler$t3map,
+				_elm_community$linear_algebra$Math_Vector2$toTuple,
+				{ctor: '_Tuple3', _0: _p51._1._0._0, _1: _p51._1._0._1, _2: _p51._1._0._2});
+			var w1x = _p52._0._0;
+			var w1y = _p52._0._1;
+			var w2x = _p52._1._0;
+			var w2y = _p52._1._1;
+			var w3x = _p52._2._0;
+			var w3y = _p52._2._1;
+			var _p53 = {
+				ctor: '_Tuple2',
+				_0: {ctor: '_Tuple2', _0: w2x - w1x, _1: w3x - w1x},
+				_1: {ctor: '_Tuple2', _0: w2y - w1y, _1: w3y - w1y}
+			};
+			var s1 = _p53._0._0;
+			var s2 = _p53._0._1;
+			var t1 = _p53._1._0;
+			var t2 = _p53._1._1;
+			var denom = (s1 * t2) - (s2 * t1);
+			var r = (_elm_lang$core$Native_Utils.cmp(
+				_elm_lang$core$Basics$abs(denom),
+				1.0e-6) < 1) ? 0.1 : (1 / denom);
+			var _p54 = A2(
+				_user$project$OBJ_Assembler$t3map,
+				_elm_community$linear_algebra$Math_Vector3$toTuple,
+				{ctor: '_Tuple3', _0: _p51._0._0._0, _1: _p51._0._0._1, _2: _p51._0._0._2});
+			var v1x = _p54._0._0;
+			var v1y = _p54._0._1;
+			var v1z = _p54._0._2;
+			var v2x = _p54._1._0;
+			var v2y = _p54._1._1;
+			var v2z = _p54._1._2;
+			var v3x = _p54._2._0;
+			var v3y = _p54._2._1;
+			var v3z = _p54._2._2;
+			var _p55 = {
+				ctor: '_Tuple3',
+				_0: {ctor: '_Tuple2', _0: v2x - v1x, _1: v3x - v1x},
+				_1: {ctor: '_Tuple2', _0: v2y - v1y, _1: v3y - v1y},
+				_2: {ctor: '_Tuple2', _0: v2z - v1z, _1: v3z - v1z}
+			};
+			var x1 = _p55._0._0;
+			var x2 = _p55._0._1;
+			var y1 = _p55._1._0;
+			var y2 = _p55._1._1;
+			var z1 = _p55._2._0;
+			var z2 = _p55._2._1;
+			var sdir = A3(_elm_community$linear_algebra$Math_Vector3$vec3, ((t2 * x1) - (t1 * x2)) * r, ((t2 * y1) - (t1 * y2)) * r, ((t2 * z1) - (t1 * z2)) * r);
+			var tdir = A3(_elm_community$linear_algebra$Math_Vector3$vec3, ((s1 * x2) - (s2 * x1)) * r, ((s1 * y2) - (s2 * y1)) * r, ((s1 * z2) - (s2 * z1)) * r);
+			return {ctor: '_Tuple2', _0: sdir, _1: tdir};
+		} else {
+			return A2(
+				_user$project$OBJ_Assembler$log,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'index ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(_p49),
+						' out of bounds!\nThis should never happen with a well formed file')),
+				{
+					ctor: '_Tuple2',
+					_0: A3(_elm_community$linear_algebra$Math_Vector3$vec3, 1, 1, 1),
+					_1: A3(_elm_community$linear_algebra$Math_Vector3$vec3, 1, 1, 1)
+				});
+		}
+	});
+var _user$project$OBJ_Assembler$applyForFaceA = F3(
+	function (f, _p58, s_0) {
+		var _p59 = _p58;
+		var _p60 = A2(f, _p59._0, s_0);
+		var s_1 = _p60._0;
+		var vs_1 = _p60._1;
+		var i_1 = _p60._2;
+		var _p61 = A2(f, _p59._1, s_1);
+		var s_2 = _p61._0;
+		var vs_2 = _p61._1;
+		var i_2 = _p61._2;
+		var _p62 = A2(f, _p59._2, s_2);
+		var s_3 = _p62._0;
+		var vs_3 = _p62._1;
+		var i_3 = _p62._2;
+		return {
+			ctor: '_Tuple3',
+			_0: s_3,
+			_1: A2(
+				_Skinney$elm_array_exploration$Array_Hamt$append,
+				A2(_Skinney$elm_array_exploration$Array_Hamt$append, vs_1, vs_2),
+				vs_3),
+			_2: {ctor: '_Tuple3', _0: i_3, _1: i_2, _2: i_1}
+		};
+	});
+var _user$project$OBJ_Assembler$applyForFace = F3(
+	function (f, _p63, s_0) {
+		var _p64 = _p63;
+		var _p65 = A2(f, _p64._0, s_0);
+		var s_1 = _p65._0;
+		var vs_1 = _p65._1;
+		var i_1 = _p65._2;
+		var _p66 = A2(f, _p64._1, s_1);
+		var s_2 = _p66._0;
+		var vs_2 = _p66._1;
+		var i_2 = _p66._2;
+		var _p67 = A2(f, _p64._2, s_2);
+		var s_3 = _p67._0;
+		var vs_3 = _p67._1;
+		var i_3 = _p67._2;
+		return {
+			ctor: '_Tuple3',
+			_0: s_3,
+			_1: A2(
+				_elm_lang$core$Basics_ops['++'],
+				vs_1,
+				A2(_elm_lang$core$Basics_ops['++'], vs_2, vs_3)),
+			_2: {ctor: '_Tuple3', _0: i_3, _1: i_2, _2: i_1}
+		};
+	});
+var _user$project$OBJ_Assembler$addFaceToMesh = F3(
+	function (f, mesh, _p68) {
+		var _p69 = _p68;
+		var _p81 = _p69;
+		var _p70 = {ctor: '_Tuple2', _0: f, _1: mesh};
+		_v28_3:
 		do {
-			if (_p0._0.ctor === 'Just') {
-				switch (_p0._0._0.ctor) {
-					case 'GV':
-						switch (_p0._1.ctor) {
-							case 'FVertex':
-								return _elm_lang$core$Native_Utils.update(
-									state,
-									{
-										currentGroup: _elm_lang$core$Maybe$Just(
-											_user$project$OBJ_Types$GV(
-												_elm_lang$core$Native_Utils.update(
-													_p0._0._0._0,
-													{
-														faces: {ctor: '::', _0: _p0._1._0, _1: _p0._0._0._0.faces}
-													})))
-									});
-							case 'FVertex4':
-								if (_p0._1._0.ctor === '_Tuple4') {
-									var _p2 = _p0._1._0._2;
-									var _p1 = _p0._1._0._0;
-									return _elm_lang$core$Native_Utils.update(
-										state,
+			if (_p70.ctor === '_Tuple2') {
+				if (_p70._0.ctor === 'FTVertexTextureNormal') {
+					if (_p70._0._0.ctor === '_Tuple3') {
+						switch (_p70._1.ctor) {
+							case 'WithTextureT':
+								var _p72 = _p70._1._0;
+								var _p71 = A3(
+									_user$project$OBJ_Assembler$applyForFace,
+									_user$project$OBJ_Assembler$getOrInsertVTN,
+									{ctor: '_Tuple3', _0: _p70._0._0._0, _1: _p70._0._0._1, _2: _p70._0._0._2},
+									_p81);
+								var newState = _p71._0;
+								var newVs = _p71._1;
+								var newIs = _p71._2;
+								var newMesh = _user$project$OBJ_Types$WithTextureT(
+									_elm_lang$core$Native_Utils.update(
+										_p72,
 										{
-											currentGroup: _elm_lang$core$Maybe$Just(
-												_user$project$OBJ_Types$GV(
-													_elm_lang$core$Native_Utils.update(
-														_p0._0._0._0,
-														{
-															faces: {
-																ctor: '::',
-																_0: {ctor: '_Tuple3', _0: _p1, _1: _p0._1._0._1, _2: _p2},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple3', _0: _p2, _1: _p0._1._0._3, _2: _p1},
-																	_1: _p0._0._0._0.faces
-																}
-															}
-														})))
-										});
-								} else {
-									break _v0_16;
-								}
-							default:
-								break _v0_16;
-						}
-					case 'GVN':
-						switch (_p0._1.ctor) {
-							case 'FVertexNormal':
+											indices: {ctor: '::', _0: newIs, _1: _p72.indices},
+											vertices: A2(_elm_lang$core$Basics_ops['++'], _p72.vertices, newVs)
+										}));
 								return _elm_lang$core$Native_Utils.update(
-									state,
+									newState,
 									{
-										currentGroup: _elm_lang$core$Maybe$Just(
-											_user$project$OBJ_Types$GVN(
-												_elm_lang$core$Native_Utils.update(
-													_p0._0._0._0,
-													{
-														faces: {ctor: '::', _0: _p0._1._0, _1: _p0._0._0._0.faces}
-													})))
+										currentMesh: _elm_lang$core$Maybe$Just(newMesh)
 									});
-							case 'FVertexNormal4':
-								if (_p0._1._0.ctor === '_Tuple4') {
-									var _p6 = _p0._1._0._2;
-									var _p5 = _p0._1._0._0;
-									return _elm_lang$core$Native_Utils.update(
-										state,
+							case 'WithTextureAndTangentT':
+								var _p77 = _p70._0._0._2;
+								var _p76 = _p70._0._0._1;
+								var _p75 = _p70._0._0._0;
+								var _p74 = _p70._1._0;
+								var tangents = A2(
+									_user$project$OBJ_Assembler$getFaceTangent,
+									{ctor: '_Tuple3', _0: _p75, _1: _p76, _2: _p77},
+									_p81);
+								var _p73 = A3(
+									_user$project$OBJ_Assembler$applyForFaceA,
+									_user$project$OBJ_Assembler$getOrInsertVTNT(tangents),
+									{ctor: '_Tuple3', _0: _p75, _1: _p76, _2: _p77},
+									_p81);
+								var newState = _p73._0;
+								var newVs = _p73._1;
+								var newIs = _p73._2;
+								var newMesh = _user$project$OBJ_Types$WithTextureAndTangentT(
+									_elm_lang$core$Native_Utils.update(
+										_p74,
 										{
-											currentGroup: _elm_lang$core$Maybe$Just(
-												_user$project$OBJ_Types$GVN(
-													_elm_lang$core$Native_Utils.update(
-														_p0._0._0._0,
-														{
-															faces: {
-																ctor: '::',
-																_0: {ctor: '_Tuple3', _0: _p5, _1: _p0._1._0._1, _2: _p6},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple3', _0: _p6, _1: _p0._1._0._3, _2: _p5},
-																	_1: _p0._0._0._0.faces
-																}
-															}
-														})))
-										});
-								} else {
-									break _v0_16;
-								}
-							default:
-								break _v0_16;
-						}
-					case 'GVT':
-						switch (_p0._1.ctor) {
-							case 'FVertexTexture':
+											indices: {ctor: '::', _0: newIs, _1: _p74.indices},
+											vertices: A2(_Skinney$elm_array_exploration$Array_Hamt$append, _p74.vertices, newVs)
+										}));
 								return _elm_lang$core$Native_Utils.update(
-									state,
+									newState,
 									{
-										currentGroup: _elm_lang$core$Maybe$Just(
-											_user$project$OBJ_Types$GVT(
-												_elm_lang$core$Native_Utils.update(
-													_p0._0._0._0,
-													{
-														faces: {ctor: '::', _0: _p0._1._0, _1: _p0._0._0._0.faces}
-													})))
+										currentMesh: _elm_lang$core$Maybe$Just(newMesh)
 									});
-							case 'FVertexTexture4':
-								if (_p0._1._0.ctor === '_Tuple4') {
-									var _p10 = _p0._1._0._2;
-									var _p9 = _p0._1._0._0;
-									return _elm_lang$core$Native_Utils.update(
-										state,
-										{
-											currentGroup: _elm_lang$core$Maybe$Just(
-												_user$project$OBJ_Types$GVT(
-													_elm_lang$core$Native_Utils.update(
-														_p0._0._0._0,
-														{
-															faces: {
-																ctor: '::',
-																_0: {ctor: '_Tuple3', _0: _p9, _1: _p0._1._0._1, _2: _p10},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple3', _0: _p10, _1: _p0._1._0._3, _2: _p9},
-																	_1: _p0._0._0._0.faces
-																}
-															}
-														})))
-										});
-								} else {
-									break _v0_16;
-								}
 							default:
-								break _v0_16;
+								break _v28_3;
 						}
-					default:
-						switch (_p0._1.ctor) {
-							case 'FVertexTextureNormal':
-								return _elm_lang$core$Native_Utils.update(
-									state,
-									{
-										currentGroup: _elm_lang$core$Maybe$Just(
-											_user$project$OBJ_Types$GVTN(
-												_elm_lang$core$Native_Utils.update(
-													_p0._0._0._0,
-													{
-														faces: {ctor: '::', _0: _p0._1._0, _1: _p0._0._0._0.faces}
-													})))
-									});
-							case 'FVertexTextureNormal4':
-								if (_p0._1._0.ctor === '_Tuple4') {
-									var _p14 = _p0._1._0._2;
-									var _p13 = _p0._1._0._0;
-									return _elm_lang$core$Native_Utils.update(
-										state,
-										{
-											currentGroup: _elm_lang$core$Maybe$Just(
-												_user$project$OBJ_Types$GVTN(
-													_elm_lang$core$Native_Utils.update(
-														_p0._0._0._0,
-														{
-															faces: {
-																ctor: '::',
-																_0: {ctor: '_Tuple3', _0: _p13, _1: _p0._1._0._1, _2: _p14},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple3', _0: _p14, _1: _p0._1._0._3, _2: _p13},
-																	_1: _p0._0._0._0.faces
-																}
-															}
-														})))
-										});
-								} else {
-									break _v0_16;
-								}
-							default:
-								break _v0_16;
-						}
+					} else {
+						break _v28_3;
+					}
+				} else {
+					if ((_p70._0._0.ctor === '_Tuple3') && (_p70._1.ctor === 'WithoutTextureT')) {
+						var _p79 = _p70._1._0;
+						var _p78 = A3(
+							_user$project$OBJ_Assembler$applyForFace,
+							_user$project$OBJ_Assembler$getOrInsertVN,
+							{ctor: '_Tuple3', _0: _p70._0._0._0, _1: _p70._0._0._1, _2: _p70._0._0._2},
+							_p81);
+						var newState = _p78._0;
+						var newVs = _p78._1;
+						var newIs = _p78._2;
+						var newMesh = _user$project$OBJ_Types$WithoutTextureT(
+							_elm_lang$core$Native_Utils.update(
+								_p79,
+								{
+									indices: {ctor: '::', _0: newIs, _1: _p79.indices},
+									vertices: A2(_elm_lang$core$Basics_ops['++'], _p79.vertices, newVs)
+								}));
+						return _elm_lang$core$Native_Utils.update(
+							newState,
+							{
+								currentMesh: _elm_lang$core$Maybe$Just(newMesh)
+							});
+					} else {
+						break _v28_3;
+					}
 				}
 			} else {
-				switch (_p0._1.ctor) {
-					case 'FVertex':
-						return _elm_lang$core$Native_Utils.update(
-							state,
-							{
-								currentGroup: _elm_lang$core$Maybe$Just(
-									_user$project$OBJ_Types$GV(
-										{
-											faces: {
-												ctor: '::',
-												_0: _p0._1._0,
-												_1: {ctor: '[]'}
-											}
-										}))
-							});
-					case 'FVertex4':
-						if (_p0._1._0.ctor === '_Tuple4') {
-							var _p4 = _p0._1._0._2;
-							var _p3 = _p0._1._0._0;
-							return _elm_lang$core$Native_Utils.update(
-								state,
-								{
-									currentGroup: _elm_lang$core$Maybe$Just(
-										_user$project$OBJ_Types$GV(
-											{
-												faces: {
-													ctor: '::',
-													_0: {ctor: '_Tuple3', _0: _p3, _1: _p0._1._0._1, _2: _p4},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple3', _0: _p4, _1: _p0._1._0._3, _2: _p3},
-														_1: {ctor: '[]'}
-													}
-												}
-											}))
-								});
-						} else {
-							break _v0_16;
-						}
-					case 'FVertexNormal':
-						return _elm_lang$core$Native_Utils.update(
-							state,
-							{
-								currentGroup: _elm_lang$core$Maybe$Just(
-									_user$project$OBJ_Types$GVN(
-										{
-											faces: {
-												ctor: '::',
-												_0: _p0._1._0,
-												_1: {ctor: '[]'}
-											}
-										}))
-							});
-					case 'FVertexNormal4':
-						if (_p0._1._0.ctor === '_Tuple4') {
-							var _p8 = _p0._1._0._2;
-							var _p7 = _p0._1._0._0;
-							return _elm_lang$core$Native_Utils.update(
-								state,
-								{
-									currentGroup: _elm_lang$core$Maybe$Just(
-										_user$project$OBJ_Types$GVN(
-											{
-												faces: {
-													ctor: '::',
-													_0: {ctor: '_Tuple3', _0: _p7, _1: _p0._1._0._1, _2: _p8},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple3', _0: _p8, _1: _p0._1._0._3, _2: _p7},
-														_1: {ctor: '[]'}
-													}
-												}
-											}))
-								});
-						} else {
-							break _v0_16;
-						}
-					case 'FVertexTexture':
-						return _elm_lang$core$Native_Utils.update(
-							state,
-							{
-								currentGroup: _elm_lang$core$Maybe$Just(
-									_user$project$OBJ_Types$GVT(
-										{
-											faces: {
-												ctor: '::',
-												_0: _p0._1._0,
-												_1: {ctor: '[]'}
-											}
-										}))
-							});
-					case 'FVertexTexture4':
-						if (_p0._1._0.ctor === '_Tuple4') {
-							var _p12 = _p0._1._0._2;
-							var _p11 = _p0._1._0._0;
-							return _elm_lang$core$Native_Utils.update(
-								state,
-								{
-									currentGroup: _elm_lang$core$Maybe$Just(
-										_user$project$OBJ_Types$GVT(
-											{
-												faces: {
-													ctor: '::',
-													_0: {ctor: '_Tuple3', _0: _p11, _1: _p0._1._0._1, _2: _p12},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple3', _0: _p12, _1: _p0._1._0._3, _2: _p11},
-														_1: {ctor: '[]'}
-													}
-												}
-											}))
-								});
-						} else {
-							break _v0_16;
-						}
-					case 'FVertexTextureNormal':
-						return _elm_lang$core$Native_Utils.update(
-							state,
-							{
-								currentGroup: _elm_lang$core$Maybe$Just(
-									_user$project$OBJ_Types$GVTN(
-										{
-											faces: {
-												ctor: '::',
-												_0: _p0._1._0,
-												_1: {ctor: '[]'}
-											}
-										}))
-							});
-					default:
-						if (_p0._1._0.ctor === '_Tuple4') {
-							var _p16 = _p0._1._0._2;
-							var _p15 = _p0._1._0._0;
-							return _elm_lang$core$Native_Utils.update(
-								state,
-								{
-									currentGroup: _elm_lang$core$Maybe$Just(
-										_user$project$OBJ_Types$GVTN(
-											{
-												faces: {
-													ctor: '::',
-													_0: {ctor: '_Tuple3', _0: _p15, _1: _p0._1._0._1, _2: _p16},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple3', _0: _p16, _1: _p0._1._0._3, _2: _p15},
-														_1: {ctor: '[]'}
-													}
-												}
-											}))
-								});
-						} else {
-							break _v0_16;
-						}
-				}
+				break _v28_3;
 			}
 		} while(false);
 		return _elm_lang$core$Native_Utils.crashCase(
 			'OBJ.Assembler',
 			{
-				start: {line: 405, column: 5},
-				end: {line: 458, column: 18}
+				start: {line: 194, column: 5},
+				end: {line: 229, column: 57}
 			},
-			_p0)(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'Faces should all be the same type!\nMesh, face pair:\n\n',
-				_elm_lang$core$Basics$toString(
-					{ctor: '_Tuple2', _0: state.currentGroup, _1: _p0._1})));
+			_p70)('mixed face types in the model!');
+	});
+var _user$project$OBJ_Assembler$addFace = F2(
+	function (f, state) {
+		var _p82 = state.currentMesh;
+		if (_p82.ctor === 'Nothing') {
+			return A3(
+				_user$project$OBJ_Assembler$addFaceToMesh,
+				f,
+				A2(_user$project$OBJ_Assembler$createMesh, state.config.withTangents, f),
+				_elm_lang$core$Native_Utils.update(
+					state,
+					{currentIndex: 0}));
+		} else {
+			return A3(_user$project$OBJ_Assembler$addFaceToMesh, f, _p82._0, state);
+		}
 	});
 var _user$project$OBJ_Assembler$addCurrentGroup = function (state) {
-	var _p18 = A2(
-		_elm_lang$core$Debug$log,
-		'(vs, vns, vts)',
+	return _elm_lang$core$Dict$isEmpty(state.currentGroup) ? state : _elm_lang$core$Native_Utils.update(
+		state,
 		{
-			ctor: '_Tuple3',
-			_0: _elm_lang$core$Array$length(state.vs),
-			_1: _elm_lang$core$Array$length(state.vns),
-			_2: _elm_lang$core$Array$length(state.vts)
+			groups: A3(_elm_lang$core$Dict$insert, state.currentGroupName, state.currentGroup, state.groups),
+			currentGroup: _elm_lang$core$Dict$empty
 		});
-	var _p19 = state.currentGroup;
-	if (_p19.ctor === 'Just') {
+};
+var _user$project$OBJ_Assembler$finalizeMesh = function (mesh) {
+	var _p83 = mesh;
+	switch (_p83.ctor) {
+		case 'WithTextureT':
+			return _user$project$OBJ_Types$WithTexture(_p83._0);
+		case 'WithoutTextureT':
+			return _user$project$OBJ_Types$WithoutTexture(_p83._0);
+		default:
+			var _p90 = _p83._0;
+			return _user$project$OBJ_Types$WithTextureAndTangent(
+				_elm_lang$core$Native_Utils.update(
+					_p90,
+					{
+						vertices: A3(
+							_Skinney$elm_array_exploration$Array_Hamt$foldr,
+							F2(
+								function (_p84, acc) {
+									var _p85 = _p84;
+									var _p89 = _p85.tdir;
+									var _p88 = _p85.sdir;
+									var _p87 = _p85.normal;
+									var _p86 = (!_elm_lang$core$Native_Utils.eq(
+										_elm_community$linear_algebra$Math_Vector3$lengthSquared(_p88),
+										0)) ? _elm_community$linear_algebra$Math_Vector3$toTuple(
+										_elm_community$linear_algebra$Math_Vector3$normalize(
+											A2(
+												_elm_community$linear_algebra$Math_Vector3$sub,
+												_p88,
+												A2(
+													_elm_community$linear_algebra$Math_Vector3$scale,
+													A2(_elm_community$linear_algebra$Math_Vector3$dot, _p87, _p88),
+													_p87)))) : _elm_community$linear_algebra$Math_Vector3$toTuple(
+										A2(
+											_elm_community$linear_algebra$Math_Vector3$cross,
+											_elm_community$linear_algebra$Math_Vector3$normalize(
+												A2(
+													_elm_community$linear_algebra$Math_Vector3$sub,
+													_p89,
+													A2(
+														_elm_community$linear_algebra$Math_Vector3$scale,
+														A2(_elm_community$linear_algebra$Math_Vector3$dot, _p87, _p89),
+														_p87))),
+											_p87));
+									var x = _p86._0;
+									var y = _p86._1;
+									var z = _p86._2;
+									var w = (_elm_lang$core$Native_Utils.cmp(
+										A2(
+											_elm_community$linear_algebra$Math_Vector3$dot,
+											A2(_elm_community$linear_algebra$Math_Vector3$cross, _p87, _p88),
+											_p89),
+										0) < 0) ? -1 : 1;
+									return {
+										ctor: '::',
+										_0: {
+											position: _p85.position,
+											texCoord: _p85.texCoord,
+											normal: _p87,
+											tangent: A4(_elm_community$linear_algebra$Math_Vector4$vec4, x, y, z, w)
+										},
+										_1: acc
+									};
+								}),
+							{ctor: '[]'},
+							_p90.vertices)
+					}));
+	}
+};
+var _user$project$OBJ_Assembler$addCurrentMesh = function (state) {
+	var _p91 = state.currentMesh;
+	if (_p91.ctor === 'Just') {
 		return _elm_lang$core$Native_Utils.update(
 			state,
 			{
-				groups: A3(_elm_lang$core$Dict$insert, state.currentGroupName, _p19._0, state.groups),
-				currentGroup: _elm_lang$core$Maybe$Nothing
+				currentGroup: A3(
+					_elm_lang$core$Dict$insert,
+					state.currentMaterialName,
+					_user$project$OBJ_Assembler$finalizeMesh(_p91._0),
+					state.currentGroup),
+				currentMesh: _elm_lang$core$Maybe$Nothing,
+				knownVertexTextures: _elm_lang$core$Dict$empty,
+				knownVertexTexturesTangents: _elm_lang$core$Dict$empty,
+				knownVertex: _elm_lang$core$Dict$empty
 			});
 	} else {
 		return state;
 	}
 };
+var _user$project$OBJ_Assembler$triangulateFace = function (f) {
+	var _p92 = f;
+	if (_p92.ctor === 'FVertexTextureNormal') {
+		return A2(
+			_elm_lang$core$List$map,
+			_user$project$OBJ_Types$FTVertexTextureNormal,
+			_user$project$OBJ_Assembler$triangulate(_p92._0));
+	} else {
+		return A2(
+			_elm_lang$core$List$map,
+			_user$project$OBJ_Types$FTVertexNormal,
+			_user$project$OBJ_Assembler$triangulate(_p92._0));
+	}
+};
 var _user$project$OBJ_Assembler$insertLine = F2(
 	function (line, state) {
-		var _p20 = line;
-		switch (_p20.ctor) {
+		var _p93 = line;
+		switch (_p93.ctor) {
 			case 'Object':
-				return _elm_lang$core$Native_Utils.update(
-					state,
-					{
-						objectName: _elm_lang$core$Maybe$Just(_p20._0)
-					});
+				return function (st) {
+					return _elm_lang$core$Native_Utils.update(
+						st,
+						{currentGroupName: _p93._0});
+				}(
+					_user$project$OBJ_Assembler$addCurrentGroup(state));
 			case 'MtlLib':
-				return _elm_lang$core$Native_Utils.update(
-					state,
-					{
-						mtlLib: _elm_lang$core$Maybe$Just(_p20._0)
-					});
+				return state;
 			case 'Group':
 				return function (st) {
 					return _elm_lang$core$Native_Utils.update(
 						st,
-						{currentGroupName: _p20._0});
+						{currentGroupName: _p93._0});
 				}(
 					_user$project$OBJ_Assembler$addCurrentGroup(state));
 			case 'Smooth':
 				return state;
 			case 'UseMtl':
-				return state;
+				return function (st) {
+					return _elm_lang$core$Native_Utils.update(
+						st,
+						{currentMaterialName: _p93._0});
+				}(
+					_user$project$OBJ_Assembler$addCurrentMesh(state));
 			case 'V':
 				return _elm_lang$core$Native_Utils.update(
 					state,
 					{
-						vs: A2(_elm_lang$core$Array$push, _p20._0, state.vs)
+						vs: A2(_Skinney$elm_array_exploration$Array_Hamt$push, _p93._0, state.vs)
 					});
 			case 'Vt':
 				return _elm_lang$core$Native_Utils.update(
 					state,
 					{
-						vts: A2(_elm_lang$core$Array$push, _p20._0, state.vts)
+						vts: A2(_Skinney$elm_array_exploration$Array_Hamt$push, _p93._0, state.vts)
 					});
 			case 'Vn':
 				return _elm_lang$core$Native_Utils.update(
 					state,
 					{
-						vns: A2(_elm_lang$core$Array$push, _p20._0, state.vns)
+						vns: A2(_Skinney$elm_array_exploration$Array_Hamt$push, _p93._0, state.vns)
 					});
 			default:
-				return A2(_user$project$OBJ_Assembler$addFace, _p20._0, state);
+				return A3(
+					_elm_lang$core$List$foldr,
+					_user$project$OBJ_Assembler$addFace,
+					state,
+					_user$project$OBJ_Assembler$triangulateFace(_p93._0));
 		}
 	});
 var _user$project$OBJ_Assembler$compileHelper = F2(
 	function (state, lines) {
 		compileHelper:
 		while (true) {
-			var _p21 = lines;
-			if (_p21.ctor === '[]') {
+			var _p94 = lines;
+			if (_p94.ctor === '[]') {
 				return state;
 			} else {
-				var _v4 = A2(_user$project$OBJ_Assembler$insertLine, _p21._0, state),
-					_v5 = _p21._1;
-				state = _v4;
-				lines = _v5;
+				var _v36 = A2(_user$project$OBJ_Assembler$insertLine, _p94._0, state),
+					_v37 = _p94._1;
+				state = _v36;
+				lines = _v37;
 				continue compileHelper;
 			}
 		}
 	});
-var _user$project$OBJ_Assembler$getNormalTo = function (_p22) {
-	var _p23 = _p22;
-	var _p24 = _p23._1;
-	return _elm_community$linear_algebra$Math_Vector3$normalize(
-		A2(
-			_elm_community$linear_algebra$Math_Vector3$cross,
-			A2(_elm_community$linear_algebra$Math_Vector3$sub, _p23._0, _p24),
-			A2(_elm_community$linear_algebra$Math_Vector3$sub, _p23._2, _p24)));
+var _user$project$OBJ_Assembler$emptyCompileState = function (config) {
+	return {groups: _elm_lang$core$Dict$empty, currentGroupName: '__default__', currentMaterialName: '__default__', currentMesh: _elm_lang$core$Maybe$Nothing, currentGroup: _elm_lang$core$Dict$empty, vs: _Skinney$elm_array_exploration$Array_Hamt$empty, vts: _Skinney$elm_array_exploration$Array_Hamt$empty, vns: _Skinney$elm_array_exploration$Array_Hamt$empty, currentIndex: 0, knownVertexTextures: _elm_lang$core$Dict$empty, knownVertexTexturesTangents: _elm_lang$core$Dict$empty, knownVertex: _elm_lang$core$Dict$empty, config: config};
 };
-var _user$project$OBJ_Assembler$getOrUpdateCoordsHelperVN = F4(
-	function (vs, vns, coords, _p25) {
-		getOrUpdateCoordsHelperVN:
-		while (true) {
-			var _p26 = _p25;
-			var _p38 = _p26._2;
-			var _p37 = _p26._0;
-			var _p36 = _p26._1;
-			var _p27 = coords;
-			if (_p27.ctor === '[]') {
-				return {ctor: '_Tuple3', _0: _p37, _1: _p36, _2: _p38};
-			} else {
-				var _p35 = _p27._1;
-				var _p34 = _p27._0._1;
-				var _p33 = _p27._0._0;
-				var _p28 = A2(
-					_elm_lang$core$Dict$get,
-					{ctor: '_Tuple2', _0: _p33, _1: _p34},
-					_p37.knowns);
-				if (_p28.ctor === 'Just') {
-					var _v10 = vs,
-						_v11 = vns,
-						_v12 = _p35,
-						_v13 = {
-						ctor: '_Tuple3',
-						_0: _p37,
-						_1: {ctor: '::', _0: _p28._0._0, _1: _p36},
-						_2: _p38
-					};
-					vs = _v10;
-					vns = _v11;
-					coords = _v12;
-					_p25 = _v13;
-					continue getOrUpdateCoordsHelperVN;
-				} else {
-					var _p29 = {
-						ctor: '_Tuple2',
-						_0: A2(_elm_lang$core$Array$get, _p33 - 1, vs),
-						_1: A2(_elm_lang$core$Array$get, _p34 - 1, vns)
-					};
-					if (((_p29.ctor === '_Tuple2') && (_p29._0.ctor === 'Just')) && (_p29._1.ctor === 'Just')) {
-						var _p31 = _p29._0._0;
-						var _p30 = _p29._1._0;
-						var _v15 = vs,
-							_v16 = vns,
-							_v17 = _p35,
-							_v18 = {
-							ctor: '_Tuple3',
-							_0: _elm_lang$core$Native_Utils.update(
-								_p37,
-								{
-									knowns: A3(
-										_elm_lang$core$Dict$insert,
-										{ctor: '_Tuple2', _0: _p33, _1: _p34},
-										{
-											ctor: '_Tuple2',
-											_0: _p37.i,
-											_1: {pos: _p31, norm: _p30}
-										},
-										_p37.knowns),
-									i: _p37.i + 1
-								}),
-							_1: {ctor: '::', _0: _p37.i, _1: _p36},
-							_2: {
-								ctor: '::',
-								_0: {pos: _p31, norm: _p30},
-								_1: _p38
-							}
-						};
-						vs = _v15;
-						vns = _v16;
-						coords = _v17;
-						_p25 = _v18;
-						continue getOrUpdateCoordsHelperVN;
-					} else {
-						return _elm_lang$core$Native_Utils.crashCase(
-							'OBJ.Assembler',
-							{
-								start: {line: 317, column: 21},
-								end: {line: 331, column: 63}
-							},
-							_p29)('Index out of bounds!');
-					}
-				}
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$getOrUpdateCoordsTHelper = F4(
-	function (vs, vts, coords, _p39) {
-		getOrUpdateCoordsTHelper:
-		while (true) {
-			var _p40 = _p39;
-			var _p52 = _p40._2;
-			var _p51 = _p40._0;
-			var _p50 = _p40._1;
-			var _p41 = coords;
-			if (_p41.ctor === '[]') {
-				return {ctor: '_Tuple3', _0: _p51, _1: _p50, _2: _p52};
-			} else {
-				var _p49 = _p41._0._1;
-				var _p48 = _p41._1;
-				var _p47 = _p41._0._0;
-				var _p42 = A2(
-					_elm_lang$core$Dict$get,
-					{ctor: '_Tuple2', _0: _p47, _1: _p49},
-					_p51.knowns);
-				if (_p42.ctor === 'Just') {
-					var _v22 = vs,
-						_v23 = vts,
-						_v24 = _p48,
-						_v25 = {
-						ctor: '_Tuple3',
-						_0: _p51,
-						_1: {ctor: '::', _0: _p42._0._0, _1: _p50},
-						_2: _p52
-					};
-					vs = _v22;
-					vts = _v23;
-					coords = _v24;
-					_p39 = _v25;
-					continue getOrUpdateCoordsTHelper;
-				} else {
-					var _p43 = {
-						ctor: '_Tuple2',
-						_0: A2(_elm_lang$core$Array$get, _p47 - 1, vs),
-						_1: A2(_elm_lang$core$Array$get, _p49 - 1, vts)
-					};
-					if (((_p43.ctor === '_Tuple2') && (_p43._0.ctor === 'Just')) && (_p43._1.ctor === 'Just')) {
-						var _p45 = _p43._0._0;
-						var _p44 = _p43._1._0;
-						var _v27 = vs,
-							_v28 = vts,
-							_v29 = _p48,
-							_v30 = {
-							ctor: '_Tuple3',
-							_0: _elm_lang$core$Native_Utils.update(
-								_p51,
-								{
-									knowns: A3(
-										_elm_lang$core$Dict$insert,
-										{ctor: '_Tuple2', _0: _p47, _1: _p49},
-										{
-											ctor: '_Tuple2',
-											_0: _p51.i,
-											_1: {pos: _p45, coord: _p44}
-										},
-										_p51.knowns),
-									i: _p51.i + 1
-								}),
-							_1: {ctor: '::', _0: _p51.i, _1: _p50},
-							_2: A2(
-								_elm_lang$core$Basics_ops['++'],
-								_p52,
-								{
-									ctor: '::',
-									_0: {pos: _p45, coord: _p44},
-									_1: {ctor: '[]'}
-								})
-						};
-						vs = _v27;
-						vts = _v28;
-						coords = _v29;
-						_p39 = _v30;
-						continue getOrUpdateCoordsTHelper;
-					} else {
-						return _elm_lang$core$Native_Utils.crashCase(
-							'OBJ.Assembler',
-							{
-								start: {line: 289, column: 21},
-								end: {line: 303, column: 63}
-							},
-							_p43)('Index out of bounds!');
-					}
-				}
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$getOrUpdateCoordsNTHelper = F5(
-	function (vs, vns, vts, coords, _p53) {
-		getOrUpdateCoordsNTHelper:
-		while (true) {
-			var _p54 = _p53;
-			var _p68 = _p54._2;
-			var _p67 = _p54._0;
-			var _p66 = _p54._1;
-			var _p55 = coords;
-			if (_p55.ctor === '[]') {
-				return {ctor: '_Tuple3', _0: _p67, _1: _p66, _2: _p68};
-			} else {
-				var _p65 = _p55._0._1;
-				var _p64 = _p55._1;
-				var _p63 = _p55._0._2;
-				var _p62 = _p55._0._0;
-				var _p56 = A2(
-					_elm_lang$core$Dict$get,
-					{ctor: '_Tuple3', _0: _p62, _1: _p63, _2: _p65},
-					_p67.knowns);
-				if (_p56.ctor === 'Just') {
-					var _v34 = vs,
-						_v35 = vns,
-						_v36 = vts,
-						_v37 = _p64,
-						_v38 = {
-						ctor: '_Tuple3',
-						_0: _p67,
-						_1: {ctor: '::', _0: _p56._0._0, _1: _p66},
-						_2: _p68
-					};
-					vs = _v34;
-					vns = _v35;
-					vts = _v36;
-					coords = _v37;
-					_p53 = _v38;
-					continue getOrUpdateCoordsNTHelper;
-				} else {
-					var _p57 = {
-						ctor: '_Tuple3',
-						_0: A2(_elm_lang$core$Array$get, _p62 - 1, vs),
-						_1: A2(_elm_lang$core$Array$get, _p63 - 1, vns),
-						_2: A2(_elm_lang$core$Array$get, _p65 - 1, vts)
-					};
-					if ((((_p57.ctor === '_Tuple3') && (_p57._0.ctor === 'Just')) && (_p57._1.ctor === 'Just')) && (_p57._2.ctor === 'Just')) {
-						var _p60 = _p57._0._0;
-						var _p59 = _p57._2._0;
-						var _p58 = _p57._1._0;
-						var _v40 = vs,
-							_v41 = vns,
-							_v42 = vts,
-							_v43 = _p64,
-							_v44 = {
-							ctor: '_Tuple3',
-							_0: _elm_lang$core$Native_Utils.update(
-								_p67,
-								{
-									knowns: A3(
-										_elm_lang$core$Dict$insert,
-										{ctor: '_Tuple3', _0: _p62, _1: _p63, _2: _p65},
-										{
-											ctor: '_Tuple2',
-											_0: _p67.i,
-											_1: {pos: _p60, norm: _p58, coord: _p59}
-										},
-										_p67.knowns),
-									i: _p67.i + 1
-								}),
-							_1: {ctor: '::', _0: _p67.i, _1: _p66},
-							_2: A2(
-								_elm_lang$core$Basics_ops['++'],
-								_p68,
-								{
-									ctor: '::',
-									_0: {pos: _p60, norm: _p58, coord: _p59},
-									_1: {ctor: '[]'}
-								})
-						};
-						vs = _v40;
-						vns = _v41;
-						vts = _v42;
-						coords = _v43;
-						_p53 = _v44;
-						continue getOrUpdateCoordsNTHelper;
-					} else {
-						return _elm_lang$core$Native_Utils.crashCase(
-							'OBJ.Assembler',
-							{
-								start: {line: 260, column: 21},
-								end: {line: 275, column: 100}
-							},
-							_p57)(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'Index out of bounds!\n\n',
-								_elm_lang$core$Basics$toString(
-									_elm_lang$core$Array$length(vns))));
-					}
-				}
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$getOrUpdateCoordsT = F4(
-	function (vs, vts, coords, state) {
-		return function (_p69) {
-			var _p70 = _p69;
-			var _p71 = _p70._1;
-			if ((((_p71.ctor === '::') && (_p71._1.ctor === '::')) && (_p71._1._1.ctor === '::')) && (_p71._1._1._1.ctor === '[]')) {
-				return {
-					ctor: '_Tuple3',
-					_0: _p70._0,
-					_1: {ctor: '_Tuple3', _0: _p71._0, _1: _p71._1._0, _2: _p71._1._1._0},
-					_2: _p70._2
-				};
-			} else {
-				return _elm_lang$core$Native_Utils.crashCase(
-					'OBJ.Assembler',
-					{
-						start: {line: 240, column: 17},
-						end: {line: 245, column: 56}
-					},
-					_p71)('This can\'t happen');
-			}
+var _user$project$OBJ_Assembler$compile = F2(
+	function (config, lines) {
+		return function (_) {
+			return _.groups;
 		}(
-			A4(
-				_user$project$OBJ_Assembler$getOrUpdateCoordsTHelper,
-				vs,
-				vts,
-				coords,
-				{
-					ctor: '_Tuple3',
-					_0: state,
-					_1: {ctor: '[]'},
-					_2: {ctor: '[]'}
-				}));
+			_user$project$OBJ_Assembler$addCurrentGroup(
+				_user$project$OBJ_Assembler$addCurrentMesh(
+					A2(
+						_user$project$OBJ_Assembler$compileHelper,
+						_user$project$OBJ_Assembler$emptyCompileState(config),
+						lines))));
 	});
-var _user$project$OBJ_Assembler$getOrUpdateCoordsNT = F5(
-	function (vs, vns, vts, coords, state) {
-		return function (_p73) {
-			var _p74 = _p73;
-			var _p75 = _p74._1;
-			if ((((_p75.ctor === '::') && (_p75._1.ctor === '::')) && (_p75._1._1.ctor === '::')) && (_p75._1._1._1.ctor === '[]')) {
-				return {
-					ctor: '_Tuple3',
-					_0: _p74._0,
-					_1: {ctor: '_Tuple3', _0: _p75._0, _1: _p75._1._0, _2: _p75._1._1._0},
-					_2: _p74._2
-				};
-			} else {
-				return _elm_lang$core$Native_Utils.crashCase(
-					'OBJ.Assembler',
-					{
-						start: {line: 228, column: 17},
-						end: {line: 233, column: 56}
-					},
-					_p75)('This can\'t happen');
-			}
-		}(
-			A5(
-				_user$project$OBJ_Assembler$getOrUpdateCoordsNTHelper,
-				vs,
-				vns,
-				vts,
-				coords,
-				{
-					ctor: '_Tuple3',
-					_0: state,
-					_1: {ctor: '[]'},
-					_2: {ctor: '[]'}
-				}));
-	});
-var _user$project$OBJ_Assembler$getOrUpdateCoordsVN = F4(
-	function (vs, vns, coords, state) {
-		return function (_p77) {
-			var _p78 = _p77;
-			var _p79 = _p78._1;
-			if ((((_p79.ctor === '::') && (_p79._1.ctor === '::')) && (_p79._1._1.ctor === '::')) && (_p79._1._1._1.ctor === '[]')) {
-				return {
-					ctor: '_Tuple3',
-					_0: _p78._0,
-					_1: {ctor: '_Tuple3', _0: _p79._0, _1: _p79._1._0, _2: _p79._1._1._0},
-					_2: _p78._2
-				};
-			} else {
-				return _elm_lang$core$Native_Utils.crashCase(
-					'OBJ.Assembler',
-					{
-						start: {line: 216, column: 17},
-						end: {line: 221, column: 56}
-					},
-					_p79)('This can\'t happen');
-			}
-		}(
-			A4(
-				_user$project$OBJ_Assembler$getOrUpdateCoordsHelperVN,
-				vs,
-				vns,
-				coords,
-				{
-					ctor: '_Tuple3',
-					_0: state,
-					_1: {ctor: '[]'},
-					_2: {ctor: '[]'}
-				}));
-	});
-var _user$project$OBJ_Assembler$get3 = F2(
-	function (_p81, array) {
-		var _p82 = _p81;
-		var _p83 = {
-			ctor: '_Tuple3',
-			_0: A2(_elm_lang$core$Array$get, _p82._0, array),
-			_1: A2(_elm_lang$core$Array$get, _p82._1, array),
-			_2: A2(_elm_lang$core$Array$get, _p82._2, array)
-		};
-		if ((((_p83.ctor === '_Tuple3') && (_p83._0.ctor === 'Just')) && (_p83._1.ctor === 'Just')) && (_p83._2.ctor === 'Just')) {
-			return _elm_lang$core$Maybe$Just(
-				{ctor: '_Tuple3', _0: _p83._0._0, _1: _p83._1._0, _2: _p83._2._0});
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	});
-var _user$project$OBJ_Assembler$makeMeshVTHelper = F4(
-	function (vs, vts, faces, state) {
-		makeMeshVTHelper:
-		while (true) {
-			var _p84 = faces;
-			if (_p84.ctor === '::') {
-				var _p92 = _p84._0._2._0;
-				var _p91 = _p84._0._1._0;
-				var _p90 = _p84._0._0._0;
-				var _p85 = A4(
-					_user$project$OBJ_Assembler$getOrUpdateCoordsT,
-					vs,
-					vts,
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: _p90, _1: _p84._0._0._1},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: _p91, _1: _p84._0._1._1},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: _p92, _1: _p84._0._2._1},
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					state);
-				var newState = _p85._0;
-				var newIs = _p85._1;
-				var newVerts = _p85._2;
-				var _p86 = {
-					ctor: '_Tuple3',
-					_0: A2(_elm_lang$core$Array$get, _p90 - 1, vs),
-					_1: A2(_elm_lang$core$Array$get, _p91 - 1, vs),
-					_2: A2(_elm_lang$core$Array$get, _p92 - 1, vs)
-				};
-				if ((((_p86.ctor === '_Tuple3') && (_p86._0.ctor === 'Just')) && (_p86._1.ctor === 'Just')) && (_p86._2.ctor === 'Just')) {
-					var _v56 = vs,
-						_v57 = vts,
-						_v58 = _p84._1,
-						_v59 = _elm_lang$core$Native_Utils.update(
-						newState,
-						{
-							verts: A2(
-								_elm_lang$core$Basics_ops['++'],
-								state.verts,
-								A2(
-									_elm_lang$core$List$map,
-									function (_p87) {
-										var _p88 = _p87;
-										return {
-											pos: _p88.pos,
-											coord: _p88.coord,
-											norm: _user$project$OBJ_Assembler$getNormalTo(
-												{ctor: '_Tuple3', _0: _p86._2._0, _1: _p86._1._0, _2: _p86._0._0})
-										};
-									},
-									newVerts)),
-							is: {ctor: '::', _0: newIs, _1: state.is}
-						});
-					vs = _v56;
-					vts = _v57;
-					faces = _v58;
-					state = _v59;
-					continue makeMeshVTHelper;
-				} else {
-					return _elm_lang$core$Native_Utils.crashCase(
-						'OBJ.Assembler',
-						{
-							start: {line: 180, column: 17},
-							end: {line: 198, column: 57}
-						},
-						_p86)('Index out of bound');
-				}
-			} else {
-				return state;
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$makeMeshVT = F3(
-	function (vs, vts, fs) {
-		return function (_p93) {
-			var _p94 = _p93;
-			return {vertices: _p94.verts, indices: _p94.is};
-		}(
-			A4(
-				_user$project$OBJ_Assembler$makeMeshVTHelper,
-				vs,
-				vts,
-				fs,
-				{
-					verts: {ctor: '[]'},
-					is: {ctor: '[]'},
-					i: 0,
-					knowns: _elm_lang$core$Dict$empty
-				}));
-	});
-var _user$project$OBJ_Assembler$makeMeshVNTHelper = F5(
-	function (vs, vns, vts, faces, state) {
-		makeMeshVNTHelper:
-		while (true) {
-			var _p95 = faces;
-			if (_p95.ctor === '::') {
-				var _p96 = A5(
-					_user$project$OBJ_Assembler$getOrUpdateCoordsNT,
-					vs,
-					vns,
-					vts,
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple3', _0: _p95._0._0._0, _1: _p95._0._0._1, _2: _p95._0._0._2},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple3', _0: _p95._0._1._0, _1: _p95._0._1._1, _2: _p95._0._1._2},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple3', _0: _p95._0._2._0, _1: _p95._0._2._1, _2: _p95._0._2._2},
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					state);
-				var newState = _p96._0;
-				var newIs = _p96._1;
-				var newVerts = _p96._2;
-				var _v62 = vs,
-					_v63 = vns,
-					_v64 = vts,
-					_v65 = _p95._1,
-					_v66 = _elm_lang$core$Native_Utils.update(
-					newState,
-					{
-						verts: A2(_elm_lang$core$Basics_ops['++'], state.verts, newVerts),
-						is: {ctor: '::', _0: newIs, _1: state.is}
-					});
-				vs = _v62;
-				vns = _v63;
-				vts = _v64;
-				faces = _v65;
-				state = _v66;
-				continue makeMeshVNTHelper;
-			} else {
-				return state;
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$makeMeshVNT = F4(
-	function (vs, vns, vts, fs) {
-		return function (_p97) {
-			var _p98 = _p97;
-			return {vertices: _p98.verts, indices: _p98.is};
-		}(
-			A5(
-				_user$project$OBJ_Assembler$makeMeshVNTHelper,
-				vs,
-				vns,
-				vts,
-				fs,
-				{
-					verts: {ctor: '[]'},
-					is: {ctor: '[]'},
-					i: 0,
-					knowns: _elm_lang$core$Dict$empty
-				}));
-	});
-var _user$project$OBJ_Assembler$makeMeshVNHelper = F4(
-	function (vs, vns, faces, state) {
-		makeMeshVNHelper:
-		while (true) {
-			var _p99 = faces;
-			if (_p99.ctor === '::') {
-				var _p100 = A4(
-					_user$project$OBJ_Assembler$getOrUpdateCoordsVN,
-					vs,
-					vns,
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: _p99._0._0._0, _1: _p99._0._0._1},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: _p99._0._1._0, _1: _p99._0._1._1},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: _p99._0._2._0, _1: _p99._0._2._1},
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					state);
-				var newState = _p100._0;
-				var newIs = _p100._1;
-				var newVerts = _p100._2;
-				var _v69 = vs,
-					_v70 = vns,
-					_v71 = _p99._1,
-					_v72 = _elm_lang$core$Native_Utils.update(
-					newState,
-					{
-						verts: A2(_elm_lang$core$Basics_ops['++'], state.verts, newVerts),
-						is: {ctor: '::', _0: newIs, _1: state.is}
-					});
-				vs = _v69;
-				vns = _v70;
-				faces = _v71;
-				state = _v72;
-				continue makeMeshVNHelper;
-			} else {
-				return state;
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$makeMeshVN = F3(
-	function (vs, vns, fs) {
-		return function (_p101) {
-			var _p102 = _p101;
-			return {vertices: _p102.verts, indices: _p102.is};
-		}(
-			A4(
-				_user$project$OBJ_Assembler$makeMeshVNHelper,
-				vs,
-				vns,
-				fs,
-				{
-					verts: {ctor: '[]'},
-					is: {ctor: '[]'},
-					i: 0,
-					knowns: _elm_lang$core$Dict$empty
-				}));
-	});
-var _user$project$OBJ_Assembler$makeMeshVHelper = F3(
-	function (vs, faces, state) {
-		makeMeshVHelper:
-		while (true) {
-			var _p103 = faces;
-			if (_p103.ctor === '::') {
-				var _p111 = _p103._0._2;
-				var _p110 = _p103._0._1;
-				var _p109 = _p103._0._0;
-				var _p104 = {
-					ctor: '_Tuple3',
-					_0: A2(_elm_lang$core$Array$get, _p109 - 1, vs),
-					_1: A2(_elm_lang$core$Array$get, _p110 - 1, vs),
-					_2: A2(_elm_lang$core$Array$get, _p111 - 1, vs)
-				};
-				if ((((_p104.ctor === '_Tuple3') && (_p104._0.ctor === 'Just')) && (_p104._1.ctor === 'Just')) && (_p104._2.ctor === 'Just')) {
-					var _p107 = _p104._2._0;
-					var _p106 = _p104._1._0;
-					var _p105 = _p104._0._0;
-					var norm = _user$project$OBJ_Assembler$getNormalTo(
-						{ctor: '_Tuple3', _0: _p107, _1: _p106, _2: _p105});
-					var _v76 = vs,
-						_v77 = _p103._1,
-						_v78 = _elm_lang$core$Native_Utils.update(
-						state,
-						{
-							verts: A2(
-								_elm_lang$core$Basics_ops['++'],
-								state.verts,
-								{
-									ctor: '::',
-									_0: {pos: _p105, norm: norm},
-									_1: {
-										ctor: '::',
-										_0: {pos: _p106, norm: norm},
-										_1: {
-											ctor: '::',
-											_0: {pos: _p107, norm: norm},
-											_1: {ctor: '[]'}
-										}
-									}
-								}),
-							is: {
-								ctor: '::',
-								_0: {ctor: '_Tuple3', _0: state.i + 2, _1: state.i + 1, _2: state.i},
-								_1: state.is
-							},
-							i: state.i + 3
-						});
-					vs = _v76;
-					faces = _v77;
-					state = _v78;
-					continue makeMeshVHelper;
-				} else {
-					return _elm_lang$core$Native_Utils.crashCase(
-						'OBJ.Assembler',
-						{
-							start: {line: 92, column: 13},
-							end: {line: 113, column: 26}
-						},
-						_p104)(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'Index out of bound: ',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(
-									{ctor: '_Tuple3', _0: _p109, _1: _p110, _2: _p111}),
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									'\n\n',
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'vs: ',
-										_elm_lang$core$Basics$toString(
-											_elm_lang$core$Array$length(vs)))))));
-				}
-			} else {
-				return state;
-			}
-		}
-	});
-var _user$project$OBJ_Assembler$makeMeshV = F2(
-	function (vs, fs) {
-		return function (_p112) {
-			var _p113 = _p112;
-			return {vertices: _p113.verts, indices: _p113.is};
-		}(
-			A3(
-				_user$project$OBJ_Assembler$makeMeshVHelper,
-				vs,
-				fs,
-				{
-					verts: {ctor: '[]'},
-					is: {ctor: '[]'},
-					i: 0
-				}));
-	});
-var _user$project$OBJ_Assembler$log = F2(
-	function (s, a) {
-		var _p114 = A2(
-			_elm_lang$core$Debug$log,
-			s,
-			{ctor: '_Tuple0'});
-		return a;
-	});
-var _user$project$OBJ_Assembler$toMeshes = function (state) {
+var _user$project$OBJ_Parser$ignoreZ = function (v) {
+	var _p0 = _elm_community$linear_algebra$Math_Vector3$toTuple(v);
+	var x = _p0._0;
+	var y = _p0._1;
+	return A2(_elm_community$linear_algebra$Math_Vector2$vec2, x, y);
+};
+var _user$project$OBJ_Parser$toInt = function (s) {
 	return A2(
-		_elm_lang$core$Dict$map,
-		F2(
-			function (groupName, group) {
-				var _p115 = group;
-				switch (_p115.ctor) {
-					case 'GV':
-						return A2(
-							_user$project$OBJ_Assembler$log,
-							'GV',
-							_user$project$OBJ_Types$WithoutTexture(
-								A2(_user$project$OBJ_Assembler$makeMeshV, state.vs, _p115._0.faces)));
-					case 'GVT':
-						return A2(
-							_user$project$OBJ_Assembler$log,
-							'GVT',
-							_user$project$OBJ_Types$WithTexture(
-								A3(_user$project$OBJ_Assembler$makeMeshVT, state.vs, state.vts, _p115._0.faces)));
-					case 'GVN':
-						return A2(
-							_user$project$OBJ_Assembler$log,
-							'GVN',
-							_user$project$OBJ_Types$WithoutTexture(
-								A3(_user$project$OBJ_Assembler$makeMeshVN, state.vs, state.vns, _p115._0.faces)));
-					default:
-						return A2(
-							_user$project$OBJ_Assembler$log,
-							'GVTN',
-							_user$project$OBJ_Types$WithTexture(
-								A4(_user$project$OBJ_Assembler$makeMeshVNT, state.vs, state.vns, state.vts, _p115._0.faces)));
-				}
-			}),
-		state.groups);
+		_elm_lang$core$Result$withDefault,
+		0,
+		_elm_lang$core$String$toInt(s));
 };
-var _user$project$OBJ_Assembler$emptyCompileState = {groups: _elm_lang$core$Dict$empty, currentGroupName: 'default', objectName: _elm_lang$core$Maybe$Nothing, mtlLib: _elm_lang$core$Maybe$Nothing, currentGroup: _elm_lang$core$Maybe$Nothing, vs: _elm_lang$core$Array$empty, vts: _elm_lang$core$Array$empty, vns: _elm_lang$core$Array$empty};
-var _user$project$OBJ_Assembler$compile = function (lines) {
-	return _user$project$OBJ_Assembler$toMeshes(
-		_user$project$OBJ_Assembler$addCurrentGroup(
-			A2(_user$project$OBJ_Assembler$compileHelper, _user$project$OBJ_Assembler$emptyCompileState, lines)));
-};
-var _user$project$OBJ_Assembler$CompileState = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {currentGroup: a, currentGroupName: b, groups: c, mtlLib: d, objectName: e, vns: f, vs: g, vts: h};
-	});
 var _user$project$OBJ_Parser$formatError = F2(
 	function (ms, stream) {
 		var expectationSeparator = '\n  * ';
@@ -14781,12 +16040,6 @@ var _user$project$OBJ_Parser$formatError = F2(
 										expectationSeparator,
 										A2(_elm_lang$core$String$join, expectationSeparator, ms)))))))));
 	});
-var _user$project$OBJ_Parser$toInt = function (s) {
-	return A2(
-		_elm_lang$core$Result$withDefault,
-		0,
-		_elm_lang$core$String$toInt(s));
-};
 var _user$project$OBJ_Parser$intWithZero = A2(
 	_Bogdanp$elm_combine$Combine_ops['<*>'],
 	A2(
@@ -14833,12 +16086,6 @@ var _user$project$OBJ_Parser$comment = A2(
 	_Bogdanp$elm_combine$Combine_ops['*>'],
 	_Bogdanp$elm_combine$Combine$regex('#'),
 	_Bogdanp$elm_combine$Combine$regex('.*'));
-var _user$project$OBJ_Parser$ignoreZ = function (v) {
-	var _p0 = _elm_community$linear_algebra$Math_Vector3$toTuple(v);
-	var x = _p0._0;
-	var y = _p0._1;
-	return A2(_elm_community$linear_algebra$Math_Vector2$vec2, x, y);
-};
 var _user$project$OBJ_Parser$int__int = A2(
 	_Bogdanp$elm_combine$Combine_ops['<*>'],
 	A2(
@@ -14907,6 +16154,30 @@ var _user$project$OBJ_Parser$threeValues = F2(
 				A2(_Bogdanp$elm_combine$Combine_ops['*>'], _user$project$OBJ_Parser$spaces, vtype)),
 			A2(_Bogdanp$elm_combine$Combine_ops['*>'], _user$project$OBJ_Parser$spaces, vtype));
 	});
+var _user$project$OBJ_Parser$threeOrFourValues = function (elements) {
+	return A2(
+		_Bogdanp$elm_combine$Combine_ops['<|>'],
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<$>'],
+			_user$project$OBJ_Types$Four,
+			A2(
+				_user$project$OBJ_Parser$fourValues,
+				F4(
+					function (v0, v1, v2, v3) {
+						return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
+					}),
+				elements)),
+		A2(
+			_Bogdanp$elm_combine$Combine_ops['<$>'],
+			_user$project$OBJ_Types$Three,
+			A2(
+				_user$project$OBJ_Parser$threeValues,
+				F3(
+					function (v0, v1, v2) {
+						return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+					}),
+				elements)));
+};
 var _user$project$OBJ_Parser$vector3 = A2(_user$project$OBJ_Parser$threeValues, _elm_community$linear_algebra$Math_Vector3$vec3, _user$project$OBJ_Parser$betterFloat);
 var _user$project$OBJ_Parser$vertexNormal = A2(
 	_Bogdanp$elm_combine$Combine_ops['*>'],
@@ -14924,109 +16195,37 @@ var _user$project$OBJ_Parser$vertex = A2(
 	_Bogdanp$elm_combine$Combine$regex('v[ \t]+'),
 	_user$project$OBJ_Parser$vector3);
 var _user$project$OBJ_Parser$fVertexNormal = A2(
-	_Bogdanp$elm_combine$Combine_ops['<|>'],
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertexNormal4,
-		A2(
-			_user$project$OBJ_Parser$fourValues,
-			F4(
-				function (v0, v1, v2, v3) {
-					return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
-				}),
-			_user$project$OBJ_Parser$int__int)),
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertexNormal,
-		A2(
-			_user$project$OBJ_Parser$threeValues,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-				}),
-			_user$project$OBJ_Parser$int__int)));
+	_Bogdanp$elm_combine$Combine_ops['<$>'],
+	_user$project$OBJ_Types$FVertexNormal,
+	_user$project$OBJ_Parser$threeOrFourValues(_user$project$OBJ_Parser$int__int));
 var _user$project$OBJ_Parser$fVertexTextureNormal = A2(
-	_Bogdanp$elm_combine$Combine_ops['<|>'],
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertexTextureNormal4,
-		A2(
-			_user$project$OBJ_Parser$fourValues,
-			F4(
-				function (v0, v1, v2, v3) {
-					return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
-				}),
-			_user$project$OBJ_Parser$int_int_int)),
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertexTextureNormal,
-		A2(
-			_user$project$OBJ_Parser$threeValues,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-				}),
-			_user$project$OBJ_Parser$int_int_int)));
+	_Bogdanp$elm_combine$Combine_ops['<$>'],
+	_user$project$OBJ_Types$FVertexTextureNormal,
+	_user$project$OBJ_Parser$threeOrFourValues(_user$project$OBJ_Parser$int_int_int));
 var _user$project$OBJ_Parser$fVertexTexture = A2(
-	_Bogdanp$elm_combine$Combine_ops['<|>'],
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertexTexture4,
-		A2(
-			_user$project$OBJ_Parser$fourValues,
-			F4(
-				function (v0, v1, v2, v3) {
-					return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
-				}),
-			_user$project$OBJ_Parser$int_int)),
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertexTexture,
-		A2(
-			_user$project$OBJ_Parser$threeValues,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-				}),
-			_user$project$OBJ_Parser$int_int)));
+	_Bogdanp$elm_combine$Combine_ops['*>'],
+	_user$project$OBJ_Parser$threeOrFourValues(_user$project$OBJ_Parser$int_int),
+	_Bogdanp$elm_combine$Combine$fail('Models with no precalculated vertex normals are not supported!'));
 var _user$project$OBJ_Parser$fVertex = A2(
-	_Bogdanp$elm_combine$Combine_ops['<|>'],
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertex4,
-		A2(
-			_user$project$OBJ_Parser$fourValues,
-			F4(
-				function (v0, v1, v2, v3) {
-					return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
-				}),
-			_Bogdanp$elm_combine$Combine_Num$int)),
-	A2(
-		_Bogdanp$elm_combine$Combine_ops['<$>'],
-		_user$project$OBJ_Types$FVertex,
-		A2(
-			_user$project$OBJ_Parser$threeValues,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-				}),
-			_Bogdanp$elm_combine$Combine_Num$int)));
+	_Bogdanp$elm_combine$Combine_ops['*>'],
+	_user$project$OBJ_Parser$threeOrFourValues(_Bogdanp$elm_combine$Combine_Num$int),
+	_Bogdanp$elm_combine$Combine$fail('Models with no precalculated vertex normals are not supported!'));
 var _user$project$OBJ_Parser$face = A2(
 	_Bogdanp$elm_combine$Combine_ops['*>'],
 	_Bogdanp$elm_combine$Combine$regex('f[ \t]+'),
 	_Bogdanp$elm_combine$Combine$choice(
 		{
 			ctor: '::',
-			_0: _user$project$OBJ_Parser$fVertex,
+			_0: _user$project$OBJ_Parser$fVertexTextureNormal,
 			_1: {
 				ctor: '::',
-				_0: _user$project$OBJ_Parser$fVertexTexture,
+				_0: _user$project$OBJ_Parser$fVertexNormal,
 				_1: {
 					ctor: '::',
-					_0: _user$project$OBJ_Parser$fVertexTextureNormal,
+					_0: _user$project$OBJ_Parser$fVertex,
 					_1: {
 						ctor: '::',
-						_0: _user$project$OBJ_Parser$fVertexNormal,
+						_0: _user$project$OBJ_Parser$fVertexTexture,
 						_1: {ctor: '[]'}
 					}
 				}
@@ -15130,26 +16329,458 @@ var _user$project$OBJ_Parser$parse = function (input) {
 			A2(_user$project$OBJ_Parser$formatError, _p1._0._2, _p1._0._1));
 	}
 };
-var _user$project$OBJ_Parser$load = function (input) {
-	return A2(
-		_elm_lang$core$Result$map,
-		_user$project$OBJ_Assembler$compile,
-		_user$project$OBJ_Parser$parse(input));
+var _user$project$OBJ$defaultSettings = {withTangents: false};
+var _user$project$OBJ$parseObjStringWith = F2(
+	function (config, input) {
+		return A2(
+			_elm_lang$core$Result$map,
+			_user$project$OBJ_Assembler$compile(config),
+			_user$project$OBJ_Parser$parse(input));
+	});
+var _user$project$OBJ$parseObjString = _user$project$OBJ$parseObjStringWith(_user$project$OBJ$defaultSettings);
+var _user$project$OBJ$loadObjFileWith = F3(
+	function (settings, url, msg) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			function (r) {
+				var _p0 = r;
+				if (_p0.ctor === 'Ok') {
+					if (_p0._0.ctor === 'Ok') {
+						return msg(
+							_elm_lang$core$Result$Ok(_p0._0._0));
+					} else {
+						return msg(
+							_elm_lang$core$Result$Err(_p0._0._0));
+					}
+				} else {
+					return msg(
+						_elm_lang$core$Result$Err(_p0._0));
+				}
+			},
+			A2(
+				_elm_lang$core$Task$onError,
+				function (e) {
+					return _elm_lang$core$Task$succeed(
+						_elm_lang$core$Result$Err(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'failed to load: ',
+								_elm_lang$core$Basics$toString(e))));
+				},
+				A2(
+					_elm_lang$core$Task$andThen,
+					function (s) {
+						return _elm_lang$core$Task$succeed(
+							A2(_user$project$OBJ$parseObjStringWith, settings, s));
+					},
+					_elm_lang$http$Http$toTask(
+						_elm_lang$http$Http$getString(url)))));
+	});
+var _user$project$OBJ$loadObjFile = _user$project$OBJ$loadObjFileWith(_user$project$OBJ$defaultSettings);
+var _user$project$OBJ$Settings = function (a) {
+	return {withTangents: a};
 };
-var _user$project$Main$reflectionFrag = {'src': '\nprecision mediump float;\n\nuniform sampler2D texture;\n\nvarying vec3 vNormal;\n\nvoid main()\n{\n    vec2 texCoord = vec2(0.5 * vNormal.x + 0.5, - 0.5 * vNormal.y - 0.5);\n    vec4 fragColor = texture2D(texture, texCoord);\n    fragColor.a = 1.0;\n\n    gl_FragColor = fragColor;\n}\n\n'};
-var _user$project$Main$reflectionVert = {'src': '\n\nattribute vec3 pos;\nattribute vec3 norm;\nuniform mat4 mvMat;\nuniform mat4 camera;\nvarying vec3 vNormal;\n\nvoid main()\n{\n    vec4 vertex4 = mvMat * vec4(pos, 1.0);\n    vNormal = vec3(mvMat * vec4(norm, 0.0));\n    vec3 nm_z = normalize(vec3(vertex4));\n    vec3 nm_x = cross(nm_z, vec3(0.0, 1.0, 0.0));\n    vec3 nm_y = cross(nm_x, nm_z);\n    vNormal = vec3(dot(vNormal, nm_x), dot(vNormal, nm_y), dot(vNormal, nm_z));\n    gl_Position = camera * vertex4;\n}\n\n'};
-var _user$project$Main$phongFrag = {'src': '\nprecision mediump float;\n\nvarying vec3 vVertex;\nvarying vec3 vNormal;\nconst vec3 lightPos = 10.0*vec3(1.0, 5.0, 2.0);\nconst vec3 specularColor = vec3(1.0,1.0,1.0);\nconst vec3 ambientColor = vec3(0.2,0.1,0.1);\nconst vec3 diffuseColor = vec3(0.8,0.8,1.0);\n\n\nconst float shininessVal = 200.0;\nconst float Ka=0.6, Kd=0.6, Ks=0.7;\n\nvoid main()\n{\n    vec3 fragColor = vec3(0.7, 0.7, 0.7);\n\n    vec3 N = normalize(vNormal);\n    vec3 L = normalize(lightPos - vVertex);\n\n    float lambertian = max(dot(N, L), 0.0);\n\n    float specular = 0.0;\n\n    if (lambertian > 0.0) {\n        vec3 R = reflect(-L, N);      // Reflected light vector\n        vec3 V = normalize(-vVertex); // Vector to viewer\n\n        // Compute the specular term\n        float specAngle = max(dot(R, V), 0.0);\n        specular = pow(specAngle, shininessVal);\n    }\n    gl_FragColor =\n        vec4(Ka * ambientColor +\n             Kd * lambertian * diffuseColor +\n             Ks * specular * specularColor, 1.0);\n}\n\n'};
-var _user$project$Main$phongVert = {'src': '\nattribute vec3 pos;\nattribute vec3 norm;\nuniform mat4 mvMat;\nuniform mat3 nMat;\nuniform mat4 camera;\nvarying vec3 vVertex;\nvarying vec3 vNormal;\n\nvoid main()\n{\n    vec4 pos4 = mvMat * vec4(pos, 1.0);\n    vNormal = vec3(mvMat * vec4(norm, 0.0));\n\n    vVertex = vec3(pos4);\n    gl_Position = camera * pos4;\n}\n\n'};
-var _user$project$Main$update = F2(
+var _user$project$Shaders$simpleFrag = {'src': '\nprecision mediump float;\n\nvarying vec3 vLightDirection;\nvarying vec3 vViewDirection;\nvarying vec3 vNormal;\n\nvoid main()\n{\n    vec3 lightDir = normalize(vLightDirection);\n\n    // lambert\n    vec3 pixelNormal = normalize(vNormal);\n    float lambert = max(dot(pixelNormal, lightDir), 0.0);\n\n    // diffuse + lambert\n    vec3 lightIntensities = vec3(1.5, 1.0, 1.0);\n    vec3 diffuseColor = vec3(0.3, 0.2, 0.95);\n    vec3 diffuse = lambert * diffuseColor * lightIntensities;\n\n    // ambient\n    vec3 ambient = 0.2 * diffuseColor;\n\n    // specular\n    float shininess = 32.0;\n    vec3 viewDir = normalize(vViewDirection);\n    vec3 reflectDir = reflect(-lightDir, pixelNormal);\n    vec3 halfwayDir = normalize(lightDir + viewDir);\n    float spec = pow(max(dot(pixelNormal, halfwayDir), 0.0), shininess);\n    vec3 specular = vec3(0.2) * spec * lightIntensities;\n\n    // attenuation\n    float lightAttenuation = 0.3;\n    float attenuation = 1.0 / (1.0 + lightAttenuation * pow(length(vLightDirection), 2.0));\n\n    vec3 final_color = ambient + (diffuse + specular) * attenuation;\n    gl_FragColor = vec4(final_color, 1.0);\n}\n'};
+var _user$project$Shaders$simpleVert = {'src': '\nattribute vec3 position;\nattribute vec3 normal;\n\nvarying vec3 vLightDirection;\nvarying vec3 vViewDirection;\nvarying vec3 vNormal;\n\nuniform mat4 modelViewProjectionMatrix;\nuniform mat4 modelMatrix;\nuniform vec3 lightPosition;\nuniform vec3 viewPosition;\n\nvoid main()\n{\n    vec4 pos = vec4(position, 1.0 );\n    vec3 posWorld = (modelMatrix * pos).xyz;\n\n    vLightDirection = lightPosition - posWorld;\n    vViewDirection = viewPosition - posWorld;\n    vNormal = normal;\n    gl_Position = modelViewProjectionMatrix * pos;\n}\n'};
+var _user$project$Shaders$noNormalFrag = {'src': '\nprecision mediump float;\n\nuniform sampler2D textureDiff;\n\nvarying vec2 vTexCoord;\nvarying vec3 vLightDirection;\nvarying vec3 vViewDirection;\nvarying vec3 vNormal;\n\nvoid main()\n{\n    vec3 lightDir = normalize(vLightDirection);\n\n    // lambert\n    vec3 pixelNormal = normalize(vNormal);\n    float lambert = max(dot(pixelNormal, lightDir), 0.0);\n\n    // diffuse + lambert\n    vec3 lightIntensities = vec3(1.5, 1.0, 1.0);\n    vec3 diffuseColor = texture2D(textureDiff, vTexCoord).rgb;\n    vec3 diffuse = lambert * diffuseColor * lightIntensities;\n\n    // ambient\n    vec3 ambient = 0.3 * diffuseColor;\n\n    // specular\n    float shininess = 32.0;\n    vec3 viewDir = normalize(vViewDirection);\n    vec3 reflectDir = reflect(-lightDir, pixelNormal);\n    vec3 halfwayDir = normalize(lightDir + viewDir);\n    float spec = pow(max(dot(pixelNormal, halfwayDir), 0.0), shininess);\n    vec3 specular = vec3(0.2) * spec * lightIntensities;\n\n    // attenuation\n    float lightAttenuation = 0.3;\n    float attenuation = 1.0 / (1.0 + lightAttenuation * pow(length(vLightDirection), 2.0));\n\n    vec3 final_color = ambient + (diffuse + specular) * attenuation;\n    gl_FragColor = vec4(final_color, 1.0);\n}\n'};
+var _user$project$Shaders$noNormalVert = {'src': '\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 texCoord;\n\nvarying vec2 vTexCoord;\nvarying vec3 vLightDirection;\nvarying vec3 vViewDirection;\nvarying vec3 vNormal;\n\nuniform mat4 modelViewProjectionMatrix;\nuniform mat4 modelMatrix;\nuniform vec3 lightPosition;\nuniform vec3 viewPosition;\n\nvoid main()\n{\n    vec4 pos = vec4(position, 1.0 );\n    vec3 posWorld = (modelMatrix * pos).xyz;\n\n    vLightDirection = lightPosition - posWorld;\n    vViewDirection = viewPosition - posWorld;\n    vTexCoord = texCoord;\n    vNormal = normal;\n    gl_Position = modelViewProjectionMatrix * pos;\n}\n'};
+var _user$project$Shaders$normalFrag = {'src': '\nprecision mediump float;\n\nuniform sampler2D textureDiff;\nuniform sampler2D textureNorm;\n\nvarying vec2 vTexCoord;\nvarying vec3 vLightDirection;\nvarying vec3 vViewDirection;\n\nvoid main() {\n\n    vec3 lightDir = normalize(vLightDirection);\n\n    // Local normal, in tangent space\n    vec3 pixelNormal = normalize(texture2D(textureNorm, vTexCoord).rgb*2.0 - 1.0);\n    float lambert = max(dot(pixelNormal, lightDir), 0.0);\n\n\n    // diffuse + lambert\n    vec3 lightIntensities = vec3(1.5, 1.0, 1.0);\n    vec3 diffuseColor = texture2D(textureDiff, vTexCoord).rgb;\n    vec3 diffuse = lambert * diffuseColor * lightIntensities;\n\n    // ambient\n    vec3 ambient = 0.3 * diffuseColor;\n\n    // specular\n    float shininess = 32.0;\n    vec3 viewDir = normalize(vViewDirection);\n    vec3 reflectDir = reflect(-lightDir, pixelNormal);\n    vec3 halfwayDir = normalize(lightDir + viewDir);\n    float spec = pow(max(dot(pixelNormal, halfwayDir), 0.0), shininess);\n    vec3 specular = vec3(0.2) * spec * lightIntensities;\n\n    // attenuation\n    float lightAttenuation = 0.3;\n    float attenuation = 1.0 / (1.0 + lightAttenuation * pow(length(vLightDirection), 2.0));\n\n    vec3 final_color = ambient + (diffuse + specular) * attenuation;\n    gl_FragColor = vec4(final_color, 1.0);\n}\n'};
+var _user$project$Shaders$normalVert = {'src': '\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 texCoord;\nattribute vec4 tangent;\n\nvarying vec2 vTexCoord;\nvarying vec3 vLightDirection;\nvarying vec3 vViewDirection;\n\n\nuniform mat4 modelViewProjectionMatrix;\nuniform mat4 modelMatrix;\nuniform vec3 lightPosition;\nuniform vec3 viewPosition;\n\nmat3 transpose(mat3 m) {\n    return mat3(m[0][0], m[1][0], m[2][0],\n                m[0][1], m[1][1], m[2][1],\n                m[0][2], m[1][2], m[2][2]);\n}\n\n\nvoid main()\n{\n    vec4 pos = vec4(position, 1.0 );\n    vec3 posWorld = (modelMatrix * pos).xyz;\n\n    // Tangent, Bitangent, Normal space matrix TBN\n    // this isn\'t entirely correct, it should use the normal matrix\n    vec3 n = normalize((modelMatrix * vec4(normal, 0.0)).xyz);\n    vec3 t = normalize((modelMatrix * vec4(tangent.xyz, 0.0)).xyz);\n    vec3 b = normalize((modelMatrix * vec4((cross(normal, tangent.xyz) * tangent.w), 0.0)).xyz);\n    mat3 tbn = transpose(mat3(t, b, n));\n    vLightDirection = tbn*(lightPosition - posWorld);\n    vViewDirection = tbn*(viewPosition - posWorld);\n    vTexCoord = texCoord;\n    gl_Position = modelViewProjectionMatrix * pos;\n}\n'};
+var _user$project$ElmLogo$getCamera = function (_p0) {
+	var _p1 = _p0;
+	var _p5 = _p1.zoom;
+	var _p4 = _p1.windowSize;
+	var _p3 = _p1.mouseDelta;
+	var aspect = _elm_lang$core$Basics$toFloat(_p4.width) / _elm_lang$core$Basics$toFloat(_p4.height);
+	var proj = A4(_elm_community$linear_algebra$Math_Matrix4$makePerspective, 45, aspect, 1.0e-2, 10000);
+	var _p2 = {ctor: '_Tuple2', _0: _p3.x, _1: _p3.y};
+	var mx = _p2._0;
+	var my = _p2._1;
+	var position = A3(
+		_elm_community$linear_algebra$Math_Vector3$vec3,
+		(_p5 * _elm_lang$core$Basics$sin(0 - mx)) * _elm_lang$core$Basics$sin(my),
+		((0 - _p5) * _elm_lang$core$Basics$cos(my)) + 1,
+		(_p5 * _elm_lang$core$Basics$cos(0 - mx)) * _elm_lang$core$Basics$sin(my));
+	var view = A3(
+		_elm_community$linear_algebra$Math_Matrix4$makeLookAt,
+		position,
+		A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0, 1, 0),
+		A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0, 1, 0));
+	return {
+		ctor: '_Tuple4',
+		_0: proj,
+		_1: view,
+		_2: A2(_elm_community$linear_algebra$Math_Matrix4$mul, proj, view),
+		_3: position
+	};
+};
+var _user$project$ElmLogo$renderCullFace = _elm_community$webgl$WebGL$entityWith(
+	{
+		ctor: '::',
+		_0: _elm_community$webgl$WebGL_Settings_DepthTest$default,
+		_1: {
+			ctor: '::',
+			_0: _elm_community$webgl$WebGL_Settings$cullFace(_elm_community$webgl$WebGL_Settings$front),
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$ElmLogo$renderModel = F4(
+	function (model, textureDiff, textureNorm, mesh) {
+		var lightPos = A3(
+			_elm_community$linear_algebra$Math_Vector3$vec3,
+			0.5 * _elm_lang$core$Basics$cos(2 * model.time),
+			1 + (0.5 * _elm_lang$core$Basics$sin(2 * model.time)),
+			0.5);
+		var modelM = _elm_community$linear_algebra$Math_Matrix4$makeTranslate(
+			A3(_elm_community$linear_algebra$Math_Vector3$vec3, -1, 0, 0));
+		var _p6 = _user$project$ElmLogo$getCamera(model);
+		var camera = _p6._0;
+		var view = _p6._1;
+		var viewProjection = _p6._2;
+		var cameraPos = _p6._3;
+		var uniforms = {
+			camera: camera,
+			mvMat: A2(_elm_community$linear_algebra$Math_Matrix4$mul, view, modelM),
+			modelViewProjectionMatrix: A2(_elm_community$linear_algebra$Math_Matrix4$mul, viewProjection, modelM),
+			modelMatrix: modelM,
+			normalMat: _elm_community$linear_algebra$Math_Matrix4$identity,
+			viewMat: view,
+			viewPosition: cameraPos,
+			textureDiff: textureDiff,
+			textureNorm: textureNorm,
+			time: model.time,
+			light_diffuse: A3(_elm_community$linear_algebra$Math_Vector3$vec3, 1.0, 1.0, 1.0),
+			lightPosition: lightPos,
+			light_specular: A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0.15, 0.15, 0.15),
+			material_diffuse: A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0.5, 0.5, 0.5),
+			material_specular: A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0.15, 0.15, 0.15),
+			material_shininess: 100.002
+		};
+		var _p7 = mesh;
+		switch (_p7.ctor) {
+			case 'WithoutTexture':
+				return A4(
+					_user$project$ElmLogo$renderCullFace,
+					_user$project$Shaders$simpleVert,
+					_user$project$Shaders$simpleFrag,
+					A2(_elm_community$webgl$WebGL$indexedTriangles, _p7._0.vertices, _p7._0.indices),
+					uniforms);
+			case 'WithTexture':
+				return A4(
+					_user$project$ElmLogo$renderCullFace,
+					_user$project$Shaders$noNormalVert,
+					_user$project$Shaders$noNormalFrag,
+					A2(_elm_community$webgl$WebGL$indexedTriangles, _p7._0.vertices, _p7._0.indices),
+					uniforms);
+			default:
+				return A4(
+					_user$project$ElmLogo$renderCullFace,
+					_user$project$Shaders$normalVert,
+					_user$project$Shaders$normalFrag,
+					A2(_elm_community$webgl$WebGL$indexedTriangles, _p7._0.vertices, _p7._0.indices),
+					uniforms);
+		}
+	});
+var _user$project$ElmLogo$loadTexture = F2(
+	function (url, msg) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			function (r) {
+				var _p8 = r;
+				if (_p8.ctor === 'Ok') {
+					return msg(
+						_elm_lang$core$Result$Ok(_p8._0));
+				} else {
+					return msg(
+						_elm_lang$core$Result$Err(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'Failed to load texture: ',
+								_elm_lang$core$Basics$toString(_p8._0))));
+				}
+			},
+			_elm_community$webgl$WebGL_Texture$load(url));
+	});
+var _user$project$ElmLogo$models = {
+	ctor: '::',
+	_0: 'meshes/elmLogo.obj',
+	_1: {
+		ctor: '::',
+		_0: 'meshes/suzanneNoUV.obj',
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$ElmLogo$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {time: a, mesh: b, currentModel: c, zoom: d, diffText: e, normText: f, isDown: g, lastMousePos: h, mouseDelta: i, windowSize: j, withTangent: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$ElmLogo$MouseDelta = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _user$project$ElmLogo$initModel = {
+	mesh: _elm_lang$core$Result$Err('loading ...'),
+	currentModel: 'elmLogo.obj',
+	time: 0,
+	zoom: 5,
+	diffText: _elm_lang$core$Result$Err('Loading texture...'),
+	normText: _elm_lang$core$Result$Err('Loading texture...'),
+	isDown: false,
+	lastMousePos: A2(_elm_lang$mouse$Mouse$Position, 0, 0),
+	mouseDelta: A2(_user$project$ElmLogo$MouseDelta, 0, _elm_lang$core$Basics$pi / 2),
+	windowSize: A2(_elm_lang$window$Window$Size, 800, 600),
+	withTangent: true
+};
+var _user$project$ElmLogo$getDelta = F3(
+	function (curr, lastP, delta) {
+		return A2(
+			_user$project$ElmLogo$MouseDelta,
+			(_elm_lang$core$Basics$toFloat(curr.x - lastP.x) / 100) + delta.x,
+			A3(
+				_elm_lang$core$Basics$clamp,
+				1.0e-2,
+				_elm_lang$core$Basics$pi,
+				(_elm_lang$core$Basics$toFloat(curr.y - lastP.y) / 100) + delta.y));
+	});
+var _user$project$ElmLogo$SetUseTangent = function (a) {
+	return {ctor: 'SetUseTangent', _0: a};
+};
+var _user$project$ElmLogo$SelectMesh = function (a) {
+	return {ctor: 'SelectMesh', _0: a};
+};
+var _user$project$ElmLogo$selectModel = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'z-index', _1: '2'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'backgroundColor', _1: 'white'},
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$select,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$ElmLogo$SelectMesh),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$value(model.currentModel),
+							_1: {ctor: '[]'}
+						}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						function (t) {
+							return A2(
+								_elm_lang$html$Html$option,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$value(t),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(t),
+									_1: {ctor: '[]'}
+								});
+						},
+						_user$project$ElmLogo$models)),
+				_1: {ctor: '[]'}
+			},
+			A2(_elm_lang$core$String$startsWith, 'meshes/elmLogo', model.currentModel) ? {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('\twith normal map: '),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onCheck(_user$project$ElmLogo$SetUseTangent),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$checked(model.withTangent),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				}
+			} : {ctor: '[]'}));
+};
+var _user$project$ElmLogo$ResizeWindow = function (a) {
+	return {ctor: 'ResizeWindow', _0: a};
+};
+var _user$project$ElmLogo$NormTextureLoaded = function (a) {
+	return {ctor: 'NormTextureLoaded', _0: a};
+};
+var _user$project$ElmLogo$DiffTextureLoaded = function (a) {
+	return {ctor: 'DiffTextureLoaded', _0: a};
+};
+var _user$project$ElmLogo$MouseUp = {ctor: 'MouseUp'};
+var _user$project$ElmLogo$MouseDown = function (a) {
+	return {ctor: 'MouseDown', _0: a};
+};
+var _user$project$ElmLogo$MouseMove = function (a) {
+	return {ctor: 'MouseMove', _0: a};
+};
+var _user$project$ElmLogo$Zoom = function (a) {
+	return {ctor: 'Zoom', _0: a};
+};
+var _user$project$ElmLogo$onZoom = A2(
+	_elm_lang$html$Html_Events$on,
+	'wheel',
+	A2(
+		_elm_lang$core$Json_Decode$map,
+		_user$project$ElmLogo$Zoom,
+		A2(_elm_lang$core$Json_Decode$field, 'deltaY', _elm_lang$core$Json_Decode$float)));
+var _user$project$ElmLogo$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$ElmLogo$selectModel(model),
+			_1: {
+				ctor: '::',
+				_0: function () {
+					var _p9 = {ctor: '_Tuple3', _0: model.mesh, _1: model.diffText, _2: model.normText};
+					if ((((_p9.ctor === '_Tuple3') && (_p9._0.ctor === 'Ok')) && (_p9._1.ctor === 'Ok')) && (_p9._2.ctor === 'Ok')) {
+						return A3(
+							_elm_community$webgl$WebGL$toHtmlWith,
+							{
+								ctor: '::',
+								_0: _elm_community$webgl$WebGL$antialias,
+								_1: {
+									ctor: '::',
+									_0: _elm_community$webgl$WebGL$depth(1),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _user$project$ElmLogo$onZoom,
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$width(model.windowSize.width),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$height(model.windowSize.height),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							},
+							A2(
+								_elm_lang$core$List$map,
+								A3(_user$project$ElmLogo$renderModel, model, _p9._1._0, _p9._2._0),
+								A2(
+									_elm_lang$core$List$concatMap,
+									_elm_lang$core$Dict$values,
+									_elm_lang$core$Dict$values(_p9._0._0))));
+					} else {
+						return A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(_p9)),
+								_1: {ctor: '[]'}
+							});
+					}
+				}(),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$ElmLogo$LoadObj = F2(
+	function (a, b) {
+		return {ctor: 'LoadObj', _0: a, _1: b};
+	});
+var _user$project$ElmLogo$loadModel = F2(
+	function (withTangents, url) {
+		return A3(
+			_user$project$OBJ$loadObjFileWith,
+			{withTangents: withTangents},
+			url,
+			_user$project$ElmLogo$LoadObj(url));
+	});
+var _user$project$ElmLogo$initCmd = _elm_lang$core$Platform_Cmd$batch(
+	{
+		ctor: '::',
+		_0: A2(_user$project$ElmLogo$loadModel, true, 'meshes/elmLogo.obj'),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$ElmLogo$loadTexture, 'textures/elmLogoDiffuse.png', _user$project$ElmLogo$DiffTextureLoaded),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$ElmLogo$loadTexture, 'textures/elmLogoNorm.png', _user$project$ElmLogo$NormTextureLoaded),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Task$perform, _user$project$ElmLogo$ResizeWindow, _elm_lang$window$Window$size),
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
+var _user$project$ElmLogo$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p10 = msg;
+		switch (_p10.ctor) {
 			case 'Tick':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{time: model.time + (_p0._0 / 1000)}),
+						{time: model.time + (_p10._0 / 1000)}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Zoom':
@@ -15157,15 +16788,76 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{zoom: model.zoom + (_p0._0 / 100)}),
+						{
+							zoom: A2(_elm_lang$core$Basics$max, 1.0e-2, model.zoom + (_p10._0 / 100))
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SelectMesh':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(_user$project$ElmLogo$loadModel, model.withTangent, _p10._0)
+				};
+			case 'SetUseTangent':
+				var _p11 = _p10._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{withTangent: _p11}),
+					_1: A2(_user$project$ElmLogo$loadModel, _p11, model.currentModel)
 				};
 			case 'LoadObj':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{mesh: _p0._0}),
+						{mesh: _p10._1, currentModel: _p10._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'DiffTextureLoaded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{diffText: _p10._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'NormTextureLoaded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{normText: _p10._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'MouseDown':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{isDown: true, lastMousePos: _p10._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'MouseUp':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{isDown: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'MouseMove':
+				var _p12 = _p10._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							mouseDelta: A3(_user$project$ElmLogo$getDelta, _p12, model.lastMousePos, model.mouseDelta),
+							lastMousePos: _p12
+						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
@@ -15173,235 +16865,55 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{reflectionTexture: _p0._0}),
+						{windowSize: _p10._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
 	});
-var _user$project$Main$getCamera = F2(
-	function (zoom, t) {
-		return {
-			ctor: '_Tuple2',
-			_0: A4(_elm_community$linear_algebra$Math_Matrix4$makePerspective, 45, 1, 1.0e-2, 10000),
-			_1: A3(
-				_elm_community$linear_algebra$Math_Matrix4$makeLookAt,
-				A3(_elm_community$linear_algebra$Math_Vector3$vec3, zoom, zoom / 2, zoom),
-				A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0, 0, 0),
-				A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0, 1, 0))
-		};
-	});
-var _user$project$Main$renderModel = F3(
-	function (_p1, texture, mesh) {
-		var _p2 = _p1;
-		var _p5 = _p2.time;
-		var model = A2(
-			_elm_community$linear_algebra$Math_Matrix4$makeRotate,
-			_p5,
-			A3(_elm_community$linear_algebra$Math_Vector3$vec3, 0, 1, 0));
-		var _p3 = A2(_user$project$Main$getCamera, _p2.zoom, _p5);
-		var camera = _p3._0;
-		var view = _p3._1;
-		var modelView = A2(_elm_community$linear_algebra$Math_Matrix4$mul, view, model);
-		var _p4 = mesh;
-		if (_p4.ctor === 'WithoutTexture') {
-			return A5(
-				_elm_community$webgl$WebGL$renderWith,
-				{
-					ctor: '::',
-					_0: _elm_community$webgl$WebGL_Settings$depth(_elm_community$webgl$WebGL_Settings$depthOptions),
-					_1: {
-						ctor: '::',
-						_0: _elm_community$webgl$WebGL_Settings$cullFace(_elm_community$webgl$WebGL_Settings$front),
-						_1: {ctor: '[]'}
-					}
-				},
-				_user$project$Main$reflectionVert,
-				_user$project$Main$reflectionFrag,
-				A2(_elm_community$webgl$WebGL$indexedTriangles, _p4._0.vertices, _p4._0.indices),
-				{camera: camera, mvMat: modelView, texture: texture});
-		} else {
-			return A5(
-				_elm_community$webgl$WebGL$renderWith,
-				{
-					ctor: '::',
-					_0: _elm_community$webgl$WebGL_Settings$depth(_elm_community$webgl$WebGL_Settings$depthOptions),
-					_1: {
-						ctor: '::',
-						_0: _elm_community$webgl$WebGL_Settings$cullFace(_elm_community$webgl$WebGL_Settings$front),
-						_1: {ctor: '[]'}
-					}
-				},
-				_user$project$Main$reflectionVert,
-				_user$project$Main$reflectionFrag,
-				A2(_elm_community$webgl$WebGL$indexedTriangles, _p4._0.vertices, _p4._0.indices),
-				{camera: camera, mvMat: modelView, texture: texture});
-		}
-	});
-var _user$project$Main$loadTexture = F2(
-	function (url, msg) {
-		return A2(
-			_elm_lang$core$Task$attempt,
-			function (r) {
-				var _p6 = r;
-				if (_p6.ctor === 'Ok') {
-					return msg(
-						_elm_lang$core$Result$Ok(_p6._0));
-				} else {
-					return msg(
-						_elm_lang$core$Result$Err(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'Failed to load texture: ',
-								_elm_lang$core$Basics$toString(_p6._0))));
-				}
-			},
-			_elm_community$webgl$WebGL_Texture$load(url));
-	});
-var _user$project$Main$initModel = {
-	mesh: _elm_lang$core$Result$Err('loading ...'),
-	time: 0,
-	zoom: 10,
-	reflectionTexture: _elm_lang$core$Result$Err('Loading texture...')
+var _user$project$ElmLogo$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
 };
-var _user$project$Main$objFileUrl = 'meshes/suzanne.obj';
-var _user$project$Main$loadModel = function (msg) {
-	return A2(
-		_elm_lang$core$Task$attempt,
-		function (r) {
-			var _p7 = r;
-			if (_p7.ctor === 'Ok') {
-				if (_p7._0.ctor === 'Ok') {
-					return msg(
-						_elm_lang$core$Result$Ok(_p7._0._0));
-				} else {
-					return msg(
-						_elm_lang$core$Result$Err(_p7._0._0));
-				}
-			} else {
-				return msg(
-					_elm_lang$core$Result$Err(_p7._0));
-			}
-		},
+var _user$project$ElmLogo$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
 		A2(
-			_elm_lang$core$Task$onError,
-			function (e) {
-				return _elm_lang$core$Task$succeed(
-					_elm_lang$core$Result$Err(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'failed to load: ',
-							_elm_lang$core$Basics$toString(e))));
-			},
-			A2(
-				_elm_lang$core$Task$andThen,
-				function (s) {
-					return _elm_lang$core$Task$succeed(
-						_user$project$OBJ_Parser$load(s));
-				},
-				_elm_lang$http$Http$toTask(
-					_elm_lang$http$Http$getString(_user$project$Main$objFileUrl)))));
-};
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {time: a, mesh: b, zoom: c, reflectionTexture: d};
-	});
-var _user$project$Main$TextureLoaded = function (a) {
-	return {ctor: 'TextureLoaded', _0: a};
-};
-var _user$project$Main$Zoom = function (a) {
-	return {ctor: 'Zoom', _0: a};
-};
-var _user$project$Main$onZoom = A2(
-	_elm_lang$html$Html_Events$on,
-	'wheel',
-	A2(
-		_elm_lang$core$Json_Decode$map,
-		_user$project$Main$Zoom,
-		A2(_elm_lang$core$Json_Decode$field, 'deltaY', _elm_lang$core$Json_Decode$float)));
-var _user$project$Main$view = function (model) {
-	var _p8 = model.mesh;
-	if (_p8.ctor === 'Ok') {
-		var _p9 = model.reflectionTexture;
-		if (_p9.ctor === 'Ok') {
-			return A3(
-				_elm_community$webgl$WebGL$toHtmlWith,
-				{
+			_elm_lang$core$Basics_ops['++'],
+			model.isDown ? {
+				ctor: '::',
+				_0: _elm_lang$mouse$Mouse$moves(_user$project$ElmLogo$MouseMove),
+				_1: {ctor: '[]'}
+			} : {ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$animation_frame$AnimationFrame$diffs(_user$project$ElmLogo$Tick),
+				_1: {
 					ctor: '::',
-					_0: _elm_community$webgl$WebGL_Options$antialias,
+					_0: _elm_lang$mouse$Mouse$downs(_user$project$ElmLogo$MouseDown),
 					_1: {
 						ctor: '::',
-						_0: _elm_community$webgl$WebGL_Options$depth(1),
-						_1: {ctor: '[]'}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _user$project$Main$onZoom,
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$width(400),
+						_0: _elm_lang$mouse$Mouse$ups(
+							function (_p13) {
+								return _user$project$ElmLogo$MouseUp;
+							}),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$height(400),
+							_0: _elm_lang$window$Window$resizes(_user$project$ElmLogo$ResizeWindow),
 							_1: {ctor: '[]'}
 						}
 					}
-				},
-				A2(
-					_elm_lang$core$List$map,
-					A2(_user$project$Main$renderModel, model, _p9._0),
-					_elm_lang$core$Dict$values(_p8._0)));
-		} else {
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(_p9._0),
-					_1: {ctor: '[]'}
-				});
-		}
-	} else {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$Basics$toString(_p8._0)),
-				_1: {ctor: '[]'}
-			});
-	}
+				}
+			}));
 };
-var _user$project$Main$LoadObj = function (a) {
-	return {ctor: 'LoadObj', _0: a};
-};
-var _user$project$Main$initCmd = _elm_lang$core$Platform_Cmd$batch(
+var _user$project$ElmLogo$main = _elm_lang$html$Html$program(
 	{
-		ctor: '::',
-		_0: _user$project$Main$loadModel(_user$project$Main$LoadObj),
-		_1: {
-			ctor: '::',
-			_0: A2(_user$project$Main$loadTexture, 'meshes/textures/chavant.jpg', _user$project$Main$TextureLoaded),
-			_1: {ctor: '[]'}
-		}
-	});
-var _user$project$Main$Tick = function (a) {
-	return {ctor: 'Tick', _0: a};
-};
-var _user$project$Main$main = _elm_lang$html$Html$program(
-	{
-		init: {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _user$project$Main$initCmd},
-		view: _user$project$Main$view,
-		subscriptions: function (model) {
-			return _elm_lang$animation_frame$AnimationFrame$diffs(_user$project$Main$Tick);
-		},
-		update: _user$project$Main$update
+		init: {ctor: '_Tuple2', _0: _user$project$ElmLogo$initModel, _1: _user$project$ElmLogo$initCmd},
+		view: _user$project$ElmLogo$view,
+		subscriptions: _user$project$ElmLogo$subscriptions,
+		update: _user$project$ElmLogo$update
 	})();
 var Elm = {};
-Elm['Main'] = Elm['Main'] || {};
-if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', undefined);
+Elm['ElmLogo'] = Elm['ElmLogo'] || {};
+if (typeof _user$project$ElmLogo$main !== 'undefined') {
+    _user$project$ElmLogo$main(Elm['ElmLogo'], 'ElmLogo', undefined);
 }
 
 if (typeof define === "function" && define['amd'])
@@ -15433,4 +16945,4 @@ for (var publicModule in Elm)
 }
 
 }).call(this);
-</script></head><body><script type="text/javascript">Elm.Main.fullscreen()</script></body></html>
+</script></head><body><script type="text/javascript">Elm.ElmLogo.fullscreen()</script></body></html>
