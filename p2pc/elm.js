@@ -5251,7 +5251,7 @@ var romstad$elm_chess$Internal$Game$empty = {
 	tags: _List_Nil
 };
 var romstad$elm_chess$Game$empty = romstad$elm_chess$Game$Game(romstad$elm_chess$Internal$Game$empty);
-var author$project$Main$initModel = {candidateMoves: _List_Nil, error: elm$core$Maybe$Nothing, game: romstad$elm_chess$Game$empty, gameState: author$project$Main$Init, isBlack: false, myId: elm$core$Maybe$Nothing, otherId: '', selectedSquare: elm$core$Maybe$Nothing};
+var author$project$Main$initModel = {candidateMoves: _List_Nil, error: elm$core$Maybe$Nothing, game: romstad$elm_chess$Game$empty, gameState: author$project$Main$Init, isBlack: false, myAnswer: elm$core$Maybe$Nothing, myOffer: elm$core$Maybe$Nothing, otherOffer: '', selectedSquare: elm$core$Maybe$Nothing};
 var author$project$Main$output = _Platform_outgoingPort('output', elm$core$Basics$identity);
 var elm$core$Elm$JsArray$initialize = _JsArray_initialize;
 var elm$core$Array$initializeHelp = F5(
@@ -5484,8 +5484,11 @@ var elm$json$Json$Decode$value = _Json_decodeValue;
 var author$project$Main$input = _Platform_incomingPort('input', elm$json$Json$Decode$value);
 var author$project$Main$MyTurn = {$: 'MyTurn'};
 var author$project$Main$OtherTurn = {$: 'OtherTurn'};
-var author$project$Main$GotId = function (a) {
-	return {$: 'GotId', a: a};
+var author$project$Main$GotAnswer = function (a) {
+	return {$: 'GotAnswer', a: a};
+};
+var author$project$Main$GotOffer = function (a) {
+	return {$: 'GotOffer', a: a};
 };
 var author$project$Main$GotMove = function (a) {
 	return {$: 'GotMove', a: a};
@@ -5523,11 +5526,16 @@ var author$project$Main$portDecoder = A2(
 	elm$json$Json$Decode$andThen,
 	function (t) {
 		switch (t) {
-			case 'GotId':
+			case 'GotOffer':
 				return A2(
 					elm$json$Json$Decode$map,
-					author$project$Main$GotId,
-					A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$string));
+					author$project$Main$GotOffer,
+					A2(elm$json$Json$Decode$field, 'offer', elm$json$Json$Decode$string));
+			case 'GotAnswer':
+				return A2(
+					elm$json$Json$Decode$map,
+					author$project$Main$GotAnswer,
+					A2(elm$json$Json$Decode$field, 'answer', elm$json$Json$Decode$string));
 			case 'GotMsg':
 				return A2(elm$json$Json$Decode$field, 'data', author$project$Main$msgDecoder);
 			default:
@@ -7445,16 +7453,12 @@ var author$project$Main$update = F2(
 								}),
 							elm$core$Platform$Cmd$none);
 					}
-				case 'SetOtherId':
+				case 'SetOtherOffer':
 					var s = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{otherId: s}),
-						elm$core$Platform$Cmd$none);
-				case 'Connect':
-					return _Utils_Tuple2(
-						model,
+							{otherOffer: s}),
 						author$project$Main$output(
 							elm$json$Json$Encode$object(
 								_List_fromArray(
@@ -7463,19 +7467,28 @@ var author$project$Main$update = F2(
 										'type',
 										elm$json$Json$Encode$string('Connect')),
 										_Utils_Tuple2(
-										'otherId',
-										elm$json$Json$Encode$string(model.otherId))
+										'otherOffer',
+										elm$json$Json$Encode$string(s))
 									]))));
 				case 'SquarePressed':
 					var sq = msg.a;
 					return A2(author$project$Main$squarePressed, sq, model);
-				case 'GotId':
-					var id = msg.a;
+				case 'GotOffer':
+					var offer = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								myId: elm$core$Maybe$Just(id)
+								myOffer: elm$core$Maybe$Just(offer)
+							}),
+						elm$core$Platform$Cmd$none);
+				case 'GotAnswer':
+					var answer = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								myAnswer: elm$core$Maybe$Just(answer)
 							}),
 						elm$core$Platform$Cmd$none);
 				case 'Ready':
@@ -7534,10 +7547,6 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
-var author$project$Main$Connect = {$: 'Connect'};
-var author$project$Main$SetOtherId = function (a) {
-	return {$: 'SetOtherId', a: a};
-};
 var author$project$Main$Rematch = {$: 'Rematch'};
 var author$project$Main$SquarePressed = function (a) {
 	return {$: 'SquarePressed', a: a};
@@ -7599,8 +7608,8 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
-var author$project$Main$square = F4(
-	function (_n0, piece, sqSize, msg) {
+var author$project$Main$square = F6(
+	function (isSelected, isPossibleMove, _n0, piece, sqSize, msg) {
 		var col = _n0.a;
 		var row = _n0.b;
 		return A2(
@@ -7611,7 +7620,8 @@ var author$project$Main$square = F4(
 					A2(
 					elm$html$Html$Attributes$style,
 					'backgroundColor',
-					(!A2(elm$core$Basics$modBy, 2, col + row)) ? 'rgb(200, 200, 200)' : 'rgb(140, 140, 140)'),
+					isSelected ? 'rgb(133, 57, 146)' : ((!A2(elm$core$Basics$modBy, 2, col + row)) ? 'rgb(200, 200, 200)' : 'rgb(140, 140, 140)')),
+					isPossibleMove ? A2(elm$html$Html$Attributes$style, 'filter', 'sepia(0.6)') : A2(elm$html$Html$Attributes$style, '', ''),
 					A2(elm$html$Html$Attributes$style, 'position', 'absolute'),
 					A2(
 					elm$html$Html$Attributes$style,
@@ -7685,6 +7695,175 @@ var author$project$Main$squareToCoordinates = F2(
 				romstad$elm_chess$Square$rank(square_)) : (7 - romstad$elm_chess$SquareRank$toIndex(
 				romstad$elm_chess$Square$rank(square_))));
 	});
+var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
+var elm$core$Set$Set_elm_builtin = function (a) {
+	return {$: 'Set_elm_builtin', a: a};
+};
+var elm$core$Set$empty = elm$core$Set$Set_elm_builtin(elm$core$Dict$empty);
+var elm$core$Dict$Black = {$: 'Black'};
+var elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var elm$core$Basics$compare = _Utils_compare;
+var elm$core$Dict$Red = {$: 'Red'};
+var elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _n1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _n3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					elm$core$Dict$RBNode_elm_builtin,
+					elm$core$Dict$Red,
+					key,
+					value,
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _n5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _n6 = left.d;
+				var _n7 = _n6.a;
+				var llK = _n6.b;
+				var llV = _n6.c;
+				var llLeft = _n6.d;
+				var llRight = _n6.e;
+				var lRight = left.e;
+				return A5(
+					elm$core$Dict$RBNode_elm_builtin,
+					elm$core$Dict$Red,
+					lK,
+					lV,
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5(elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Red, key, value, elm$core$Dict$RBEmpty_elm_builtin, elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _n1 = A2(elm$core$Basics$compare, key, nKey);
+			switch (_n1.$) {
+				case 'LT':
+					return A5(
+						elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3(elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5(elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3(elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _n0 = A3(elm$core$Dict$insertHelp, key, value, dict);
+		if ((_n0.$ === 'RBNode_elm_builtin') && (_n0.a.$ === 'Red')) {
+			var _n1 = _n0.a;
+			var k = _n0.b;
+			var v = _n0.c;
+			var l = _n0.d;
+			var r = _n0.e;
+			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _n0;
+			return x;
+		}
+	});
+var elm$core$Set$insert = F2(
+	function (key, _n0) {
+		var dict = _n0.a;
+		return elm$core$Set$Set_elm_builtin(
+			A3(elm$core$Dict$insert, key, _Utils_Tuple0, dict));
+	});
+var elm$core$Set$fromList = function (list) {
+	return A3(elm$core$List$foldl, elm$core$Set$insert, elm$core$Set$empty, list);
+};
+var elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _n1 = A2(elm$core$Basics$compare, targetKey, key);
+				switch (_n1.$) {
+					case 'LT':
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 'EQ':
+						return elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _n0 = A2(elm$core$Dict$get, key, dict);
+		if (_n0.$ === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var elm$core$Set$member = F2(
+	function (key, _n0) {
+		var dict = _n0.a;
+		return A2(elm$core$Dict$member, key, dict);
+	});
 var elm$html$Html$b = _VirtualDom_node('b');
 var elm$html$Html$button = _VirtualDom_node('button');
 var romstad$elm_chess$PieceColor$black = romstad$elm_chess$Internal$PieceColor$black;
@@ -7696,8 +7875,14 @@ var romstad$elm_chess$Position$pieceOn = F2(
 	});
 var romstad$elm_chess$Position$sideToMove = romstad$elm_chess$Internal$Position$sideToMove;
 var romstad$elm_chess$Square$all = romstad$elm_chess$Internal$Square$all;
-var author$project$Main$board = F4(
-	function (isBlack, position, size, isRotated) {
+var romstad$elm_chess$Square$toInt = romstad$elm_chess$Internal$Square$compress;
+var author$project$Main$board = F5(
+	function (possibleMoves, selectedSquare, isBlack, position, size) {
+		var possibleSquares = elm$core$Set$fromList(
+			A2(
+				elm$core$List$map,
+				A2(elm$core$Basics$composeR, romstad$elm_chess$Move$to, romstad$elm_chess$Square$toInt),
+				possibleMoves));
 		return A2(
 			elm$html$Html$div,
 			_List_Nil,
@@ -7722,9 +7907,16 @@ var author$project$Main$board = F4(
 					A2(
 						elm$core$List$map,
 						function (s) {
-							return A4(
+							return A6(
 								author$project$Main$square,
-								A2(author$project$Main$squareToCoordinates, s, isRotated),
+								_Utils_eq(
+									elm$core$Maybe$Just(s),
+									selectedSquare),
+								A2(
+									elm$core$Set$member,
+									romstad$elm_chess$Square$toInt(s),
+									possibleSquares),
+								A2(author$project$Main$squareToCoordinates, s, isBlack),
 								A2(romstad$elm_chess$Position$pieceOn, s, position),
 								size / 8,
 								author$project$Main$SquarePressed(s));
@@ -7764,6 +7956,9 @@ var author$project$Main$board = F4(
 				}()
 				]));
 	});
+var author$project$Main$SetOtherOffer = function (a) {
+	return {$: 'SetOtherOffer', a: a};
+};
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
@@ -7813,29 +8008,71 @@ var elm$html$Html$Events$onInput = function (tagger) {
 			elm$html$Html$Events$alwaysStop,
 			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
 };
+var author$project$Main$connectUi = function (model) {
+	if (_Utils_eq(model.gameState, author$project$Main$Init)) {
+		var _n0 = function () {
+			var _n1 = model.myAnswer;
+			if (_n1.$ === 'Just') {
+				var a = _n1.a;
+				return _Utils_Tuple2('Answer', a);
+			} else {
+				return _Utils_Tuple2(
+					'Offer',
+					A2(elm$core$Maybe$withDefault, '', model.myOffer));
+			}
+		}();
+		var kind = _n0.a;
+		var txt = _n0.b;
+		var offerOrAnswer = A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					elm$html$Html$text(kind),
+					A2(
+					elm$html$Html$input,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$readonly(true),
+							elm$html$Html$Attributes$value(txt)
+						]),
+					_List_Nil)
+				]));
+		var _n2 = (kind === 'Offer') ? _Utils_Tuple2(
+			offerOrAnswer,
+			elm$html$Html$text('')) : _Utils_Tuple2(
+			elm$html$Html$text(''),
+			offerOrAnswer);
+		var offer = _n2.a;
+		var answer = _n2.b;
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					offer,
+					elm$html$Html$text('Paste other offer / answer here'),
+					A2(
+					elm$html$Html$input,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$value(model.otherOffer),
+							elm$html$Html$Events$onInput(author$project$Main$SetOtherOffer)
+						]),
+					_List_Nil),
+					answer
+				]));
+	} else {
+		return elm$html$Html$text('');
+	}
+};
 var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('my id'),
-						A2(
-						elm$html$Html$input,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$readonly(true),
-								elm$html$Html$Attributes$value(
-								A2(elm$core$Maybe$withDefault, '', model.myId))
-							]),
-						_List_Nil)
-					])),
-				elm$html$Html$text('other id'),
+				author$project$Main$connectUi(model),
 				function () {
 				var _n0 = model.error;
 				if (_n0.$ === 'Nothing') {
@@ -7857,47 +8094,25 @@ var author$project$Main$view = function (model) {
 							]));
 				}
 			}(),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$value(model.otherId),
-						elm$html$Html$Events$onInput(author$project$Main$SetOtherId)
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Main$Connect)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('Connect')
-					])),
 				function () {
 				var _n1 = model.gameState;
 				switch (_n1.$) {
 					case 'Init':
-						return A2(
-							elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('Waiting for other player')
-								]));
+						return elm$html$Html$text('');
 					case 'MyTurn':
 						return A2(
 							elm$html$Html$div,
 							_List_Nil,
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									author$project$Main$board,
+									model.candidateMoves,
+									model.selectedSquare,
 									model.isBlack,
 									romstad$elm_chess$Game$position(model.game),
-									400.0,
-									model.isBlack)
+									400.0),
+									elm$html$Html$text('Your turn, make a move')
 								]));
 					default:
 						return A2(
@@ -7905,12 +8120,13 @@ var author$project$Main$view = function (model) {
 							_List_Nil,
 							_List_fromArray(
 								[
-									A4(
+									A5(
 									author$project$Main$board,
+									model.candidateMoves,
+									model.selectedSquare,
 									model.isBlack,
 									romstad$elm_chess$Game$position(model.game),
-									400.0,
-									model.isBlack),
+									400.0),
 									elm$html$Html$text('Wait for other player to make a move')
 								]));
 				}
