@@ -614,11 +614,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.bb.ay === region.bu.ay)
+	if (region.bd.az === region.bw.az)
 	{
-		return 'on line ' + region.bb.ay;
+		return 'on line ' + region.bd.az;
 	}
-	return 'on lines ' + region.bb.ay + ' through ' + region.bu.ay;
+	return 'on lines ' + region.bd.az + ' through ' + region.bw.az;
 }
 
 
@@ -1871,9 +1871,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cm,
-		impl.cK,
-		impl.cG,
+		impl.co,
+		impl.cM,
+		impl.cI,
 		function() { return function() {} }
 	);
 });
@@ -2719,8 +2719,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		G: func(record.G),
-		bc: record.bc,
-		a9: record.a9
+		be: record.be,
+		bb: record.bb
 	}
 });
 
@@ -2989,10 +2989,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.G;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.bc;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.be;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.a9) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.bb) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3942,11 +3942,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cm,
-		impl.cK,
-		impl.cG,
+		impl.co,
+		impl.cM,
+		impl.cI,
 		function(sendToApp, initialModel) {
-			var view = impl.cN;
+			var view = impl.cP;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3978,12 +3978,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cm,
-		impl.cK,
-		impl.cG,
+		impl.co,
+		impl.cM,
+		impl.cI,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.ba && impl.ba(sendToApp)
-			var view = impl.cN;
+			var divertHrefToApp = impl.bc && impl.bc(sendToApp)
+			var view = impl.cP;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3991,12 +3991,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.bn);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.bp);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.cI) && (_VirtualDom_doc.title = title = doc.cI);
+				(title !== doc.cK) && (_VirtualDom_doc.title = title = doc.cK);
 			});
 		}
 	);
@@ -4052,12 +4052,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.cu;
-	var onUrlRequest = impl.cv;
+	var onUrlChange = impl.cw;
+	var onUrlRequest = impl.cx;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		ba: function(sendToApp)
+		bc: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4073,9 +4073,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.bN === next.bN
-							&& curr.bz === next.bz
-							&& curr.bK.a === next.bK.a
+							&& curr.bP === next.bP
+							&& curr.bB === next.bB
+							&& curr.bM.a === next.bM.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4083,13 +4083,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		cm: function(flags)
+		co: function(flags)
 		{
-			return A3(impl.cm, flags, _Browser_getUrl(), key);
+			return A3(impl.co, flags, _Browser_getUrl(), key);
 		},
-		cN: impl.cN,
-		cK: impl.cK,
-		cG: impl.cG
+		cP: impl.cP,
+		cM: impl.cM,
+		cI: impl.cI
 	});
 }
 
@@ -4155,17 +4155,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { ci: 'hidden', ca: 'visibilitychange' }
+		? { ck: 'hidden', cc: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { ci: 'mozHidden', ca: 'mozvisibilitychange' }
+		? { ck: 'mozHidden', cc: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { ci: 'msHidden', ca: 'msvisibilitychange' }
+		? { ck: 'msHidden', cc: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { ci: 'webkitHidden', ca: 'webkitvisibilitychange' }
-		: { ci: 'hidden', ca: 'visibilitychange' };
+		? { ck: 'webkitHidden', cc: 'webkitvisibilitychange' }
+		: { ck: 'hidden', cc: 'visibilitychange' };
 }
 
 
@@ -4246,12 +4246,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		bU: _Browser_getScene(),
-		b0: {
-			b2: _Browser_window.pageXOffset,
-			b3: _Browser_window.pageYOffset,
-			b1: _Browser_doc.documentElement.clientWidth,
-			by: _Browser_doc.documentElement.clientHeight
+		bW: _Browser_getScene(),
+		b2: {
+			b4: _Browser_window.pageXOffset,
+			b5: _Browser_window.pageYOffset,
+			b3: _Browser_doc.documentElement.clientWidth,
+			bA: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4261,8 +4261,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		b1: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		by: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		b3: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		bA: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4285,15 +4285,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			bU: {
-				b1: node.scrollWidth,
-				by: node.scrollHeight
+			bW: {
+				b3: node.scrollWidth,
+				bA: node.scrollHeight
 			},
-			b0: {
-				b2: node.scrollLeft,
-				b3: node.scrollTop,
-				b1: node.clientWidth,
-				by: node.clientHeight
+			b2: {
+				b4: node.scrollLeft,
+				b5: node.scrollTop,
+				b3: node.clientWidth,
+				bA: node.clientHeight
 			}
 		};
 	});
@@ -4323,18 +4323,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			bU: _Browser_getScene(),
-			b0: {
-				b2: x,
-				b3: y,
-				b1: _Browser_doc.documentElement.clientWidth,
-				by: _Browser_doc.documentElement.clientHeight
+			bW: _Browser_getScene(),
+			b2: {
+				b4: x,
+				b5: y,
+				b3: _Browser_doc.documentElement.clientWidth,
+				bA: _Browser_doc.documentElement.clientHeight
 			},
-			ce: {
-				b2: x + rect.left,
-				b3: y + rect.top,
-				b1: rect.width,
-				by: rect.height
+			cg: {
+				b4: x + rect.left,
+				b5: y + rect.top,
+				b3: rect.width,
+				bA: rect.height
 			}
 		};
 	});
@@ -4379,25 +4379,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.cf.a(response)));
+			callback(toTask(request.ch.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.cf.b, xhr)); });
-		$elm$core$Maybe$isJust(request.cJ) && _Http_track(router, xhr, request.cJ.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.ch.b, xhr)); });
+		$elm$core$Maybe$isJust(request.cL) && _Http_track(router, xhr, request.cL.a);
 
 		try {
-			xhr.open(request.cp, request.cM, true);
+			xhr.open(request.cr, request.cO, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.cM));
+			return done($elm$http$Http$BadUrl_(request.cO));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.bn.a && xhr.setRequestHeader('Content-Type', request.bn.a);
-		xhr.send(request.bn.b);
+		request.bp.a && xhr.setRequestHeader('Content-Type', request.bp.a);
+		xhr.send(request.bp.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4408,13 +4408,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.ch; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.cj; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.cH.a || 0;
-	xhr.responseType = request.cf.d;
-	xhr.withCredentials = request.b6;
+	xhr.timeout = request.cJ.a || 0;
+	xhr.responseType = request.ch.d;
+	xhr.withCredentials = request.b8;
 }
 
 
@@ -4435,10 +4435,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		cM: xhr.responseURL,
-		cD: xhr.status,
-		cE: xhr.statusText,
-		ch: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		cO: xhr.responseURL,
+		cF: xhr.status,
+		cG: xhr.statusText,
+		cj: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4533,15 +4533,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			cC: event.loaded,
-			bV: event.total
+			cE: event.loaded,
+			bX: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			cy: event.loaded,
-			bV: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			cA: event.loaded,
+			bX: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -4607,8 +4607,8 @@ var _Regex_never = /.^/;
 var _Regex_fromStringWith = F2(function(options, string)
 {
 	var flags = 'g';
-	if (options.cr) { flags += 'm'; }
-	if (options.b9) { flags += 'i'; }
+	if (options.ct) { flags += 'm'; }
+	if (options.cb) { flags += 'i'; }
 
 	try
 	{
@@ -5203,7 +5203,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {bx: fragment, bz: host, bI: path, bK: port_, bN: protocol, bO: query};
+		return {bz: fragment, bB: host, bK: path, bM: port_, bP: protocol, bQ: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5482,7 +5482,7 @@ var $elm$core$Task$perform = F2(
 			A2($elm$core$Task$map, toMessage, task));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$initModel = {aI: $elm$core$Maybe$Nothing, aM: $elm$core$Maybe$Nothing, aO: '', aU: '', a_: '', a$: ''};
+var $author$project$Main$initModel = {aK: $elm$core$Maybe$Nothing, aO: $elm$core$Maybe$Nothing, av: $elm$core$Maybe$Nothing, aQ: '', aW: '', a0: '', a1: ''};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5509,14 +5509,14 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 	function (prePath, pathSegments, parameters) {
 		return prePath + ('/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters)));
 	});
-var $author$project$Main$Activity = F4(
-	function (billable, description, hours, remoteUrl) {
-		return {X: billable, au: description, ae: hours, aB: remoteUrl};
+var $author$project$Main$Activity = F5(
+	function (billable, description, hours, remoteUrl, username) {
+		return {L: billable, aa: description, O: hours, aC: remoteUrl, aI: username};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$float = _Json_decodeFloat;
-var $elm$json$Json$Decode$map4 = _Json_map4;
+var $elm$json$Json$Decode$map5 = _Json_map5;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$maybe = function (decoder) {
 	return $elm$json$Json$Decode$oneOf(
@@ -5527,8 +5527,8 @@ var $elm$json$Json$Decode$maybe = function (decoder) {
 			]));
 };
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Main$decodeActivity = A5(
-	$elm$json$Json$Decode$map4,
+var $author$project$Main$decodeActivity = A6(
+	$elm$json$Json$Decode$map5,
 	$author$project$Main$Activity,
 	A2($elm$json$Json$Decode$field, 'billable', $elm$json$Json$Decode$bool),
 	A2($elm$json$Json$Decode$field, 'description', $elm$json$Json$Decode$string),
@@ -5536,7 +5536,18 @@ var $author$project$Main$decodeActivity = A5(
 	A2(
 		$elm$json$Json$Decode$field,
 		'remote_url',
-		$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string)));
+		$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string)),
+	A2(
+		$elm$json$Json$Decode$field,
+		'user',
+		A3(
+			$elm$json$Json$Decode$map2,
+			F2(
+				function (first, last) {
+					return first + (' ' + last);
+				}),
+			A2($elm$json$Json$Decode$field, 'firstname', $elm$json$Json$Decode$string),
+			A2($elm$json$Json$Decode$field, 'lastname', $elm$json$Json$Decode$string))));
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 3, a: a, b: b};
@@ -6130,7 +6141,7 @@ var $elm$http$Http$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.cD));
+					$elm$http$Http$BadStatus(metadata.cF));
 			default:
 				var body = response.b;
 				return A2(
@@ -6162,7 +6173,7 @@ var $elm$http$Http$Request = function (a) {
 };
 var $elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {bR: reqs, bX: subs};
+		return {bT: reqs, bZ: subs};
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
@@ -6206,7 +6217,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.cJ;
+							var _v4 = req.cL;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -6236,7 +6247,7 @@ var $elm$http$Http$onEffects = F4(
 				return $elm$core$Task$succeed(
 					A2($elm$http$Http$State, reqs, subs));
 			},
-			A3($elm$http$Http$updateReqs, router, cmds, state.bR));
+			A3($elm$http$Http$updateReqs, router, cmds, state.bT));
 	});
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -6279,7 +6290,7 @@ var $elm$http$Http$onSelfMsg = F3(
 				A2(
 					$elm$core$List$filterMap,
 					A3($elm$http$Http$maybeSend, router, tracker, progress),
-					state.bX)));
+					state.bZ)));
 	});
 var $elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -6293,14 +6304,14 @@ var $elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return $elm$http$Http$Request(
 				{
-					b6: r.b6,
-					bn: r.bn,
-					cf: A2(_Http_mapExpect, func, r.cf),
-					ch: r.ch,
-					cp: r.cp,
-					cH: r.cH,
+					b8: r.b8,
+					bp: r.bp,
+					ch: A2(_Http_mapExpect, func, r.ch),
+					cj: r.cj,
+					cr: r.cr,
 					cJ: r.cJ,
-					cM: r.cM
+					cL: r.cL,
+					cO: r.cO
 				});
 		}
 	});
@@ -6323,22 +6334,22 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{b6: false, bn: r.bn, cf: r.cf, ch: r.ch, cp: r.cp, cH: r.cH, cJ: r.cJ, cM: r.cM}));
+			{b8: false, bp: r.bp, ch: r.ch, cj: r.cj, cr: r.cr, cJ: r.cJ, cL: r.cL, cO: r.cO}));
 };
 var $author$project$Main$get = F4(
 	function (decoder, msg, token, url) {
 		return $elm$http$Http$request(
 			{
-				bn: $elm$http$Http$emptyBody,
-				cf: A2($elm$http$Http$expectJson, msg, decoder),
-				ch: _List_fromArray(
+				bp: $elm$http$Http$emptyBody,
+				ch: A2($elm$http$Http$expectJson, msg, decoder),
+				cj: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'Authorization', 'Token token=' + token)
 					]),
-				cp: 'GET',
-				cH: $elm$core$Maybe$Nothing,
+				cr: 'GET',
 				cJ: $elm$core$Maybe$Nothing,
-				cM: url
+				cL: $elm$core$Maybe$Nothing,
+				cO: url
 			});
 	});
 var $elm$json$Json$Decode$list = _Json_decodeList;
@@ -6355,10 +6366,10 @@ var $elm$url$Url$Builder$string = F2(
 			$elm$url$Url$percentEncode(value));
 	});
 var $author$project$Main$getActivities = function (_v0) {
-	var token = _v0.a$;
-	var projectId = _v0.aU;
-	var from = _v0.aO;
-	var to = _v0.a_;
+	var token = _v0.a1;
+	var projectId = _v0.aW;
+	var from = _v0.aQ;
+	var to = _v0.a0;
 	return A4(
 		$author$project$Main$get,
 		$elm$json$Json$Decode$list($author$project$Main$decodeActivity),
@@ -6389,7 +6400,7 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								aI: $elm$core$Maybe$Just(res)
+								aK: $elm$core$Maybe$Just(res)
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
@@ -6398,37 +6409,48 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								aM: $elm$core$Maybe$Just(err)
+								aO: $elm$core$Maybe$Just(err)
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 2:
-				var txt = msg.a;
+				var url = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{a$: txt}),
+						{
+							av: _Utils_eq(
+								$elm$core$Maybe$Just(url),
+								model.av) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(url)
+						}),
 					$elm$core$Platform$Cmd$none);
 			case 3:
 				var txt = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aU: txt}),
+						{a1: txt}),
 					$elm$core$Platform$Cmd$none);
 			case 4:
 				var txt = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aO: txt}),
+						{aW: txt}),
+					$elm$core$Platform$Cmd$none);
+			case 5:
+				var txt = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{aQ: txt}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				var txt = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{a_: txt}),
+						{a0: txt}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6540,8 +6562,8 @@ var $rtfeldman$elm_css$Css$Structure$compactHelp = F2(
 					A2($elm$core$List$cons, declaration, declarations));
 			case 6:
 				var record = declaration.a;
-				return $elm$core$String$isEmpty(record.cb) ? _Utils_Tuple2(keyframesByName, declarations) : _Utils_Tuple2(
-					A3($elm$core$Dict$insert, record.cs, record.cb, keyframesByName),
+				return $elm$core$String$isEmpty(record.cd) ? _Utils_Tuple2(keyframesByName, declarations) : _Utils_Tuple2(
+					A3($elm$core$Dict$insert, record.cu, record.cd, keyframesByName),
 					declarations);
 			case 7:
 				var properties = declaration.a;
@@ -6587,16 +6609,16 @@ var $rtfeldman$elm_css$Css$Structure$withKeyframeDeclarations = F2(
 					var name = _v0.a;
 					var decl = _v0.b;
 					return $rtfeldman$elm_css$Css$Structure$Keyframes(
-						{cb: decl, cs: name});
+						{cd: decl, cu: name});
 				},
 				$elm$core$Dict$toList(keyframesByName)),
 			compactedDeclarations);
 	});
 var $rtfeldman$elm_css$Css$Structure$compactStylesheet = function (_v0) {
-	var charset = _v0.br;
-	var imports = _v0.bA;
-	var namespaces = _v0.bG;
-	var declarations = _v0.cc;
+	var charset = _v0.bt;
+	var imports = _v0.bC;
+	var namespaces = _v0.bI;
+	var declarations = _v0.ce;
 	var _v1 = A3(
 		$elm$core$List$foldr,
 		$rtfeldman$elm_css$Css$Structure$compactHelp,
@@ -6605,7 +6627,7 @@ var $rtfeldman$elm_css$Css$Structure$compactStylesheet = function (_v0) {
 	var keyframesByName = _v1.a;
 	var compactedDeclarations = _v1.b;
 	var finalDeclarations = A2($rtfeldman$elm_css$Css$Structure$withKeyframeDeclarations, keyframesByName, compactedDeclarations);
-	return {br: charset, cc: finalDeclarations, bA: imports, bG: namespaces};
+	return {bt: charset, ce: finalDeclarations, bC: imports, bI: namespaces};
 };
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
@@ -6649,7 +6671,7 @@ var $elm$core$List$filter = F2(
 			list);
 	});
 var $rtfeldman$elm_css$Css$Structure$Output$mediaExpressionToString = function (expression) {
-	return '(' + (expression.bw + (A2(
+	return '(' + (expression.by + (A2(
 		$elm$core$Maybe$withDefault,
 		'',
 		A2(
@@ -6897,8 +6919,8 @@ var $rtfeldman$elm_css$Css$Structure$Output$prettyPrintDeclaration = function (d
 		case 5:
 			return 'TODO';
 		case 6:
-			var name = decl.a.cs;
-			var declaration = decl.a.cb;
+			var name = decl.a.cu;
+			var declaration = decl.a.cd;
 			return '@keyframes ' + (name + (' {\n' + (declaration + '\n}')));
 		case 7:
 			return 'TODO';
@@ -6909,10 +6931,10 @@ var $rtfeldman$elm_css$Css$Structure$Output$prettyPrintDeclaration = function (d
 	}
 };
 var $rtfeldman$elm_css$Css$Structure$Output$prettyPrint = function (_v0) {
-	var charset = _v0.br;
-	var imports = _v0.bA;
-	var namespaces = _v0.bG;
-	var declarations = _v0.cc;
+	var charset = _v0.bt;
+	var imports = _v0.bC;
+	var namespaces = _v0.bI;
+	var declarations = _v0.ce;
 	return A2(
 		$elm$core$String$join,
 		'\n\n',
@@ -7328,7 +7350,7 @@ var $rtfeldman$elm_css$Css$Structure$concatMapLastStyleBlock = F2(
 var $elm$core$String$cons = _String_cons;
 var $rtfeldman$elm_css$ElmCssVendor$Murmur3$HashData = F4(
 	function (shift, seed, hash, charsProcessed) {
-		return {Y: charsProcessed, ad: hash, R: seed, aj: shift};
+		return {Z: charsProcessed, af: hash, T: seed, ak: shift};
 	});
 var $rtfeldman$elm_css$ElmCssVendor$Murmur3$c1 = 3432918353;
 var $rtfeldman$elm_css$ElmCssVendor$Murmur3$c2 = 461845907;
@@ -7347,14 +7369,14 @@ var $rtfeldman$elm_css$ElmCssVendor$Murmur3$rotlBy = F2(
 	});
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $rtfeldman$elm_css$ElmCssVendor$Murmur3$finalize = function (data) {
-	var acc = (!(!data.ad)) ? (data.R ^ A2(
+	var acc = (!(!data.af)) ? (data.T ^ A2(
 		$rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy,
 		$rtfeldman$elm_css$ElmCssVendor$Murmur3$c2,
 		A2(
 			$rtfeldman$elm_css$ElmCssVendor$Murmur3$rotlBy,
 			15,
-			A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, $rtfeldman$elm_css$ElmCssVendor$Murmur3$c1, data.ad)))) : data.R;
-	var h0 = acc ^ data.Y;
+			A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, $rtfeldman$elm_css$ElmCssVendor$Murmur3$c1, data.af)))) : data.T;
+	var h0 = acc ^ data.Z;
 	var h1 = A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, 2246822507, h0 ^ (h0 >>> 16));
 	var h2 = A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$multiplyBy, 3266489909, h1 ^ (h1 >>> 13));
 	return (h2 ^ (h2 >>> 16)) >>> 0;
@@ -7378,17 +7400,17 @@ var $rtfeldman$elm_css$ElmCssVendor$Murmur3$mix = F2(
 	});
 var $rtfeldman$elm_css$ElmCssVendor$Murmur3$hashFold = F2(
 	function (c, data) {
-		var res = data.ad | ((255 & $elm$core$Char$toCode(c)) << data.aj);
-		var _v0 = data.aj;
+		var res = data.af | ((255 & $elm$core$Char$toCode(c)) << data.ak);
+		var _v0 = data.ak;
 		if (_v0 === 24) {
 			return {
-				Y: data.Y + 1,
-				ad: 0,
-				R: A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$mix, data.R, res),
-				aj: 0
+				Z: data.Z + 1,
+				af: 0,
+				T: A2($rtfeldman$elm_css$ElmCssVendor$Murmur3$mix, data.T, res),
+				ak: 0
 			};
 		} else {
-			return {Y: data.Y + 1, ad: res, R: data.R, aj: data.aj + 8};
+			return {Z: data.Z + 1, af: res, T: data.T, ak: data.ak + 8};
 		}
 	});
 var $rtfeldman$elm_css$ElmCssVendor$Murmur3$hashString = F2(
@@ -8007,7 +8029,7 @@ var $rtfeldman$elm_css$Css$Preprocess$Resolve$applyStyles = F2(
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Css$Structure$Keyframes(
-								{cb: str, cs: name})
+								{cd: str, cu: name})
 							]));
 				case 4:
 					var _v12 = styles.a;
@@ -8142,13 +8164,13 @@ var $rtfeldman$elm_css$Css$Preprocess$Resolve$toDeclarations = function (snippet
 	}
 };
 var $rtfeldman$elm_css$Css$Preprocess$Resolve$toStructure = function (_v0) {
-	var charset = _v0.br;
-	var imports = _v0.bA;
-	var namespaces = _v0.bG;
-	var snippets = _v0.bW;
+	var charset = _v0.bt;
+	var imports = _v0.bC;
+	var namespaces = _v0.bI;
+	var snippets = _v0.bY;
 	var declarations = $rtfeldman$elm_css$Css$Preprocess$Resolve$extract(
 		A2($elm$core$List$concatMap, $rtfeldman$elm_css$Css$Preprocess$unwrapSnippet, snippets));
-	return {br: charset, cc: declarations, bA: imports, bG: namespaces};
+	return {bt: charset, ce: declarations, bC: imports, bI: namespaces};
 };
 var $rtfeldman$elm_css$Css$Preprocess$Resolve$compileHelp = function (sheet) {
 	return $rtfeldman$elm_css$Css$Structure$Output$prettyPrint(
@@ -8180,7 +8202,7 @@ var $rtfeldman$elm_css$VirtualDom$Styled$makeSnippet = F2(
 	});
 var $rtfeldman$elm_css$VirtualDom$Styled$murmurSeed = 15739;
 var $rtfeldman$elm_css$Css$Preprocess$stylesheet = function (snippets) {
-	return {br: $elm$core$Maybe$Nothing, bA: _List_Nil, bG: _List_Nil, bW: snippets};
+	return {bt: $elm$core$Maybe$Nothing, bC: _List_Nil, bI: _List_Nil, bY: snippets};
 };
 var $rtfeldman$elm_css$VirtualDom$Styled$getClassname = function (styles) {
 	return $elm$core$List$isEmpty(styles) ? 'unstyled' : A2(
@@ -8242,128 +8264,16 @@ var $author$project$Main$errorToString = function (error) {
 };
 var $author$project$Main$Go = {$: 0};
 var $author$project$Main$UpdatedFrom = function (a) {
-	return {$: 4, a: a};
-};
-var $author$project$Main$UpdatedProjectId = function (a) {
-	return {$: 3, a: a};
-};
-var $author$project$Main$UpdatedTo = function (a) {
 	return {$: 5, a: a};
 };
+var $author$project$Main$UpdatedProjectId = function (a) {
+	return {$: 4, a: a};
+};
+var $author$project$Main$UpdatedTo = function (a) {
+	return {$: 6, a: a};
+};
 var $author$project$Main$UpdatedToken = function (a) {
-	return {$: 2, a: a};
-};
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_600 = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, '--tw-bg-opacity', '1'),
-			A2($rtfeldman$elm_css$Css$property, 'background-color', 'rgba(79, 70, 229, var(--tw-bg-opacity))')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_700 = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, '--tw-bg-opacity', '1'),
-			A2($rtfeldman$elm_css$Css$property, 'background-color', 'rgba(67, 56, 202, var(--tw-bg-opacity))')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border = A2($rtfeldman$elm_css$Css$property, 'border-width', '1px');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_transparent = A2($rtfeldman$elm_css$Css$property, 'border-color', 'transparent');
-var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
-var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
-	function (a, b) {
-		return {$: 1, a: a, b: b};
-	});
-var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
-	return {$: 2, a: a};
-};
-var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
-	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
-		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
-};
-var $rtfeldman$elm_css$Css$focus = $rtfeldman$elm_css$Css$pseudoClass('focus');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_medium = A2($rtfeldman$elm_css$Css$property, 'font-weight', '500');
-var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$justify_center = A2($rtfeldman$elm_css$Css$property, 'justify-content', 'center');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$outline_none = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, 'outline', '2px solid transparent'),
-			A2($rtfeldman$elm_css$Css$property, 'outline-offset', '2px')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$px_4 = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, 'padding-left', '1rem'),
-			A2($rtfeldman$elm_css$Css$property, 'padding-right', '1rem')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$py_2 = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, 'padding-top', '0.5rem'),
-			A2($rtfeldman$elm_css$Css$property, 'padding-bottom', '0.5rem')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_2 = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, '--tw-ring-offset-shadow', 'var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)'),
-			A2($rtfeldman$elm_css$Css$property, '--tw-ring-shadow', 'var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)'),
-			A2($rtfeldman$elm_css$Css$property, 'box-shadow', 'var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500 = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, '--tw-ring-opacity', '1'),
-			A2($rtfeldman$elm_css$Css$property, '--tw-ring-color', 'rgba(99, 102, 241, var(--tw-ring-opacity))')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_offset_2 = A2($rtfeldman$elm_css$Css$property, '--tw-ring-offset-width', '2px');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md = A2($rtfeldman$elm_css$Css$property, 'border-radius', '0.375rem');
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, '--tw-shadow', '0 1px 2px 0 rgba(0, 0, 0, 0.05)'),
-			A2($rtfeldman$elm_css$Css$property, 'box-shadow', 'var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_sm = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, 'font-size', '0.875rem'),
-			A2($rtfeldman$elm_css$Css$property, 'line-height', '1.25rem')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_white = $rtfeldman$elm_css$Css$batch(
-	_List_fromArray(
-		[
-			A2($rtfeldman$elm_css$Css$property, '--tw-text-opacity', '1'),
-			A2($rtfeldman$elm_css$Css$property, 'color', 'rgba(255, 255, 255, var(--tw-text-opacity))')
-		]));
-var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full = A2($rtfeldman$elm_css$Css$property, 'width', '100%');
-var $author$project$Components$button = function (attrs) {
-	return $rtfeldman$elm_css$Html$Styled$button(
-		A2(
-			$elm$core$List$cons,
-			$rtfeldman$elm_css$Html$Styled$Attributes$css(
-				_List_fromArray(
-					[
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$justify_center,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$py_2,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$px_4,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_transparent,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_sm,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_medium,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_white,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_600,
-						$rtfeldman$elm_css$Css$focus(
-						_List_fromArray(
-							[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$outline_none, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_2, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_offset_2, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500])),
-						$rtfeldman$elm_css$Css$hover(
-						_List_fromArray(
-							[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_700]))
-					])),
-			attrs));
+	return {$: 3, a: a};
 };
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$block = A2($rtfeldman$elm_css$Css$property, 'display', 'block');
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_gray_300 = $rtfeldman$elm_css$Css$batch(
@@ -8378,27 +8288,60 @@ var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_indigo_500
 			A2($rtfeldman$elm_css$Css$property, '--tw-border-opacity', '1'),
 			A2($rtfeldman$elm_css$Css$property, 'border-color', 'rgba(99, 102, 241, var(--tw-border-opacity))')
 		]));
+var $rtfeldman$elm_css$Css$Preprocess$ExtendSelector = F2(
+	function (a, b) {
+		return {$: 1, a: a, b: b};
+	});
+var $rtfeldman$elm_css$Css$Structure$PseudoClassSelector = function (a) {
+	return {$: 2, a: a};
+};
+var $rtfeldman$elm_css$Css$pseudoClass = function (_class) {
+	return $rtfeldman$elm_css$Css$Preprocess$ExtendSelector(
+		$rtfeldman$elm_css$Css$Structure$PseudoClassSelector(_class));
+};
+var $rtfeldman$elm_css$Css$focus = $rtfeldman$elm_css$Css$pseudoClass('focus');
 var $rtfeldman$elm_css$Html$Styled$input = $rtfeldman$elm_css$Html$Styled$node('input');
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$p_1 = A2($rtfeldman$elm_css$Css$property, 'padding', '0.25rem');
-var $author$project$Components$input = function (attrs) {
-	return $rtfeldman$elm_css$Html$Styled$input(
-		A2(
-			$elm$core$List$cons,
-			$rtfeldman$elm_css$Html$Styled$Attributes$css(
-				_List_fromArray(
-					[
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$p_1,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$block,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_gray_300,
-						$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md,
-						$rtfeldman$elm_css$Css$focus(
-						_List_fromArray(
-							[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_indigo_500]))
-					])),
-			attrs));
-};
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-ring-opacity', '1'),
+			A2($rtfeldman$elm_css$Css$property, '--tw-ring-color', 'rgba(99, 102, 241, var(--tw-ring-opacity))')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md = A2($rtfeldman$elm_css$Css$property, 'border-radius', '0.375rem');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-shadow', '0 1px 2px 0 rgba(0, 0, 0, 0.05)'),
+			A2($rtfeldman$elm_css$Css$property, 'box-shadow', 'var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)')
+		]));
+var $rtfeldman$elm_css$Html$Styled$styled = F4(
+	function (fn, styles, attrs, children) {
+		return A2(
+			fn,
+			A2(
+				$elm$core$List$cons,
+				$rtfeldman$elm_css$Html$Styled$Internal$css(styles),
+				attrs),
+			children);
+	});
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full = A2($rtfeldman$elm_css$Css$property, 'width', '100%');
+var $author$project$Components$input = A2(
+	$rtfeldman$elm_css$Html$Styled$styled,
+	$rtfeldman$elm_css$Html$Styled$input,
+	_List_fromArray(
+		[
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$p_1,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$block,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_gray_300,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md,
+			$rtfeldman$elm_css$Css$focus(
+			_List_fromArray(
+				[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_indigo_500]))
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_medium = A2($rtfeldman$elm_css$Css$property, 'font-weight', '500');
 var $rtfeldman$elm_css$Html$Styled$label = $rtfeldman$elm_css$Html$Styled$node('label');
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$mt_1 = A2($rtfeldman$elm_css$Css$property, 'margin-top', '0.25rem');
 var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
@@ -8415,6 +8358,12 @@ var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_gray_700 = $
 		[
 			A2($rtfeldman$elm_css$Css$property, '--tw-text-opacity', '1'),
 			A2($rtfeldman$elm_css$Css$property, 'color', 'rgba(55, 65, 81, var(--tw-text-opacity))')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_sm = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, 'font-size', '0.875rem'),
+			A2($rtfeldman$elm_css$Css$property, 'line-height', '1.25rem')
 		]));
 var $author$project$Components$labeledInput = F3(
 	function (labelText, attrs, children) {
@@ -8519,6 +8468,81 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$placeholder = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('placeholder');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_600 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-bg-opacity', '1'),
+			A2($rtfeldman$elm_css$Css$property, 'background-color', 'rgba(79, 70, 229, var(--tw-bg-opacity))')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_700 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-bg-opacity', '1'),
+			A2($rtfeldman$elm_css$Css$property, 'background-color', 'rgba(67, 56, 202, var(--tw-bg-opacity))')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border = A2($rtfeldman$elm_css$Css$property, 'border-width', '1px');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_transparent = A2($rtfeldman$elm_css$Css$property, 'border-color', 'transparent');
+var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
+var $rtfeldman$elm_css$Css$hover = $rtfeldman$elm_css$Css$pseudoClass('hover');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$justify_center = A2($rtfeldman$elm_css$Css$property, 'justify-content', 'center');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$outline_none = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, 'outline', '2px solid transparent'),
+			A2($rtfeldman$elm_css$Css$property, 'outline-offset', '2px')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$px_4 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, 'padding-left', '1rem'),
+			A2($rtfeldman$elm_css$Css$property, 'padding-right', '1rem')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$py_2 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, 'padding-top', '0.5rem'),
+			A2($rtfeldman$elm_css$Css$property, 'padding-bottom', '0.5rem')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_2 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-ring-offset-shadow', 'var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color)'),
+			A2($rtfeldman$elm_css$Css$property, '--tw-ring-shadow', 'var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)'),
+			A2($rtfeldman$elm_css$Css$property, 'box-shadow', 'var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_offset_2 = A2($rtfeldman$elm_css$Css$property, '--tw-ring-offset-width', '2px');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_white = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-text-opacity', '1'),
+			A2($rtfeldman$elm_css$Css$property, 'color', 'rgba(255, 255, 255, var(--tw-text-opacity))')
+		]));
+var $author$project$Components$primaryButton = A2(
+	$rtfeldman$elm_css$Html$Styled$styled,
+	$rtfeldman$elm_css$Html$Styled$button,
+	_List_fromArray(
+		[
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$justify_center,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$py_2,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$px_4,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_transparent,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_sm,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_medium,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_white,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_600,
+			$rtfeldman$elm_css$Css$focus(
+			_List_fromArray(
+				[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$outline_none, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_2, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_offset_2, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500])),
+			$rtfeldman$elm_css$Css$hover(
+			_List_fromArray(
+				[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_indigo_700]))
+		]));
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$pt_4 = A2($rtfeldman$elm_css$Css$property, 'padding-top', '1rem');
 var $rtfeldman$elm_css$Css$Structure$Child = 2;
 var $rtfeldman$elm_css$Css$Preprocess$NestSnippet = F2(
@@ -8623,7 +8647,7 @@ var $author$project$Main$formInputs = A2(
 					_List_Nil)
 				])),
 			A2(
-			$author$project$Components$button,
+			$author$project$Components$primaryButton,
 			_List_fromArray(
 				[
 					$rtfeldman$elm_css$Html$Styled$Attributes$type_('submit'),
@@ -9565,6 +9589,25 @@ var $elm$core$String$padRight = F3(
 				n - $elm$core$String$length(string),
 				$elm$core$String$fromChar(_char)));
 	});
+var $author$project$Main$hoursToString = function (hours) {
+	return A3(
+		$elm$core$String$padRight,
+		5,
+		' ',
+		A2(
+			$elm$core$String$left,
+			5,
+			$elm$core$String$fromFloat(hours)));
+};
+var $author$project$Main$hoursToUnbillableString = function (hours) {
+	return function (s) {
+		return ' (' + (s + ')');
+	}(
+		A2(
+			$elm$core$String$left,
+			5,
+			$elm$core$String$fromFloat(hours)));
+};
 var $rtfeldman$elm_css$Html$Styled$span = $rtfeldman$elm_css$Html$Styled$node('span');
 var $elm$core$List$sum = function (numbers) {
 	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
@@ -9574,12 +9617,12 @@ var $author$project$Main$sumBillableHours = function (activities) {
 		A2(
 			$elm$core$List$map,
 			function ($) {
-				return $.ae;
+				return $.O;
 			},
 			A2(
 				$elm$core$List$filter,
 				function (_v0) {
-					var billable = _v0.X;
+					var billable = _v0.L;
 					return billable;
 				},
 				activities)));
@@ -9589,12 +9632,12 @@ var $author$project$Main$sumNonBillableHours = function (activities) {
 		A2(
 			$elm$core$List$map,
 			function ($) {
-				return $.ae;
+				return $.O;
 			},
 			A2(
 				$elm$core$List$filter,
 				function (_v0) {
-					var billable = _v0.X;
+					var billable = _v0.L;
 					return !billable;
 				},
 				activities)));
@@ -9623,38 +9666,25 @@ var $author$project$Main$activitySummery = function (activities) {
 				_List_fromArray(
 					[
 						$rtfeldman$elm_css$Html$Styled$text(
-						A3(
-							$elm$core$String$padRight,
-							5,
-							' ',
-							A2(
-								$elm$core$String$left,
-								5,
-								$elm$core$String$fromFloat(
-									$author$project$Main$sumBillableHours(activities)))))
+						$author$project$Main$hoursToString(
+							$author$project$Main$sumBillableHours(activities)))
 					])),
 				$rtfeldman$elm_css$Html$Styled$text(
-				function (s) {
-					return ' (' + (s + ')');
-				}(
-					A2(
-						$elm$core$String$left,
-						5,
-						$elm$core$String$fromFloat(
-							$author$project$Main$sumNonBillableHours(activities)))))
+				$author$project$Main$hoursToUnbillableString(
+					$author$project$Main$sumNonBillableHours(activities)))
 			]));
 };
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row = A2($rtfeldman$elm_css$Css$property, 'flex-direction', 'row');
 var $elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
-		return {cl: index, co: match, ct: number, cF: submatches};
+		return {cn: index, cq: match, cv: number, cH: submatches};
 	});
 var $elm$regex$Regex$find = _Regex_findAtMost(_Regex_infinity);
 var $elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var $elm$regex$Regex$fromString = function (string) {
 	return A2(
 		$elm$regex$Regex$fromStringWith,
-		{b9: false, cr: false},
+		{cb: false, ct: false},
 		string);
 };
 var $elm$regex$Regex$never = _Regex_never;
@@ -9663,8 +9693,8 @@ var $author$project$Main$trelloUrlRegex = A2(
 	$elm$regex$Regex$never,
 	$elm$regex$Regex$fromString('(https?:\\/\\/)?(www\\.)?trello\\.com\\/[A-Za-z0-9_/\\-]+'));
 var $author$project$Main$extractTrelloUrl = function (_v0) {
-	var description = _v0.au;
-	var remoteUrl = _v0.aB;
+	var description = _v0.aa;
+	var remoteUrl = _v0.aC;
 	return A2(
 		$elm$core$Maybe$withDefault,
 		'',
@@ -9672,7 +9702,7 @@ var $author$project$Main$extractTrelloUrl = function (_v0) {
 			A2(
 				$elm$core$List$map,
 				function ($) {
-					return $.co;
+					return $.cq;
 				},
 				_Utils_ap(
 					A2($elm$regex$Regex$find, $author$project$Main$trelloUrlRegex, description),
@@ -9754,50 +9784,81 @@ var $author$project$Main$groupActivities = function (activities) {
 var $rtfeldman$elm_css$Html$Styled$hr = $rtfeldman$elm_css$Html$Styled$node('hr');
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4 = A2($rtfeldman$elm_css$Css$property, 'margin', '1rem');
 var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$mt_12 = A2($rtfeldman$elm_css$Css$property, 'margin-top', '3rem');
+var $author$project$Main$ExpandRow = function (a) {
+	return {$: 2, a: a};
+};
 var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_gray_500 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-bg-opacity', '1'),
+			A2($rtfeldman$elm_css$Css$property, 'background-color', 'rgba(107, 114, 128, var(--tw-bg-opacity))')
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_gray_700 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			A2($rtfeldman$elm_css$Css$property, '--tw-bg-opacity', '1'),
+			A2($rtfeldman$elm_css$Css$property, 'background-color', 'rgba(55, 65, 81, var(--tw-bg-opacity))')
+		]));
+var $author$project$Components$button = A2(
+	$rtfeldman$elm_css$Html$Styled$styled,
+	$rtfeldman$elm_css$Html$Styled$button,
+	_List_fromArray(
+		[
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_full,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$justify_center,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$py_2,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$px_4,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$border_transparent,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$rounded_md,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$shadow_sm,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_sm,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_medium,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$text_white,
+			$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_gray_500,
+			$rtfeldman$elm_css$Css$focus(
+			_List_fromArray(
+				[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$outline_none, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_2, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_offset_2, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$ring_indigo_500])),
+			$rtfeldman$elm_css$Css$hover(
+			_List_fromArray(
+				[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$bg_gray_700]))
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_grow = A2($rtfeldman$elm_css$Css$property, 'flex-grow', '1');
 var $rtfeldman$elm_css$Html$Styled$Attributes$href = function (url) {
 	return A2($rtfeldman$elm_css$Html$Styled$Attributes$stringProperty, 'href', url);
 };
-var $author$project$Main$viewActivityRow = F2(
-	function (url, activities) {
-		return A2(
-			$rtfeldman$elm_css$Html$Styled$div,
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$space_y_2 = $rtfeldman$elm_css$Css$batch(
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Css$Global$children(
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$Attributes$css(
-					_List_fromArray(
-						[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row]))
-				]),
-			_List_fromArray(
-				[
-					$author$project$Main$activitySummery(activities),
 					A2(
-					$rtfeldman$elm_css$Html$Styled$a,
+					$rtfeldman$elm_css$Css$Global$selector,
+					':not([hidden]) ~ :not([hidden])',
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Html$Styled$Attributes$href(url)
-						]),
-					_List_fromArray(
-						[
-							$rtfeldman$elm_css$Html$Styled$text(
-							function (s) {
-								return $elm$core$String$isEmpty(s) ? 'Other' : s;
-							}(
-								A2(
-									$elm$core$String$dropLeft,
-									$elm$core$String$length('https://trello.com/c/XXXXXXXX'),
-									url)))
+							A2($rtfeldman$elm_css$Css$property, '--tw-space-y-reverse', '0'),
+							A2($rtfeldman$elm_css$Css$property, 'margin-top', 'calc(0.5rem * calc(1 - var(--tw-space-y-reverse)))'),
+							A2($rtfeldman$elm_css$Css$property, 'margin-bottom', 'calc(0.5rem * var(--tw-space-y-reverse))')
 						]))
-				]));
-	});
-var $author$project$Main$viewAggregatedActivities = function (activities) {
+				]))
+		]));
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_semibold = A2($rtfeldman$elm_css$Css$property, 'font-weight', '600');
+var $author$project$Main$viewDetailRow = function (_v0) {
+	var billable = _v0.L;
+	var description = _v0.aa;
+	var hours = _v0.O;
+	var username = _v0.aI;
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
 		_List_fromArray(
 			[
 				$rtfeldman$elm_css$Html$Styled$Attributes$css(
 				_List_fromArray(
-					[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$mt_12]))
+					[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex]))
 			]),
 		_List_fromArray(
 			[
@@ -9807,69 +9868,213 @@ var $author$project$Main$viewAggregatedActivities = function (activities) {
 					[
 						$rtfeldman$elm_css$Html$Styled$Attributes$css(
 						_List_fromArray(
-							[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row]))
+							[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_36, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$whitespace_pre, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_mono]))
 					]),
 				_List_fromArray(
 					[
+						$rtfeldman$elm_css$Html$Styled$text(
+						billable ? $author$project$Main$hoursToString(hours) : ('     ' + $author$project$Main$hoursToUnbillableString(hours)))
+					])),
+				A2(
+				$rtfeldman$elm_css$Html$Styled$div,
+				_List_Nil,
+				_List_fromArray(
+					[
 						A2(
-						$rtfeldman$elm_css$Html$Styled$span,
+						$rtfeldman$elm_css$Html$Styled$div,
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Html$Styled$Attributes$css(
 								_List_fromArray(
-									[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_36]))
+									[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$font_semibold]))
 							]),
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$text('Hours')
+								$rtfeldman$elm_css$Html$Styled$text(username)
 							])),
 						A2(
-						$rtfeldman$elm_css$Html$Styled$span,
+						$rtfeldman$elm_css$Html$Styled$div,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$rtfeldman$elm_css$Html$Styled$text('URL')
+								$rtfeldman$elm_css$Html$Styled$text(description)
 							]))
-					])),
-				A2($rtfeldman$elm_css$Html$Styled$hr, _List_Nil, _List_Nil),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$div,
-				_List_Nil,
-				A2(
-					$elm$core$List$map,
-					function (_v1) {
-						var url = _v1.a;
-						var acts = _v1.b;
-						return A2($author$project$Main$viewActivityRow, url, acts);
-					},
-					$elm$core$List$reverse(
-						A2(
-							$elm$core$List$sortBy,
-							function (_v0) {
-								var acts = _v0.b;
-								return $author$project$Main$sumBillableHours(acts);
-							},
-							$author$project$Main$groupActivities(activities))))),
-				A2($rtfeldman$elm_css$Html$Styled$hr, _List_Nil, _List_Nil),
-				A2($rtfeldman$elm_css$Html$Styled$hr, _List_Nil, _List_Nil),
-				A2(
-				$rtfeldman$elm_css$Html$Styled$div,
-				_List_fromArray(
-					[
-						$rtfeldman$elm_css$Html$Styled$Attributes$css(
-						_List_fromArray(
-							[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row]))
-					]),
-				_List_fromArray(
-					[
-						$author$project$Main$activitySummery(activities),
-						$rtfeldman$elm_css$Html$Styled$text('Total')
 					]))
 			]));
 };
+var $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_8 = A2($rtfeldman$elm_css$Css$property, 'width', '2rem');
+var $author$project$Main$viewActivityRow = F3(
+	function (url, isExpanded, activities) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row]))
+						]),
+					_List_fromArray(
+						[
+							$author$project$Main$activitySummery(activities),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_grow]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$rtfeldman$elm_css$Html$Styled$a,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Attributes$href(url)
+										]),
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$text(
+											function (s) {
+												return $elm$core$String$isEmpty(s) ? 'Other' : s;
+											}(
+												A2(
+													$elm$core$String$dropLeft,
+													$elm$core$String$length('https://trello.com/c/XXXXXXXX'),
+													url)))
+										]))
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$div,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_8]))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$author$project$Components$button,
+									_List_fromArray(
+										[
+											$rtfeldman$elm_css$Html$Styled$Events$onClick(
+											$author$project$Main$ExpandRow(url))
+										]),
+									_List_fromArray(
+										[
+											isExpanded ? $rtfeldman$elm_css$Html$Styled$text('^') : $rtfeldman$elm_css$Html$Styled$text('v')
+										]))
+								]))
+						])),
+					isExpanded ? A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$space_y_2]))
+						]),
+					A2($elm$core$List$map, $author$project$Main$viewDetailRow, activities)) : $rtfeldman$elm_css$Html$Styled$text('')
+				]));
+	});
+var $author$project$Main$viewAggregatedActivities = F2(
+	function (expandedRow, activities) {
+		return A2(
+			$rtfeldman$elm_css$Html$Styled$div,
+			_List_fromArray(
+				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$css(
+					_List_fromArray(
+						[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$mt_12]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$rtfeldman$elm_css$Html$Styled$span,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$Attributes$css(
+									_List_fromArray(
+										[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$w_36]))
+								]),
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('Hours')
+								])),
+							A2(
+							$rtfeldman$elm_css$Html$Styled$span,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$rtfeldman$elm_css$Html$Styled$text('URL')
+								]))
+						])),
+					A2($rtfeldman$elm_css$Html$Styled$hr, _List_Nil, _List_Nil),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_Nil,
+					A2(
+						$elm$core$List$map,
+						function (_v1) {
+							var url = _v1.a;
+							var acts = _v1.b;
+							return A3(
+								$author$project$Main$viewActivityRow,
+								url,
+								_Utils_eq(
+									$elm$core$Maybe$Just(url),
+									expandedRow),
+								acts);
+						},
+						$elm$core$List$reverse(
+							A2(
+								$elm$core$List$sortBy,
+								function (_v0) {
+									var acts = _v0.b;
+									return $author$project$Main$sumBillableHours(acts);
+								},
+								$author$project$Main$groupActivities(activities))))),
+					A2($rtfeldman$elm_css$Html$Styled$hr, _List_Nil, _List_Nil),
+					A2($rtfeldman$elm_css$Html$Styled$hr, _List_Nil, _List_Nil),
+					A2(
+					$rtfeldman$elm_css$Html$Styled$div,
+					_List_fromArray(
+						[
+							$rtfeldman$elm_css$Html$Styled$Attributes$css(
+							_List_fromArray(
+								[$matheus23$elm_default_tailwind_modules$Tailwind$Utilities$m_4, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex, $matheus23$elm_default_tailwind_modules$Tailwind$Utilities$flex_row]))
+						]),
+					_List_fromArray(
+						[
+							$author$project$Main$activitySummery(activities),
+							$rtfeldman$elm_css$Html$Styled$text('Total')
+						]))
+				]));
+	});
 var $author$project$Main$view = function (model) {
 	return {
-		bn: _List_fromArray(
+		bp: _List_fromArray(
 			[
 				$rtfeldman$elm_css$Html$Styled$toUnstyled(
 				A2(
@@ -9895,16 +10100,16 @@ var $author$project$Main$view = function (model) {
 								[
 									$author$project$Main$formInputs,
 									function () {
-									var _v0 = model.aI;
+									var _v0 = model.aK;
 									if (!_v0.$) {
 										var activities = _v0.a;
-										return $author$project$Main$viewAggregatedActivities(activities);
+										return A2($author$project$Main$viewAggregatedActivities, model.av, activities);
 									} else {
 										return $rtfeldman$elm_css$Html$Styled$text('');
 									}
 								}(),
 									function () {
-									var _v1 = model.aM;
+									var _v1 = model.aO;
 									if (_v1.$ === 1) {
 										return $rtfeldman$elm_css$Html$Styled$text('');
 									} else {
@@ -9931,19 +10136,19 @@ var $author$project$Main$view = function (model) {
 								]))
 						])))
 			]),
-		cI: 'Moco <> Trello'
+		cK: 'Moco <> Trello'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
 	{
-		cm: function (_v0) {
+		co: function (_v0) {
 			return _Utils_Tuple2($author$project$Main$initModel, $elm$core$Platform$Cmd$none);
 		},
-		cG: function (_v1) {
+		cI: function (_v1) {
 			return $elm$core$Platform$Sub$none;
 		},
-		cK: $author$project$Main$update,
-		cN: $author$project$Main$view
+		cM: $author$project$Main$update,
+		cP: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
